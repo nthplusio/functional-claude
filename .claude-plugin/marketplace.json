@@ -1,17 +1,24 @@
 {
   "name": "functional-claude",
-  "description": "Claude Code plugins for enhanced terminal and development workflows",
-  "version": "1.0.0",
   "owner": {
-    "name": "nthplusio",
-    "url": "https://github.com/nthplusio"
+    "name": "nthplusio"
+  },
+  "metadata": {
+    "description": "Claude Code plugins for enhanced terminal and development workflows",
+    "version": "1.0.0",
+    "pluginRoot": "./plugins"
   },
   "plugins": [
     {
       "name": "wezterm-dev",
+      "source": "wezterm-dev",
       "description": "WezTerm terminal configuration and customization for Claude Code workflows",
       "version": "0.1.0",
-      "source": "plugins/wezterm-dev"
+      "author": {
+        "name": "nthplusio"
+      },
+      "license": "MIT",
+      "keywords": ["wezterm", "terminal", "agent-deck", "nerd-fonts"]
     }
   ]
 }
