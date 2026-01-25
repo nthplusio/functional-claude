@@ -1,7 +1,7 @@
 ---
 name: WezTerm Development
 description: This skill should be used when the user asks to "configure WezTerm", "wezterm config", "customize terminal", "add WezTerm keybindings", "wezterm keybindings", "wezterm keys", "set up Agent Deck", "create tab bar", "add status bar", "wezterm lua", "terminal theme", "pane splitting", "tmux-style keys", "terminal opacity", "terminal blur", "debug wezterm", "troubleshoot wezterm", "wezterm not working", "wezterm issue", "look at wezterm", "review wezterm config", "analyze wezterm", "fix wezterm", "wezterm problem", or mentions WezTerm configuration, Nerd Font icons in terminal, terminal visual customization, or asks "why does wezterm" questions about WezTerm behavior.
-version: 0.3.0
+version: 0.4.0
 ---
 
 # WezTerm Development
@@ -310,7 +310,43 @@ if process == '' then process = 'shell' end
 - **`references/status-bar.md`** - Right status bar with git branch
 - **`references/nerd-font-icons.md`** - Comprehensive icon reference
 - **`references/agent-deck.md`** - Agent Deck configuration details
+- **`references/cache-management.md`** - Cache system documentation
 
 ### Example Files
 
 - **`examples/wezterm-complete.lua`** - Full working configuration
+
+## Caching System
+
+The plugin maintains a two-tier caching system in `~/.claude/wezterm-dev.local.md`:
+
+### Daily-Refreshed Reference Cache
+
+On session start, the plugin automatically fetches and caches current WezTerm documentation:
+
+- Official config documentation
+- GitHub releases and changelog
+- Lua API reference
+
+The cache refreshes once per day, keeping you current with WezTerm updates without repeated fetches.
+
+### Learnings Cache
+
+At session end, you'll be prompted to capture learnings from WezTerm work:
+
+- **Successful Patterns** - Configurations that worked well
+- **Mistakes to Avoid** - Issues encountered and their solutions
+
+Learnings persist across sessions, building a knowledge base specific to your setup.
+
+### Cache Settings
+
+Configure via YAML frontmatter in `~/.claude/wezterm-dev.local.md`:
+
+```yaml
+settings:
+  auto_refresh: true       # Enable daily documentation refresh
+  capture_learnings: true  # Enable end-of-session learning prompts
+```
+
+See `references/cache-management.md` for full documentation.
