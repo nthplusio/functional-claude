@@ -1,0 +1,8 @@
+[
+  {
+    "event": "PreToolUse",
+    "tools": ["Edit", "Write"],
+    "type": "prompt",
+    "prompt": "If modifying a WezTerm config file (.wezterm.lua), first verify a dated backup exists for today. If no backup exists, create one before making changes:\n\nLinux/macOS: cp ~/.wezterm.lua ~/.wezterm.lua.bak.$(date +%Y-%m-%d)\nWindows (Git Bash): cp ~/.wezterm.lua ~/.wezterm.lua.bak.$(date +%Y-%m-%d)\n\nOnly proceed with the edit after confirming the backup exists or creating one."
+  }
+]
