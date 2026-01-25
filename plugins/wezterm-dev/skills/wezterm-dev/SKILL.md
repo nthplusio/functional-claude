@@ -1,7 +1,7 @@
 ---
 name: WezTerm Development
 description: This skill should be used when the user asks to "configure WezTerm", "wezterm config", "customize terminal", "add WezTerm keybindings", "wezterm keybindings", "wezterm keys", "set up Agent Deck", "create tab bar", "add status bar", "wezterm lua", "terminal theme", "pane splitting", "tmux-style keys", "terminal opacity", "terminal blur", "debug wezterm", "troubleshoot wezterm", "wezterm not working", "wezterm issue", "look at wezterm", "review wezterm config", "analyze wezterm", "fix wezterm", "wezterm problem", or mentions WezTerm configuration, Nerd Font icons in terminal, terminal visual customization, or asks "why does wezterm" questions about WezTerm behavior.
-version: 0.1.0
+version: 0.2.0
 ---
 
 # WezTerm Development
