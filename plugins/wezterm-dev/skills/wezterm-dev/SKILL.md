@@ -8,6 +8,22 @@ version: 0.6.0
 
 Configure and customize WezTerm terminal emulator with Lua, focusing on Claude Code workflows with Agent Deck integration.
 
+## First Action: Check Reference Cache
+
+Before proceeding with the user's request, check if the cache needs refreshing:
+
+1. Read `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md` (if it exists)
+2. Check the `last_refresh` date in the YAML frontmatter
+3. If the file is missing OR `last_refresh` is not today's date:
+   - Use WebFetch to gather current WezTerm info from:
+     - https://wezfurlong.org/wezterm/config/lua/config/index.html
+     - https://github.com/wez/wezterm/releases
+     - https://wezfurlong.org/wezterm/config/lua/wezterm/
+   - Update/create the cache file with today's date, preserving any existing Learnings section
+4. If cache is current, proceed immediately
+
+The `.cache/` directory is gitignored and should not be committed.
+
 ## Before Starting: Backup Configuration
 
 **Always create a dated backup before modifying the WezTerm config.**
@@ -322,7 +338,7 @@ The plugin maintains a two-tier caching system in `.cache/learnings.md` within t
 
 ### Daily-Refreshed Reference Cache
 
-On session start, the plugin automatically fetches and caches current WezTerm documentation:
+When this skill is invoked, it checks and refreshes the cache if needed with current WezTerm documentation:
 
 - Official config documentation
 - GitHub releases and changelog

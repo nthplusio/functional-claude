@@ -11,17 +11,6 @@
         ]
       }
     ],
-    "SessionStart": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Check if ${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md exists. If missing or last_refresh in frontmatter is not today, use WebFetch to gather current WezTerm info from: (1) https://wezfurlong.org/wezterm/config/lua/config/index.html, (2) https://github.com/wez/wezterm/releases, (3) https://wezfurlong.org/wezterm/config/lua/wezterm/. Update the Reference Cache section with today's date, preserving existing Learnings section. Create the file if it doesn't exist using the template structure with YAML frontmatter. Note: The .cache directory is gitignored and should not be committed."
-          }
-        ]
-      }
-    ],
     "Stop": [
       {
         "matcher": "*",
