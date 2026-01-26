@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Evaluate if this session involved WezTerm configuration work (editing .wezterm.lua, troubleshooting WezTerm issues, or discussing WezTerm configuration). If YES: ask the user if there are learnings to capture, and if they provide any, append to ${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md Learnings section with date prefix [YYYY-MM-DD] under categories 'Successful Patterns' or 'Mistakes to Avoid', then return {\"ok\": true}. If NO WezTerm work was done: return ONLY {\"ok\": true} with no other text."
+            "prompt": "Analyze silently, then output ONLY valid JSON - no explanations.\n\nIf this session involved WezTerm configuration work (editing .wezterm.lua, troubleshooting WezTerm issues, or discussing WezTerm configuration):\n- Ask the user if there are learnings to capture\n- If they provide any, append to ${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md with [YYYY-MM-DD] prefix under 'Successful Patterns' or 'Mistakes to Avoid'\n- Output: {\"ok\": true}\n\nIf NO WezTerm work was done:\n- Output: {\"ok\": true}\n\nYOUR ENTIRE RESPONSE MUST BE ONLY THE JSON OBJECT. NO OTHER TEXT."
           }
         ]
       }
