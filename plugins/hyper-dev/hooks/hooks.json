@@ -1,20 +1,37 @@
 {
-  "hooks": [
-    {
-      "event": "PreToolUse",
-      "tools": ["Edit", "Write"],
-      "type": "command",
-      "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-hyper-backup.sh\""
-    },
-    {
-      "event": "SessionStart",
-      "type": "prompt",
-      "prompt": "Check if ${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md exists. If missing or last_refresh in frontmatter is not today, use WebFetch to gather current Hyper info from: (1) https://hyper.is/, (2) https://github.com/vercel/hyper/releases, (3) https://github.com/vercel/hyper#readme. Update the Reference Cache section with today's date, preserving existing Learnings section. Create the file if it doesn't exist using the template structure with YAML frontmatter. Note: The .cache directory is gitignored and should not be committed."
-    },
-    {
-      "event": "Stop",
-      "type": "prompt",
-      "prompt": "If this session involved Hyper terminal work (editing .hyper.js, creating Hyper plugins, troubleshooting Hyper issues, or discussing Hyper configuration), ask the user if there are learnings to capture. If yes, append to ${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md Learnings section with date prefix [YYYY-MM-DD]. Categories: 'Successful Patterns' for things that worked well, 'Mistakes to Avoid' for issues encountered, 'Plugin Patterns' for reusable plugin techniques."
-    }
-  ]
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-hyper-backup.sh\""
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Check if ${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md exists. If missing or last_refresh in frontmatter is not today, use WebFetch to gather current Hyper info from: (1) https://hyper.is/, (2) https://github.com/vercel/hyper/releases, (3) https://github.com/vercel/hyper#readme. Update the Reference Cache section with today's date, preserving existing Learnings section. Create the file if it doesn't exist using the template structure with YAML frontmatter. Note: The .cache directory is gitignored and should not be committed."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "If this session involved Hyper terminal work (editing .hyper.js, creating Hyper plugins, troubleshooting Hyper issues, or discussing Hyper configuration), ask the user if there are learnings to capture. If yes, append to ${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md Learnings section with date prefix [YYYY-MM-DD]. Categories: 'Successful Patterns' for things that worked well, 'Mistakes to Avoid' for issues encountered, 'Plugin Patterns' for reusable plugin techniques."
+          }
+        ]
+      }
+    ]
+  }
 }

@@ -1,10 +1,15 @@
 {
-  "hooks": [
-    {
-      "event": "PreToolUse",
-      "tools": ["Write", "Edit"],
-      "type": "prompt",
-      "prompt": "This is a PUBLIC repository. Before allowing this file write/edit, check for sensitive information that must NEVER be committed:\n\n- API keys, tokens, secrets, or credentials (e.g., sk-*, ghp_*, Bearer tokens)\n- .env files or environment variable definitions with real values\n- Private URLs, internal endpoints, or IP addresses\n- Personal information (emails, phone numbers, addresses)\n- Database connection strings with credentials\n- Private keys or certificates\n\nIf any sensitive information is detected, respond with 'deny' and explain what was found. Otherwise respond with 'approve'."
-    }
-  ]
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "This is a PUBLIC repository. Before allowing this file write/edit, check for sensitive information that must NEVER be committed:\n\n- API keys, tokens, secrets, or credentials (e.g., sk-*, ghp_*, Bearer tokens)\n- .env files or environment variable definitions with real values\n- Private URLs, internal endpoints, or IP addresses\n- Personal information (emails, phone numbers, addresses)\n- Database connection strings with credentials\n- Private keys or certificates\n\nIf any sensitive information is detected, respond with 'deny' and explain what was found. Otherwise respond with 'approve'."
+          }
+        ]
+      }
+    ]
+  }
 }
