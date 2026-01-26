@@ -1,7 +1,7 @@
 ---
 name: WezTerm Development
 description: This skill should be used when the user asks to "configure WezTerm", "wezterm config", "customize terminal", "add WezTerm keybindings", "wezterm keybindings", "wezterm keys", "set up Agent Deck", "create tab bar", "add status bar", "wezterm lua", "terminal theme", "pane splitting", "tmux-style keys", "terminal opacity", "terminal blur", "debug wezterm", "troubleshoot wezterm", "wezterm not working", "wezterm issue", "look at wezterm", "review wezterm config", "analyze wezterm", "fix wezterm", "wezterm problem", "update wezterm", "modify wezterm", "edit wezterm", "change wezterm", "leader key", "prefix key", "modifier key", "keybinding conflict", "ctrl+a wezterm", "remote tmux", "ssh tmux", "wezterm tmux", or mentions WezTerm configuration, Nerd Font icons in terminal, terminal visual customization, or asks "why does wezterm" questions about WezTerm behavior.
-version: 0.5.0
+version: 0.6.0
 ---
 
 # WezTerm Development
@@ -318,7 +318,7 @@ if process == '' then process = 'shell' end
 
 ## Caching System
 
-The plugin maintains a two-tier caching system in `~/.claude/wezterm-dev.local.md`:
+The plugin maintains a two-tier caching system in `.cache/learnings.md` within the plugin directory:
 
 ### Daily-Refreshed Reference Cache
 
@@ -339,9 +339,13 @@ At session end, you'll be prompted to capture learnings from WezTerm work:
 
 Learnings persist across sessions, building a knowledge base specific to your setup.
 
+### Cache Location
+
+The `.cache/` directory is gitignored and stays with the plugin. This keeps learnings relative to the plugin that uses them.
+
 ### Cache Settings
 
-Configure via YAML frontmatter in `~/.claude/wezterm-dev.local.md`:
+Configure via YAML frontmatter in the cache file:
 
 ```yaml
 settings:

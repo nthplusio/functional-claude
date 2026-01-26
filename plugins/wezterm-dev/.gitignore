@@ -1,0 +1,3 @@
+# Cache directory for learnings and fetched documentation
+# These are user-specific and should not be committed
+.cache/

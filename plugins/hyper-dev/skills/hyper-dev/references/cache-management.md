@@ -1,6 +1,6 @@
 # Cache Management
 
-The wezterm-dev plugin maintains a local cache file to store fetched WezTerm documentation and session learnings.
+The hyper-dev plugin maintains a local cache file to store fetched Hyper documentation and session learnings.
 
 ## Cache Location
 
@@ -14,7 +14,7 @@ The cache uses YAML frontmatter for metadata with markdown body for content:
 
 ```yaml
 ---
-last_refresh: 2026-01-25
+last_refresh: 2026-01-26
 cache_version: 1
 learnings_count: 0
 settings:
@@ -24,17 +24,21 @@ settings:
 
 ## Reference Cache
 
-[Fetched WezTerm documentation, release notes, configuration tips]
+[Fetched Hyper documentation, release notes, configuration tips]
 
 ## Learnings
 
 ### Successful Patterns
 
-- [2026-01-25] Pattern description...
+- [2026-01-26] Pattern description...
 
 ### Mistakes to Avoid
 
-- [2026-01-25] Mistake description...
+- [2026-01-26] Mistake description...
+
+### Plugin Patterns
+
+- [2026-01-26] Reusable plugin technique...
 ```
 
 ## Automatic Behavior
@@ -49,16 +53,16 @@ On session start, the plugin checks if the cache needs refreshing:
 
 **Sources fetched:**
 
-- Official WezTerm Config Docs: https://wezfurlong.org/wezterm/config/lua/config/index.html
-- GitHub Releases: https://github.com/wez/wezterm/releases
-- Lua API Reference: https://wezfurlong.org/wezterm/config/lua/wezterm/
+- Official Hyper Website: https://hyper.is/
+- GitHub Releases: https://github.com/vercel/hyper/releases
+- Repository README: https://github.com/vercel/hyper#readme
 
 ### Learnings Capture (SessionEnd)
 
-At session end, if WezTerm work was done:
+At session end, if Hyper work was done:
 
 1. Prompts to capture learnings
-2. User describes successful patterns or mistakes
+2. User describes successful patterns, mistakes, or plugin techniques
 3. Appends to Learnings section with date prefix
 
 ## Manual Operations
@@ -93,6 +97,8 @@ Edit the file and remove content under the `## Learnings` section, keeping the h
 ### Successful Patterns
 
 ### Mistakes to Avoid
+
+### Plugin Patterns
 ```
 
 ## Cache Template
@@ -118,6 +124,8 @@ settings:
 ### Successful Patterns
 
 ### Mistakes to Avoid
+
+### Plugin Patterns
 ```
 
 ## Why .cache/?
