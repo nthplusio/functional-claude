@@ -28,7 +28,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "If this session involved WezTerm configuration work (editing .wezterm.lua, troubleshooting WezTerm issues, or discussing WezTerm configuration), ask the user if there are learnings to capture. If yes, append to ${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md Learnings section with date prefix [YYYY-MM-DD]. Categories: 'Successful Patterns' for things that worked well, 'Mistakes to Avoid' for issues encountered."
+            "prompt": "ONLY if this session involved WezTerm configuration work (editing .wezterm.lua, troubleshooting WezTerm issues, or discussing WezTerm configuration), ask the user if there are learnings to capture. If yes, append to ${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md Learnings section with date prefix [YYYY-MM-DD]. Categories: 'Successful Patterns' for things that worked well, 'Mistakes to Avoid' for issues encountered. If this session did NOT involve WezTerm work, do nothing and output nothing."
           }
         ]
       }
