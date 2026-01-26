@@ -1,7 +1,7 @@
 ---
 name: WezTerm Development
-description: This skill should be used when the user asks to "configure WezTerm", "wezterm config", "customize terminal", "add WezTerm keybindings", "wezterm keybindings", "wezterm keys", "set up Agent Deck", "create tab bar", "add status bar", "wezterm lua", "terminal theme", "pane splitting", "tmux-style keys", "terminal opacity", "terminal blur", "debug wezterm", "troubleshoot wezterm", "wezterm not working", "wezterm issue", "look at wezterm", "review wezterm config", "analyze wezterm", "fix wezterm", "wezterm problem", or mentions WezTerm configuration, Nerd Font icons in terminal, terminal visual customization, or asks "why does wezterm" questions about WezTerm behavior.
-version: 0.4.0
+description: This skill should be used when the user asks to "configure WezTerm", "wezterm config", "customize terminal", "add WezTerm keybindings", "wezterm keybindings", "wezterm keys", "set up Agent Deck", "create tab bar", "add status bar", "wezterm lua", "terminal theme", "pane splitting", "tmux-style keys", "terminal opacity", "terminal blur", "debug wezterm", "troubleshoot wezterm", "wezterm not working", "wezterm issue", "look at wezterm", "review wezterm config", "analyze wezterm", "fix wezterm", "wezterm problem", "update wezterm", "modify wezterm", "edit wezterm", "change wezterm", "leader key", "prefix key", "modifier key", "keybinding conflict", "ctrl+a wezterm", "remote tmux", "ssh tmux", "wezterm tmux", or mentions WezTerm configuration, Nerd Font icons in terminal, terminal visual customization, or asks "why does wezterm" questions about WezTerm behavior.
+version: 0.5.0
 ---
 
 # WezTerm Development

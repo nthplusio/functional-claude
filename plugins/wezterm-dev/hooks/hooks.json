@@ -1,18 +1,20 @@
-[
-  {
-    "event": "PreToolUse",
-    "tools": ["Edit", "Write"],
-    "type": "prompt",
-    "prompt": "If modifying a WezTerm config file (.wezterm.lua), first verify a dated backup exists for today. Also check ~/.claude/wezterm-dev.local.md for relevant learnings before editing. If no backup exists, create one before making changes:\n\nLinux/macOS: cp ~/.wezterm.lua ~/.wezterm.lua.bak.$(date +%Y-%m-%d)\nWindows (Git Bash): cp ~/.wezterm.lua ~/.wezterm.lua.bak.$(date +%Y-%m-%d)\n\nOnly proceed with the edit after confirming the backup exists or creating one."
-  },
-  {
-    "event": "SessionStart",
-    "type": "prompt",
-    "prompt": "Check if ~/.claude/wezterm-dev.local.md exists. If missing or last_refresh in frontmatter is not today, use WebFetch to gather current WezTerm info from: (1) https://wezfurlong.org/wezterm/config/lua/config/index.html, (2) https://github.com/wez/wezterm/releases, (3) https://wezfurlong.org/wezterm/config/lua/wezterm/. Update the Reference Cache section with today's date, preserving existing Learnings section. Create the file if it doesn't exist using the template structure with YAML frontmatter."
-  },
-  {
-    "event": "Stop",
-    "type": "prompt",
-    "prompt": "If this session involved WezTerm configuration work (editing .wezterm.lua, troubleshooting WezTerm issues, or discussing WezTerm configuration), ask the user if there are learnings to capture. If yes, append to ~/.claude/wezterm-dev.local.md Learnings section with date prefix [YYYY-MM-DD]. Categories: 'Successful Patterns' for things that worked well, 'Mistakes to Avoid' for issues encountered."
-  }
-]
+{
+  "hooks": [
+    {
+      "event": "PreToolUse",
+      "tools": ["Edit", "Write"],
+      "type": "command",
+      "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-wezterm-backup.sh\""
+    },
+    {
+      "event": "SessionStart",
+      "type": "prompt",
+      "prompt": "Check if ~/.claude/wezterm-dev.local.md exists. If missing or last_refresh in frontmatter is not today, use WebFetch to gather current WezTerm info from: (1) https://wezfurlong.org/wezterm/config/lua/config/index.html, (2) https://github.com/wez/wezterm/releases, (3) https://wezfurlong.org/wezterm/config/lua/wezterm/. Update the Reference Cache section with today's date, preserving existing Learnings section. Create the file if it doesn't exist using the template structure with YAML frontmatter."
+    },
+    {
+      "event": "Stop",
+      "type": "prompt",
+      "prompt": "If this session involved WezTerm configuration work (editing .wezterm.lua, troubleshooting WezTerm issues, or discussing WezTerm configuration), ask the user if there are learnings to capture. If yes, append to ~/.claude/wezterm-dev.local.md Learnings section with date prefix [YYYY-MM-DD]. Categories: 'Successful Patterns' for things that worked well, 'Mistakes to Avoid' for issues encountered."
+    }
+  ]
+}
