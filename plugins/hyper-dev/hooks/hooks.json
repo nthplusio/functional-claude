@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Analyze silently, then output ONLY valid JSON - no explanations.\n\nIf this session involved Hyper terminal work (editing .hyper.js, creating Hyper plugins, troubleshooting Hyper issues, or discussing Hyper configuration):\n- Ask the user if there are learnings to capture\n- If they provide any, append to ${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md with [YYYY-MM-DD] prefix under 'Successful Patterns', 'Mistakes to Avoid', or 'Plugin Patterns'\n- Output: {\"ok\": true}\n\nIf NO Hyper work was done:\n- Output: {\"ok\": true}\n\nYOUR ENTIRE RESPONSE MUST BE ONLY THE JSON OBJECT. NO OTHER TEXT."
+            "prompt": "Output ONLY valid JSON, no other text.\n\nDid this session involve Hyper work (editing .hyper.js, creating plugins, troubleshooting, or configuration)?\n\nYES: {\"ok\": false, \"reason\": \"Before ending, ask the user if they have any Hyper learnings to capture. If they do, append to ${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md with [YYYY-MM-DD] prefix under 'Successful Patterns', 'Mistakes to Avoid', or 'Plugin Patterns'.\"}\n\nNO: {\"ok\": true}"
           }
         ]
       }
