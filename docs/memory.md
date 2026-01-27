@@ -13,8 +13,86 @@ This document contains accumulated knowledge about the functional-claude plugin 
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| wezterm-dev | 0.6.6 | WezTerm terminal configuration and customization |
-| hyper-dev | 0.1.6 | Hyper terminal configuration and plugin development |
+| wezterm-dev | 0.7.0 | WezTerm terminal configuration and customization |
+| hyper-dev | 0.2.0 | Hyper terminal configuration and plugin development |
+
+## Architecture Overview
+
+The plugins use a **multi-skill architecture** with focused, composable skills:
+
+### Component Types
+
+| Component | Purpose | Auto-Invocation |
+|-----------|---------|-----------------|
+| **Skills** | Conceptual guidance, multi-step workflows | Yes (model can invoke) |
+| **Agents** | Complex autonomous tasks (debugging, setup) | Yes (model can delegate) |
+| **Hooks** | Event-driven automation (backup, learnings) | Automatic on events |
+
+### Plugin Structure
+
+```
+plugins/<plugin-name>/
+├── .claude-plugin/
+│   └── plugin.json           # Plugin manifest (name, version, description)
+├── hooks/
+│   └── hooks.json            # PreToolUse/Stop hooks
+├── skills/
+│   ├── <main-skill>/         # Overview skill (links to focused skills)
+│   │   ├── SKILL.md
+│   │   ├── examples/
+│   │   └── references/
+│   ├── <focused-skill-1>/    # Focused skill (specific topic)
+│   │   └── SKILL.md
+│   └── <focused-skill-2>/
+│       ├── SKILL.md
+│       └── references/
+├── agents/
+│   └── <agent-name>/         # Autonomous agent
+│       └── AGENT.md
+└── .cache/                   # Gitignored - runtime cache
+```
+
+## WezTerm Plugin (v0.7.0)
+
+### Skills
+
+| Skill | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| wezterm-dev | Overview, base config | "configure wezterm", "wezterm config" |
+| wezterm-keybindings | Tmux-style keybindings | "leader key", "tmux-style", "pane splitting" |
+| wezterm-visual | Opacity, blur, cursor, colors | "opacity", "blur", "cursor", "theme" |
+| wezterm-tabs | Tab bar with Nerd Font icons | "tab bar", "nerd font icons", "process icons" |
+| wezterm-agent-deck | Agent Deck integration | "agent deck", "claude monitoring" |
+
+### Agent
+
+| Agent | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| wezterm-troubleshoot | Autonomous debugging | "wezterm not working", "fix wezterm", "debug wezterm" |
+
+## Hyper Plugin (v0.2.0)
+
+### Skills
+
+| Skill | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| hyper-dev | Overview, base config | "configure hyper", "hyper config" |
+| hyper-keybindings | Keymap customization | "hyper keys", "shortcuts" |
+| hyper-visual | Opacity, colors, cursor | "opacity", "colors", "cursor" |
+| hyper-plugins | Plugin development | "create plugin", "decorateConfig", "redux" |
+| hyper-themes | Theme creation | "create theme", "color scheme" |
+
+### Agent
+
+| Agent | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| hyper-troubleshoot | Autonomous debugging | "hyper not working", "fix hyper", "debug hyper" |
+
+## Root-Level Skills
+
+| Skill | Purpose |
+|-------|---------|
+| terminal-cache | Shared cache management for terminal plugins |
 
 ## Directory Structure
 
@@ -27,19 +105,34 @@ functional-claude/
 │   └── hooks.json            # Security hook (blocks sensitive data commits)
 ├── docs/
 │   └── memory.md             # This file - repository knowledge
-├── skills/                   # Root-level skills (repo development)
+├── skills/
+│   └── terminal-cache/       # Shared terminal cache skill
+│       └── SKILL.md
 └── plugins/
-    └── <plugin-name>/
-        ├── .claude-plugin/
-        │   └── plugin.json   # Plugin manifest (name, version, description)
-        ├── hooks/
-        │   └── hooks.json    # Plugin-specific hooks
+    ├── wezterm-dev/
+    │   ├── .claude-plugin/plugin.json
+    │   ├── hooks/hooks.json
+    │   ├── skills/
+    │   │   ├── wezterm-dev/         # Main skill (overview)
+    │   │   ├── wezterm-keybindings/
+    │   │   ├── wezterm-visual/
+    │   │   ├── wezterm-tabs/
+    │   │   └── wezterm-agent-deck/
+    │   ├── agents/
+    │   │   └── wezterm-troubleshoot/
+    │   └── .cache/
+    └── hyper-dev/
+        ├── .claude-plugin/plugin.json
+        ├── hooks/hooks.json
         ├── skills/
-        │   └── <skill-name>/
-        │       ├── SKILL.md  # Skill definition with YAML frontmatter
-        │       ├── examples/ # Example code
-        │       └── references/ # Reference docs
-        └── .cache/           # Gitignored - runtime cache for learnings
+        │   ├── hyper-dev/           # Main skill (overview)
+        │   ├── hyper-keybindings/
+        │   ├── hyper-visual/
+        │   ├── hyper-plugins/
+        │   └── hyper-themes/
+        ├── agents/
+        │   └── hyper-troubleshoot/
+        └── .cache/
 ```
 
 ## Version Synchronization
@@ -48,10 +141,10 @@ functional-claude/
 
 1. `plugins/<name>/.claude-plugin/plugin.json` - `"version": "X.Y.Z"`
 2. `.claude-plugin/marketplace.json` - `"version": "X.Y.Z"` in plugins array
-3. `plugins/<name>/skills/<skill>/SKILL.md` - frontmatter `version:` (optional)
+3. `plugins/<name>/skills/<skill>/SKILL.md` - frontmatter `version:` (all skills in plugin)
 
 When bumping versions:
-- Update all three locations simultaneously
+- Update all locations simultaneously
 - Use semantic versioning (MAJOR.MINOR.PATCH)
 - Commit version changes together
 
@@ -95,29 +188,16 @@ Located at `hooks/hooks.json` - validates all Write/Edit operations for sensitiv
 - Private URLs, credentials
 - Personal information
 
-Uses prompt-based PreToolUse hook with proper JSON response format:
-```json
-{
-  "hookSpecificOutput": {
-    "hookEventName": "PreToolUse",
-    "permissionDecision": "allow|deny",
-    "permissionDecisionReason": "explanation"
-  }
-}
-```
-
 ### Plugin Hooks
 
 Each plugin can define hooks in `plugins/<name>/hooks/hooks.json`:
 
 **PreToolUse hooks** - Run before tool execution:
 - Backup verification before config edits
-- Permission checks
-- Exit code 0 = allow, exit code 2 = block (with stderr message)
+- Exit code 0 = allow, exit code 2 = block
 
 **Stop hooks** - Run when Claude finishes:
 - Prompt for learnings capture
-- Must check `stop_hook_active` to prevent infinite loops
 - Response format: `{"ok": true}` or `{"ok": false, "reason": "..."}`
 
 ### Hook Types
@@ -130,43 +210,15 @@ Each plugin can define hooks in `plugins/<name>/hooks/hooks.json`:
      "timeout": 10
    }
    ```
-   - Exit code 0: Allow (stdout shown in verbose mode)
-   - Exit code 2: Block (stderr shown to Claude)
-   - Other codes: Non-blocking error
 
 2. **Prompt hooks** (`"type": "prompt"`):
    ```json
    {
      "type": "prompt",
-     "prompt": "Evaluate $ARGUMENTS and respond with JSON only",
+     "prompt": "Evaluate and respond with JSON only",
      "timeout": 30
    }
    ```
-
-   **For PreToolUse** - use `hookSpecificOutput`:
-   ```json
-   {
-     "hookSpecificOutput": {
-       "hookEventName": "PreToolUse",
-       "permissionDecision": "allow|deny|ask",
-       "permissionDecisionReason": "explanation"
-     }
-   }
-   ```
-
-   **For Stop/SubagentStop** - use `ok`/`reason`:
-   ```json
-   {"ok": true}
-   {"ok": false, "reason": "why Claude should continue"}
-   ```
-
-### Hook Configuration Best Practices
-
-- Always add `"description"` field at root level for documentation
-- Set explicit `"timeout"` values (default is 60 seconds)
-- For Stop hooks, always check `stop_hook_active` to prevent loops
-- Use `$ARGUMENTS` placeholder in prompts to receive hook input
-- Command hooks: use stderr (exit 2) to block, stdout for info
 
 ### Environment Variables in Hooks
 
@@ -185,12 +237,20 @@ version: X.Y.Z
 ---
 ```
 
-### Skill Content Patterns
+### Agent AGENT.md Frontmatter
 
-1. **Cache refresh check** - Check `.cache/learnings.md` for stale data
-2. **Backup requirement** - Require backups before modifying user configs
-3. **Reference documentation** - Link to official docs
-4. **Examples** - Provide code samples
+```yaml
+---
+name: Agent Display Name
+description: Trigger phrases and when-to-use guidance
+tools:
+  - Read
+  - Bash
+  - Grep
+  - Glob
+  - WebFetch
+---
+```
 
 ## Development Workflow
 
@@ -207,28 +267,34 @@ claude --plugin-dir ./plugins/wezterm-dev
 /plugin install wezterm-dev@functional-claude
 ```
 
-### Creating a New Plugin
+### Creating a New Skill
 
-1. Create directory: `plugins/<name>/`
-2. Create manifest: `plugins/<name>/.claude-plugin/plugin.json`
-3. Add to marketplace: Update `.claude-plugin/marketplace.json`
-4. Create skill: `plugins/<name>/skills/<name>/SKILL.md`
-5. Add hooks (optional): `plugins/<name>/hooks/hooks.json`
-6. Add `.cache/` to `.gitignore`
+1. Create directory: `plugins/<name>/skills/<skill-name>/`
+2. Create SKILL.md with YAML frontmatter
+3. Add references/ directory if needed
+4. Update version across all locations
+
+### Creating a New Agent
+
+1. Create directory: `plugins/<name>/agents/<agent-name>/`
+2. Create AGENT.md with YAML frontmatter
+3. Define tools list and system prompt
+4. Test with troubleshooting scenarios
 
 ## Conventions
 
 ### Naming
 
 - Plugin names: lowercase with hyphens (`wezterm-dev`, `hyper-dev`)
-- Skill names: match plugin name when primary skill
+- Skill names: `<plugin>-<topic>` (e.g., `wezterm-keybindings`)
+- Agent names: `<plugin>-<action>` (e.g., `wezterm-troubleshoot`)
 - Hook scripts: descriptive (`verify-wezterm-backup.sh`)
 
 ### Versions
 
 - Start at `0.1.0` for new plugins
 - Increment PATCH for fixes
-- Increment MINOR for new features
+- Increment MINOR for new features (new skills, agents)
 - Increment MAJOR for breaking changes
 
 ### Cache Files
@@ -242,25 +308,6 @@ claude --plugin-dir ./plugins/wezterm-dev
 - Never commit API keys, tokens, or credentials
 - Never commit .env files with real values
 - Root security hook blocks sensitive data automatically
-- Review all commits for accidental sensitive data exposure
-
-## Learnings
-
-### WezTerm Plugin
-
-- Agent Deck plugin for Claude Code monitoring
-- Powerline-style tab bar with process icons
-- Git branch caching to avoid frequent spawns
-- Catppuccin Mocha color scheme integration
-
-### Hyper Plugin
-
-- Electron-based with React UI
-- Plugin system via npm packages
-- decorateConfig for configuration overrides
-- Redux for state management
-
----
 
 ## Official Documentation
 
@@ -272,12 +319,7 @@ claude --plugin-dir ./plugins/wezterm-dev
   - Environment variables: `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PROJECT_DIR}`
 
 - **Status Line Configuration**: https://code.claude.com/docs/en/statusline
-  - Custom status line displayed at bottom of Claude Code interface (similar to PS1 prompts)
-  - Configuration via `.claude/settings.json` with `statusLine.type: "command"` and `statusLine.command`
-  - Receives JSON via stdin with session context: model info, workspace dirs, cost, context window usage
-  - JSON fields: `model.display_name`, `workspace.current_dir`, `cost.total_cost_usd`, `context_window.used_percentage`
-  - Supports ANSI color codes; first line of stdout becomes status line text
-  - Updates when conversation messages change (max every 300ms)
+  - Custom status line displayed at bottom of Claude Code interface
 
 ---
 

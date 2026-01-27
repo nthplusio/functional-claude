@@ -32,71 +32,80 @@ claude --plugin-dir ./plugins/wezterm-dev
 
 ## Architecture
 
-### Marketplace Structure
+### Multi-Skill Architecture
+
+Plugins use focused, composable skills and agents:
 
 ```
-.claude-plugin/
-  plugin.json           # Root plugin manifest
-  marketplace.json      # Marketplace manifest - lists all available plugins
-hooks/
-  hooks.json            # Root-level hooks (security validation)
-skills/
-  <skill-name>/         # Root-level skills (functional-claude development)
-plugins/
-  <plugin-name>/        # Each plugin is a directory
-    .claude-plugin/
-      plugin.json       # Plugin manifest (name, version, description)
-    hooks/
-      hooks.json        # PreToolUse/PostToolUse hooks
-    skills/
-      <skill-name>/
-        SKILL.md        # Skill definition with frontmatter
-        examples/       # Example code for the skill
-        references/     # Reference documentation
+plugins/<plugin-name>/
+├── .claude-plugin/
+│   └── plugin.json         # Plugin manifest
+├── hooks/
+│   └── hooks.json          # PreToolUse/Stop hooks
+├── skills/
+│   ├── <main-skill>/       # Overview skill (links to focused skills)
+│   ├── <focused-skill>/    # Topic-specific skill
+│   └── ...
+├── agents/
+│   └── <agent-name>/       # Autonomous agent (debugging, setup)
+└── .cache/                 # Gitignored runtime cache
 ```
 
 ### Key Files
 
-- **`marketplace.json`**: Declares plugins available in the marketplace with source paths and versions
-- **`plugin.json`**: Per-plugin metadata - version must match `marketplace.json`
-- **`SKILL.md`**: Skill definition with YAML frontmatter (name, description, version) followed by markdown content
-- **`hooks.json`**: Array of hook definitions for events like `PreToolUse`, `PostToolUse`
+- **`marketplace.json`**: Declares plugins with source paths and versions
+- **`plugin.json`**: Per-plugin metadata
+- **`SKILL.md`**: Skill definition with YAML frontmatter
+- **`AGENT.md`**: Agent definition with tools list
+- **`hooks.json`**: Hook definitions for events
 
 ### Version Management
 
 Plugin versions must be kept in sync across:
 1. `plugins/<name>/.claude-plugin/plugin.json`
 2. `.claude-plugin/marketplace.json`
-3. `skills/<skill-name>/SKILL.md` frontmatter (if skill has version)
+3. All `SKILL.md` frontmatter within the plugin
+
+## Current Plugins
+
+### wezterm-dev (v0.7.0)
+
+WezTerm terminal configuration with multi-skill architecture:
+
+| Component | Type | Purpose |
+|-----------|------|---------|
+| wezterm-dev | skill | Overview, base configuration |
+| wezterm-keybindings | skill | Tmux-style keybindings, leader key |
+| wezterm-visual | skill | Opacity, blur, cursor, colors |
+| wezterm-tabs | skill | Tab bar with Nerd Font icons |
+| wezterm-agent-deck | skill | Agent Deck integration |
+| wezterm-troubleshoot | agent | Autonomous debugging |
+
+### hyper-dev (v0.2.0)
+
+Hyper terminal configuration and plugin development:
+
+| Component | Type | Purpose |
+|-----------|------|---------|
+| hyper-dev | skill | Overview, base configuration |
+| hyper-keybindings | skill | Keymap customization |
+| hyper-visual | skill | Opacity, colors, cursor |
+| hyper-plugins | skill | Plugin development |
+| hyper-themes | skill | Theme creation |
+| hyper-troubleshoot | agent | Autonomous debugging |
 
 ## Root-Level Components
 
+### terminal-cache skill
+
+Shared cache management for terminal plugins:
+- Daily documentation refresh
+- Learnings capture
+
 ### functional-claude skill
 
-Development guidance for this repository:
-- Plugin creation workflow
-- Version synchronization
-- Security requirements for public repo
+Development guidance for this repository.
 
 ### Security hook
 
 PreToolUse hook on Write/Edit that validates no sensitive data is committed.
-
-## Current Plugins
-
-### wezterm-dev (v0.6.5)
-
-WezTerm terminal configuration skill with:
-- Lua configuration patterns
-- Tmux-style keybindings
-- Nerd Font icon reference
-- Agent Deck integration for Claude Code monitoring
-- PreToolUse hook to enforce config backup before edits
-
-### hyper-dev (v0.1.5)
-
-Hyper terminal configuration and plugin development skill with:
-- JavaScript/React configuration
-- Plugin development patterns
-- Theme creation
-- PreToolUse hook to enforce config backup before edits
