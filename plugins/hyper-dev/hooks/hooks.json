@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Output ONLY valid JSON, no other text.\n\nDid this session involve Hyper work (editing .hyper.js, creating plugins, troubleshooting, or configuration)?\n\nYES: {\"ok\": false, \"reason\": \"Before ending, ask the user if they have any Hyper learnings to capture. If they do, append to ${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md with [YYYY-MM-DD] prefix under 'Successful Patterns', 'Mistakes to Avoid', or 'Plugin Patterns'.\"}\n\nNO: {\"ok\": true}"
+            "prompt": "You must respond with ONLY a JSON object, nothing else.\n\nQuestion: Did this session involve Hyper terminal work?\n\nIf YES, respond exactly: {\"ok\":false,\"reason\":\"Ask user about Hyper learnings to save to learnings.md\"}\n\nIf NO, respond exactly: {\"ok\":true}"
           }
         ]
       }
