@@ -197,28 +197,22 @@ Each plugin can define hooks in `plugins/<name>/hooks/hooks.json`:
 - Exit code 0 = allow, exit code 2 = block
 
 **Stop hooks** - Run when Claude finishes:
-- Prompt for learnings capture
+- Check transcript for plugin-related work
+- Prompt for learnings capture if relevant
 - Response format: `{"ok": true}` or `{"ok": false, "reason": "..."}`
 
 ### Hook Types
 
-1. **Command hooks** (`"type": "command"`):
-   ```json
-   {
-     "type": "command",
-     "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/script.sh\"",
-     "timeout": 10
-   }
-   ```
+**Command hooks** (`"type": "command"`):
+```json
+{
+  "type": "command",
+  "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/script.sh\"",
+  "timeout": 10
+}
+```
 
-2. **Prompt hooks** (`"type": "prompt"`):
-   ```json
-   {
-     "type": "prompt",
-     "prompt": "Evaluate and respond with JSON only",
-     "timeout": 30
-   }
-   ```
+Note: Use command-based hooks (bash scripts that output JSON) instead of prompt-based hooks for reliable JSON output.
 
 ### Environment Variables in Hooks
 

@@ -17,9 +17,9 @@
       {
         "hooks": [
           {
-            "type": "prompt",
-            "prompt": "Output raw JSON only. No markdown, no explanation, no code blocks.\n\nCheck $ARGUMENTS for stop_hook_active. If true: {\"ok\":true}\n\nIf this session involved Hyper config work: {\"ok\":false,\"reason\":\"Capture Hyper learnings\"}\n\nOtherwise: {\"ok\":true}",
-            "timeout": 30
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/check-hyper-learnings.sh\"",
+            "timeout": 10
           }
         ]
       }
