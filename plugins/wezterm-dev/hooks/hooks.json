@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-wezterm-backup.sh\"",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/verify-wezterm-backup.sh",
             "timeout": 10
           }
         ]
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/check-wezterm-learnings.sh\"",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/check-wezterm-learnings.sh",
             "timeout": 10
           }
         ]

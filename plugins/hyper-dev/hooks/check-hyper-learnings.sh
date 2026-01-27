@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Check if session involved Hyper config work and prompt for learnings capture
 # Ensure we always exit 0 - any error should just return ok:true
 set +e
