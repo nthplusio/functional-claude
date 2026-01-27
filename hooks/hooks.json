@@ -1,4 +1,5 @@
 {
+  "description": "Security hooks for public repository - prevents committing sensitive data",
   "hooks": {
     "PreToolUse": [
       {
@@ -6,7 +7,8 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "This is a PUBLIC repository. Before allowing this file write/edit, check for sensitive information that must NEVER be committed:\n\n- API keys, tokens, secrets, or credentials (e.g., sk-*, ghp_*, Bearer tokens)\n- .env files or environment variable definitions with real values\n- Private URLs, internal endpoints, or IP addresses\n- Personal information (emails, phone numbers, addresses)\n- Database connection strings with credentials\n- Private keys or certificates\n\nIf any sensitive information is detected, respond with 'deny' and explain what was found. Otherwise respond with 'approve'."
+            "prompt": "This is a PUBLIC repository. Check the file content in $ARGUMENTS for sensitive information that must NEVER be committed:\n\n- API keys, tokens, secrets (patterns: sk-*, ghp_*, Bearer, api_key, secret)\n- .env files or environment variables with real values\n- Private URLs, internal endpoints, IP addresses\n- Personal information (emails, phone numbers)\n- Database connection strings with credentials\n- Private keys or certificates\n\nRespond with ONLY a JSON object:\n- If sensitive data found: {\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"Sensitive data detected: <describe what was found>\"}}\n- If safe: {\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\",\"permissionDecisionReason\":\"No sensitive data detected\"}}",
+            "timeout": 30
           }
         ]
       }

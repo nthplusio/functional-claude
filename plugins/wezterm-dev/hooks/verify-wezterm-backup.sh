@@ -2,17 +2,22 @@
 # verify-wezterm-backup.sh
 # PreToolUse hook that blocks Edit/Write on .wezterm.lua files unless a dated backup exists
 #
-# Input: JSON with tool parameters on stdin (file_path for Edit/Write)
-# Output: Exit 0 to allow, exit 1 to block (with message on stdout)
+# Input: JSON with tool parameters on stdin (file_path in tool_input)
+# Output: Exit 0 to allow, exit 2 to block (with message on stderr)
 
 set -euo pipefail
 
 # Read JSON input from stdin
 INPUT=$(cat)
 
-# Extract file_path from the JSON
-# Handle both Edit (file_path) and Write (file_path) tools
-FILE_PATH=$(echo "$INPUT" | grep -oP '"file_path"\s*:\s*"\K[^"]+' 2>/dev/null || echo "")
+# Extract file_path from tool_input using portable parsing
+# Try jq first, fall back to grep patterns
+if command -v jq &>/dev/null; then
+    FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null || echo "")
+else
+    # Fallback: extract file_path with sed (more portable than grep -oP)
+    FILE_PATH=$(echo "$INPUT" | sed -n 's/.*"file_path"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)
+fi
 
 # If no file_path found, allow (not a file operation we care about)
 if [[ -z "$FILE_PATH" ]]; then
@@ -62,13 +67,13 @@ if [[ "$BACKUP_FOUND" == "true" ]]; then
     # Backup exists, allow the edit
     exit 0
 else
-    # No backup found, block and provide instructions
-    echo "BLOCKED: No backup found for today ($TODAY)."
-    echo ""
-    echo "Before editing WezTerm config, create a backup:"
-    echo ""
-    echo "  cp \"$WEZTERM_CONFIG\" \"${WEZTERM_CONFIG}.bak.${TODAY}\""
-    echo ""
-    echo "Then retry your edit."
-    exit 1
+    # No backup found, block and provide instructions (stderr for exit code 2)
+    echo "BLOCKED: No backup found for today ($TODAY)." >&2
+    echo "" >&2
+    echo "Before editing WezTerm config, create a backup:" >&2
+    echo "" >&2
+    echo "  cp \"$WEZTERM_CONFIG\" \"${WEZTERM_CONFIG}.bak.${TODAY}\"" >&2
+    echo "" >&2
+    echo "Then retry your edit." >&2
+    exit 2
 fi

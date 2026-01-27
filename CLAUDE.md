@@ -8,6 +8,15 @@ This is a Claude Code plugin marketplace repository (`nthplusio/functional-claud
 
 **Security:** This is a public repository. A PreToolUse hook validates all file writes to prevent committing sensitive information (API keys, tokens, credentials, .env files, private URLs).
 
+## Repository Memory
+
+**When working with marketplace structure, plugins, hooks, skills, or version management, always read `docs/memory.md` first.** This file contains accumulated knowledge about:
+- Current plugin versions and synchronization requirements
+- Directory structure and file schemas
+- Hook patterns and environment variables
+- Skill structure and conventions
+- Development workflows and best practices
+
 ## Development Commands
 
 **Test a plugin locally:**
@@ -75,11 +84,19 @@ PreToolUse hook on Write/Edit that validates no sensitive data is committed.
 
 ## Current Plugins
 
-### wezterm-dev
+### wezterm-dev (v0.6.5)
 
 WezTerm terminal configuration skill with:
 - Lua configuration patterns
 - Tmux-style keybindings
 - Nerd Font icon reference
 - Agent Deck integration for Claude Code monitoring
+- PreToolUse hook to enforce config backup before edits
+
+### hyper-dev (v0.1.5)
+
+Hyper terminal configuration and plugin development skill with:
+- JavaScript/React configuration
+- Plugin development patterns
+- Theme creation
 - PreToolUse hook to enforce config backup before edits
