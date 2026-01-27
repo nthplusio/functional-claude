@@ -13,8 +13,8 @@ This document contains accumulated knowledge about the functional-claude plugin 
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| wezterm-dev | 0.7.0 | WezTerm terminal configuration and customization |
-| hyper-dev | 0.2.0 | Hyper terminal configuration and plugin development |
+| wezterm-dev | 0.7.2 | WezTerm terminal configuration and customization |
+| hyper-dev | 0.2.2 | Hyper terminal configuration and plugin development |
 
 ## Architecture Overview
 
@@ -52,7 +52,7 @@ plugins/<plugin-name>/
 └── .cache/                   # Gitignored - runtime cache
 ```
 
-## WezTerm Plugin (v0.7.0)
+## WezTerm Plugin (v0.7.2)
 
 ### Skills
 
@@ -70,7 +70,7 @@ plugins/<plugin-name>/
 |-------|---------|-----------------|
 | wezterm-troubleshoot | Autonomous debugging | "wezterm not working", "fix wezterm", "debug wezterm" |
 
-## Hyper Plugin (v0.2.0)
+## Hyper Plugin (v0.2.2)
 
 ### Skills
 
