@@ -262,4 +262,23 @@ claude --plugin-dir ./plugins/wezterm-dev
 
 ---
 
+## Official Documentation
+
+- **Claude Code Plugins Reference**: https://code.claude.com/docs/en/plugins-reference
+  - Complete technical reference for plugin manifest schema, CLI commands, and component specifications
+  - Plugin components: skills, agents, hooks, MCP servers, LSP servers
+  - Hook events: PreToolUse, PostToolUse, Stop, SubagentStop, SessionStart, SessionEnd, UserPromptSubmit, PreCompact, Notification
+  - Hook types: command, prompt, agent
+  - Environment variables: `${CLAUDE_PLUGIN_ROOT}`, `${CLAUDE_PROJECT_DIR}`
+
+- **Status Line Configuration**: https://code.claude.com/docs/en/statusline
+  - Custom status line displayed at bottom of Claude Code interface (similar to PS1 prompts)
+  - Configuration via `.claude/settings.json` with `statusLine.type: "command"` and `statusLine.command`
+  - Receives JSON via stdin with session context: model info, workspace dirs, cost, context window usage
+  - JSON fields: `model.display_name`, `workspace.current_dir`, `cost.total_cost_usd`, `context_window.used_percentage`
+  - Supports ANSI color codes; first line of stdout becomes status line text
+  - Updates when conversation messages change (max every 300ms)
+
+---
+
 *Last updated: See git history for this file*
