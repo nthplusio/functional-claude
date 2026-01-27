@@ -3,8 +3,11 @@
 # Ensure we always exit 0 - any error should just return ok:true
 set +e
 
+# Debug: output to stderr so we can see what's happening
+echo "DEBUG: Script started, bash=$BASH_VERSION" >&2
+
 # Trap any unexpected exit to ensure we return valid JSON
-trap 'echo "{\"ok\":true}"; exit 0' ERR EXIT
+trap 'echo "DEBUG: trap fired" >&2; echo "{\"ok\":true}"; exit 0' ERR EXIT
 
 # Read JSON input from stdin (with fallback)
 INPUT=$(cat 2>/dev/null || echo '{}')
