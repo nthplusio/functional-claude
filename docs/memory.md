@@ -13,8 +13,8 @@ This document contains accumulated knowledge about the functional-claude plugin 
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| wezterm-dev | 0.6.4 | WezTerm terminal configuration and customization |
-| hyper-dev | 0.1.4 | Hyper terminal configuration and plugin development |
+| wezterm-dev | 0.6.6 | WezTerm terminal configuration and customization |
+| hyper-dev | 0.1.6 | Hyper terminal configuration and plugin development |
 
 ## Directory Structure
 

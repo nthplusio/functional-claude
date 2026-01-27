@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "You must respond with ONLY a JSON object, no other text.\n\nInput: $ARGUMENTS\n\nFirst: Check if \"stop_hook_active\" is true in the input. If yes, respond exactly: {\"ok\":true}\n\nOtherwise: Did this session involve Hyper terminal configuration or plugin development work?\n\nIf YES, respond exactly: {\"ok\":false,\"reason\":\"Ask user about Hyper learnings to save to the plugin's learnings.md\"}\n\nIf NO, respond exactly: {\"ok\":true}",
+            "prompt": "Output raw JSON only. No markdown, no explanation, no code blocks.\n\nCheck $ARGUMENTS for stop_hook_active. If true: {\"ok\":true}\n\nIf this session involved Hyper config work: {\"ok\":false,\"reason\":\"Capture Hyper learnings\"}\n\nOtherwise: {\"ok\":true}",
             "timeout": 30
           }
         ]
