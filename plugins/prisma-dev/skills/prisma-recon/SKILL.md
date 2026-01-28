@@ -1,7 +1,7 @@
 ---
 name: Prisma Repository Recon
 description: This skill should be used when the user asks to "analyze prisma", "prisma setup", "schema recon", "check prisma config", "prisma structure", "what models exist", "show prisma schema", or when first starting work in a Prisma project to understand the existing setup.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Prisma Repository Recon

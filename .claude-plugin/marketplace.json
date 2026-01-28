@@ -21,7 +21,7 @@
       "name": "prisma-dev",
       "source": "./plugins/prisma-dev",
       "description": "Prisma ORM development workflows with schema analysis, migration safety, and query guidance",
-      "version": "0.1.0"
+      "version": "0.1.1"
     }
   ]
 }
