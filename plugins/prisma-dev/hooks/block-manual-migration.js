@@ -4,7 +4,7 @@
 // Forces use of 'prisma migrate dev' for proper migration management
 //
 // Input: JSON with tool parameters on stdin (file_path in tool_input)
-// Output: JSON response - {"decision": "allow"} or {"decision": "block", "reason": "..."}
+// Output: JSON response with permissionDecision for PreToolUse hooks
 
 const path = require('path');
 
@@ -25,7 +25,7 @@ process.stdin.on('end', () => {
 
     // If no file_path found, allow (not a file operation we care about)
     if (!filePath) {
-      console.log(JSON.stringify({ decision: "allow" }));
+      console.log(JSON.stringify({ permissionDecision: "allow" }));
       process.exit(0);
     }
 
@@ -35,7 +35,7 @@ process.stdin.on('end', () => {
     // Check if this is in a prisma/migrations directory
     if (!normalizedPath.includes('prisma/migrations/') && !normalizedPath.includes('prisma\\migrations\\')) {
       // Not a migrations directory, allow
-      console.log(JSON.stringify({ decision: "allow" }));
+      console.log(JSON.stringify({ permissionDecision: "allow" }));
       process.exit(0);
     }
 
@@ -51,7 +51,7 @@ process.stdin.on('end', () => {
     ];
 
     if (allowedFiles.includes(fileName)) {
-      console.log(JSON.stringify({ decision: "allow" }));
+      console.log(JSON.stringify({ permissionDecision: "allow" }));
       process.exit(0);
     }
 
@@ -78,23 +78,23 @@ This ensures:
 After running the command, the migration will be created automatically.
 The command is interactive and will prompt for a migration name if not provided.`;
 
-      console.log(JSON.stringify({ decision: "block", reason: reason }));
+      console.log(JSON.stringify({ permissionDecision: "deny", reason: reason }));
       process.exit(0);
     }
 
     // Allow other files (like subdirectory READMEs)
-    console.log(JSON.stringify({ decision: "allow" }));
+    console.log(JSON.stringify({ permissionDecision: "allow" }));
     process.exit(0);
 
   } catch (err) {
     // On any error, allow to avoid blocking unexpectedly
-    console.log(JSON.stringify({ decision: "allow" }));
+    console.log(JSON.stringify({ permissionDecision: "allow" }));
     process.exit(0);
   }
 });
 
 // Handle stdin errors gracefully
 process.stdin.on('error', () => {
-  console.log(JSON.stringify({ decision: "allow" }));
+  console.log(JSON.stringify({ permissionDecision: "allow" }));
   process.exit(0);
 });
