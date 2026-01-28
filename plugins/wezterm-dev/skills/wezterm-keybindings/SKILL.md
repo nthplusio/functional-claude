@@ -1,7 +1,7 @@
 ---
 name: WezTerm Keybindings
 description: This skill should be used when the user asks about "leader key", "prefix key", "tmux-style", "keybindings", "wezterm keys", "ctrl+a wezterm", "pane splitting", "vim-style navigation", "remote tmux", "ssh tmux", "wezterm tmux", "modifier key", "keybinding conflict", or mentions WezTerm keyboard shortcuts and pane management.
-version: 0.7.0
+version: 0.7.5
 ---
 
 # WezTerm Keybindings

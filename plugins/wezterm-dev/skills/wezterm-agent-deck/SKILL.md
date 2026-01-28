@@ -1,7 +1,7 @@
 ---
 name: WezTerm Agent Deck
 description: This skill should be used when the user asks about "agent deck", "claude monitoring", "agent status", "agent notifications", "claude code status", "agent counts", "working waiting idle", or mentions monitoring Claude Code agents in WezTerm.
-version: 0.7.0
+version: 0.7.5
 ---
 
 # WezTerm Agent Deck

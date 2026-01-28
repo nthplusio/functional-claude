@@ -1,7 +1,7 @@
 ---
 name: WezTerm Visual Customization
 description: This skill should be used when the user asks about "terminal opacity", "terminal blur", "wezterm opacity", "acrylic", "background blur", "cursor style", "cursor blink", "terminal theme", "color scheme", "catppuccin", "wezterm colors", "inactive pane", "window padding", or mentions visual customization of WezTerm.
-version: 0.7.0
+version: 0.7.5
 ---
 
 # WezTerm Visual Customization
