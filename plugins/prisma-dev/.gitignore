@@ -1,0 +1,5 @@
+# Cache directory
+.cache/
+
+# Local settings
+*.local.md

@@ -13,8 +13,9 @@ This document contains accumulated knowledge about the functional-claude plugin 
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| wezterm-dev | 0.7.4 | WezTerm terminal configuration and customization |
-| hyper-dev | 0.2.4 | Hyper terminal configuration and plugin development |
+| wezterm-dev | 0.7.5 | WezTerm terminal configuration and customization |
+| hyper-dev | 0.2.5 | Hyper terminal configuration and plugin development |
+| prisma-dev | 0.1.0 | Prisma ORM development with schema analysis and migration safety |
 
 ## Architecture Overview
 
@@ -52,7 +53,7 @@ plugins/<plugin-name>/
 └── .cache/                   # Gitignored - runtime cache
 ```
 
-## WezTerm Plugin (v0.7.4)
+## WezTerm Plugin (v0.7.5)
 
 ### Skills
 
@@ -70,7 +71,7 @@ plugins/<plugin-name>/
 |-------|---------|-----------------|
 | wezterm-troubleshoot | Autonomous debugging | "wezterm not working", "fix wezterm", "debug wezterm" |
 
-## Hyper Plugin (v0.2.4)
+## Hyper Plugin (v0.2.5)
 
 ### Skills
 
@@ -87,6 +88,31 @@ plugins/<plugin-name>/
 | Agent | Purpose | Trigger Phrases |
 |-------|---------|-----------------|
 | hyper-troubleshoot | Autonomous debugging | "hyper not working", "fix hyper", "debug hyper" |
+
+## Prisma Plugin (v0.1.0)
+
+### Skills
+
+| Skill | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| prisma-dev | Overview, general guidance | "configure prisma", "prisma orm" |
+| prisma-schema | Schema design and syntax | "prisma model", "schema.prisma", "relations" |
+| prisma-migrations | Migration workflows | "prisma migrate", "migration" |
+| prisma-queries | Query patterns and CRUD | "prisma client", "findMany", "create" |
+| prisma-recon | Repository analysis | "analyze prisma", "schema recon" |
+
+### Agent
+
+| Agent | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| prisma-troubleshoot | Autonomous debugging | "prisma not working", "prisma error", "P2002" |
+
+### Hooks
+
+| Hook | Event | Purpose |
+|------|-------|---------|
+| block-manual-migration | PreToolUse | Blocks manual .sql creation in migrations/ |
+| prisma-recon | SessionStart | Analyzes schema and caches findings |
 
 ## Root-Level Skills
 
@@ -121,17 +147,29 @@ functional-claude/
     │   ├── agents/
     │   │   └── wezterm-troubleshoot/
     │   └── .cache/
-    └── hyper-dev/
+    ├── hyper-dev/
+    │   ├── .claude-plugin/plugin.json
+    │   ├── hooks/hooks.json
+    │   ├── skills/
+    │   │   ├── hyper-dev/           # Main skill (overview)
+    │   │   ├── hyper-keybindings/
+    │   │   ├── hyper-visual/
+    │   │   ├── hyper-plugins/
+    │   │   └── hyper-themes/
+    │   ├── agents/
+    │   │   └── hyper-troubleshoot/
+    │   └── .cache/
+    └── prisma-dev/
         ├── .claude-plugin/plugin.json
         ├── hooks/hooks.json
         ├── skills/
-        │   ├── hyper-dev/           # Main skill (overview)
-        │   ├── hyper-keybindings/
-        │   ├── hyper-visual/
-        │   ├── hyper-plugins/
-        │   └── hyper-themes/
+        │   ├── prisma-dev/          # Main skill (overview)
+        │   ├── prisma-schema/
+        │   ├── prisma-migrations/
+        │   ├── prisma-queries/
+        │   └── prisma-recon/
         ├── agents/
-        │   └── hyper-troubleshoot/
+        │   └── prisma-troubleshoot/
         └── .cache/
 ```
 

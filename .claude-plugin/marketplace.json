@@ -16,6 +16,12 @@
       "source": "./plugins/hyper-dev",
       "description": "Hyper terminal configuration and plugin development for Claude Code workflows",
       "version": "0.2.5"
+    },
+    {
+      "name": "prisma-dev",
+      "source": "./plugins/prisma-dev",
+      "description": "Prisma ORM development workflows with schema analysis, migration safety, and query guidance",
+      "version": "0.1.0"
     }
   ]
 }

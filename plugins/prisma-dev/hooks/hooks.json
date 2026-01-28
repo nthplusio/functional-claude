@@ -1,0 +1,28 @@
+{
+  "description": "Prisma development hooks - migration safety and schema reconnaissance",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/block-manual-migration.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/prisma-recon.js",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
