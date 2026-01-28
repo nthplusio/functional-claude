@@ -1,7 +1,7 @@
 ---
-name: Hyper Development
+name: hyper-dev
 description: This skill should be used when the user asks to "configure Hyper", "hyper config", "hyper.js", "customize Hyper terminal", "set up hyper", or mentions general Hyper configuration questions. For specific topics, focused skills may be more appropriate.
-version: 0.2.5
+version: 0.2.6
 ---
 
 # Hyper Development

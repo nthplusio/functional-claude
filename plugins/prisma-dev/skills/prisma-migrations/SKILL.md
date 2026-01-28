@@ -1,7 +1,7 @@
 ---
-name: Prisma Migrations
+name: prisma-migrations
 description: This skill should be used when the user asks about "prisma migrate", "database migration", "schema migration", "migrate dev", "migrate deploy", "migration history", "prisma db push", "rollback migration", or mentions database schema changes and versioning with Prisma.
-version: 0.1.1
+version: 0.1.2
 ---
 
 # Prisma Migrations

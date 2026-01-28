@@ -1,5 +1,5 @@
 ---
-name: Prisma Troubleshoot
+name: prisma-troubleshoot
 description: Use this agent when the user says "prisma not working", "fix prisma", "debug prisma", "prisma error", "prisma issue", "prisma problem", "migration failed", "prisma generate error", "database connection error", "P1001", "P2002", or asks troubleshooting questions about Prisma behavior.
 tools:
   - Read

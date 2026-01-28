@@ -1,5 +1,5 @@
 ---
-name: Hyper Troubleshoot
+name: hyper-troubleshoot
 description: Use this agent when the user says "hyper not working", "fix hyper", "debug hyper", "hyper issue", "hyper problem", "hyper error", "hyper crash", "hyper won't start", "hyper blank screen", or asks troubleshooting questions about Hyper terminal behavior.
 tools:
   - Read

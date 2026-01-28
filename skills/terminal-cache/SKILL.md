@@ -1,5 +1,5 @@
 ---
-name: Terminal Cache Management
+name: terminal-cache
 description: This skill manages cache refresh for terminal configuration plugins (WezTerm, Hyper). Use when you need to check cache freshness, refresh documentation from official sources, or capture session learnings. Invoked automatically by terminal skills on session start.
 version: 1.0.0
 ---

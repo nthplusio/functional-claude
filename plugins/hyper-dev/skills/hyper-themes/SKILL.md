@@ -1,7 +1,7 @@
 ---
-name: Hyper Themes
+name: hyper-themes
 description: This skill should be used when the user asks to "create hyper theme", "hyper theme", "hyper color scheme", "custom hyper theme", "publish hyper theme", or mentions creating or customizing themes for Hyper terminal.
-version: 0.2.5
+version: 0.2.6
 ---
 
 # Hyper Theme Development

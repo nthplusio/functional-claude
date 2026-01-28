@@ -1,7 +1,7 @@
 ---
-name: Hyper Visual Customization
+name: hyper-visual
 description: This skill should be used when the user asks about "hyper opacity", "hyper blur", "hyper colors", "hyper theme", "hyper background", "hyper cursor", "hyper font", "hyper padding", or mentions visual customization of Hyper terminal.
-version: 0.2.5
+version: 0.2.6
 ---
 
 # Hyper Visual Customization

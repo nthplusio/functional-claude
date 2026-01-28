@@ -1,5 +1,5 @@
 ---
-name: WezTerm Troubleshoot
+name: wezterm-troubleshoot
 description: Use this agent when the user says "wezterm not working", "fix wezterm", "debug wezterm", "wezterm issue", "wezterm problem", "wezterm error", "why is my wezterm config not working", "wezterm won't start", "wezterm crash", or asks troubleshooting questions about WezTerm behavior.
 tools:
   - Read

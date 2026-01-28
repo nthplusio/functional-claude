@@ -1,7 +1,7 @@
 ---
-name: Hyper Plugin Development
+name: hyper-plugins
 description: This skill should be used when the user asks to "create hyper plugin", "hyper plugin", "hyper extension", "decorateConfig", "hyper middleware", "hyper redux", "hyper react", "hyper electron", "hyper api", or mentions developing plugins for Hyper terminal.
-version: 0.2.5
+version: 0.2.6
 ---
 
 # Hyper Plugin Development

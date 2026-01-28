@@ -1,5 +1,5 @@
 ---
-name: Functional Claude Development
+name: functional-claude
 description: This skill should be used when the user asks to "add a plugin", "create a new plugin", "update marketplace", "sync versions", "add to functional-claude", "develop for functional-claude", or mentions working on the functional-claude plugin marketplace repository.
 version: 0.1.0
 ---
