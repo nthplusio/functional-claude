@@ -1,7 +1,7 @@
 ---
 name: hyper-ecosystem
 description: This skill should be used when the user asks about "popular hyper plugins", "best hyper plugins", "find hyper plugin", "plugin recommendations", "hyper plugin examples", "what plugins", or mentions discovering and evaluating Hyper terminal plugins.
-version: 0.3.0
+version: 0.3.1
 ---
 
 # Hyper Plugin Ecosystem

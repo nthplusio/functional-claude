@@ -1,5 +1,5 @@
 {
   "name": "hyper-dev",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Hyper terminal configuration and plugin development for Claude Code workflows"
 }

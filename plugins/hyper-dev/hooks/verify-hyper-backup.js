@@ -3,7 +3,7 @@
 // PreToolUse hook that blocks Edit/Write on .hyper.js files unless a dated backup exists
 //
 // Input: JSON with tool parameters on stdin (file_path in tool_input)
-// Output: JSON response - {"decision": "allow"} or {"decision": "block", "reason": "..."}
+// Output: JSON response - {"permissionDecision": "allow"} or {"permissionDecision": "deny", "reason": "..."}
 
 const fs = require('fs');
 const path = require('path');
@@ -26,7 +26,7 @@ process.stdin.on('end', () => {
 
     // If no file_path found, allow (not a file operation we care about)
     if (!filePath) {
-      console.log(JSON.stringify({ decision: "allow" }));
+      console.log(JSON.stringify({ permissionDecision: "allow" }));
       process.exit(0);
     }
 
@@ -36,7 +36,7 @@ process.stdin.on('end', () => {
     // Check if this is a Hyper config file
     if (!normalizedPath.endsWith('.hyper.js')) {
       // Not a Hyper config file, allow
-      console.log(JSON.stringify({ decision: "allow" }));
+      console.log(JSON.stringify({ permissionDecision: "allow" }));
       process.exit(0);
     }
 
@@ -74,7 +74,7 @@ process.stdin.on('end', () => {
 
     if (backupFound) {
       // Backup exists, allow the edit
-      console.log(JSON.stringify({ decision: "allow" }));
+      console.log(JSON.stringify({ permissionDecision: "allow" }));
       process.exit(0);
     } else {
       // No backup found, block and provide instructions
@@ -86,19 +86,19 @@ Before editing Hyper config, create a backup:
 
 Then retry your edit.`;
 
-      console.log(JSON.stringify({ decision: "block", reason: reason }));
+      console.log(JSON.stringify({ permissionDecision: "deny", reason: reason }));
       process.exit(0);
     }
 
   } catch (err) {
     // On any error, allow to avoid blocking unexpectedly
-    console.log(JSON.stringify({ decision: "allow" }));
+    console.log(JSON.stringify({ permissionDecision: "allow" }));
     process.exit(0);
   }
 });
 
 // Handle stdin errors gracefully
 process.stdin.on('error', () => {
-  console.log(JSON.stringify({ decision: "allow" }));
+  console.log(JSON.stringify({ permissionDecision: "allow" }));
   process.exit(0);
 });
