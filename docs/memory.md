@@ -14,8 +14,9 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | Plugin | Version | Description |
 |--------|---------|-------------|
 | wezterm-dev | 0.7.8 | WezTerm terminal configuration and customization |
-| hyper-dev | 0.3.1 | Hyper terminal configuration and plugin development |
+| hyper-dev | 0.3.2 | Hyper terminal configuration and plugin development |
 | prisma-dev | 0.1.3 | Prisma ORM development with schema analysis and migration safety |
+| shadcn-dev | 0.1.0 | shadcn/ui and Tailwind CSS v4 development workflows |
 
 ## Architecture Overview
 
@@ -71,7 +72,7 @@ plugins/<plugin-name>/
 |-------|---------|-----------------|
 | wezterm-troubleshoot | Autonomous debugging | "wezterm not working", "fix wezterm", "debug wezterm" |
 
-## Hyper Plugin (v0.3.1)
+## Hyper Plugin (v0.3.2)
 
 ### Skills
 
@@ -132,6 +133,38 @@ plugins/<plugin-name>/
 | block-manual-migration | PreToolUse | Blocks manual .sql creation in migrations/ |
 | prisma-recon | SessionStart | Analyzes schema and caches findings |
 
+## shadcn-dev Plugin (v0.1.0)
+
+### Skills
+
+| Skill | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| shadcn-dev | Overview, project setup | "set up shadcn", "configure shadcn", "shadcn init" |
+| shadcn-components | Component usage and customization | "add button", "create dialog", "shadcn accordion" |
+| shadcn-forms | Form building with react-hook-form | "form validation", "zod schema", "useForm" |
+| shadcn-theming | Theme and color customization | "dark mode", "theme colors", "css variables" |
+| shadcn-data-tables | TanStack Table integration | "data table", "sortable table", "column sorting" |
+| tailwindv4 | Tailwind CSS v4 features | "tailwind v4", "css-first config", "oklch colors" |
+
+### Agent
+
+| Agent | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| shadcn-troubleshoot | Autonomous debugging | "shadcn not working", "component not rendering", "hydration error" |
+
+### Command
+
+| Command | Purpose |
+|---------|---------|
+| /shadcn-recon | Analyze project for shadcn/ui setup and recommend components |
+
+### Hooks
+
+| Hook | Event | Purpose |
+|------|-------|---------|
+| cache-refresh | SessionStart | Checks if documentation cache needs refreshing |
+| learnings-capture | Stop | Prompts for learnings capture after shadcn work |
+
 ## Root-Level Skills
 
 | Skill | Purpose |
@@ -177,17 +210,32 @@ functional-claude/
     │   ├── agents/
     │   │   └── hyper-troubleshoot/
     │   └── .cache/
-    └── prisma-dev/
+    ├── prisma-dev/
+    │   ├── .claude-plugin/plugin.json
+    │   ├── hooks/hooks.json
+    │   ├── skills/
+    │   │   ├── prisma-dev/          # Main skill (overview)
+    │   │   ├── prisma-schema/
+    │   │   ├── prisma-migrations/
+    │   │   ├── prisma-queries/
+    │   │   └── prisma-recon/
+    │   ├── agents/
+    │   │   └── prisma-troubleshoot/
+    │   └── .cache/
+    └── shadcn-dev/
         ├── .claude-plugin/plugin.json
         ├── hooks/hooks.json
+        ├── commands/
+        │   └── shadcn-recon.md
         ├── skills/
-        │   ├── prisma-dev/          # Main skill (overview)
-        │   ├── prisma-schema/
-        │   ├── prisma-migrations/
-        │   ├── prisma-queries/
-        │   └── prisma-recon/
+        │   ├── shadcn-dev/          # Main skill (overview)
+        │   ├── shadcn-components/
+        │   ├── shadcn-forms/
+        │   ├── shadcn-theming/
+        │   ├── shadcn-data-tables/
+        │   └── tailwindv4/
         ├── agents/
-        │   └── prisma-troubleshoot/
+        │   └── shadcn-troubleshoot/
         └── .cache/
 ```
 
