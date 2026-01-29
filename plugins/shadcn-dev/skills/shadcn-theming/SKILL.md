@@ -1,7 +1,7 @@
 ---
 name: shadcn-theming
 description: This skill should be used when the user asks about "dark mode", "light mode", "theme colors", "css variables", "color scheme", "customize theme", "shadcn colors", "theme provider", or mentions theming, color customization, or dark/light mode implementation.
-version: 0.1.1
+version: 0.1.2
 ---
 
 # shadcn/ui Theming
