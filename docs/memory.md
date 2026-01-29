@@ -17,6 +17,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | hyper-dev | 0.3.2 | Hyper terminal configuration and plugin development |
 | prisma-dev | 0.1.3 | Prisma ORM development with schema analysis and migration safety |
 | shadcn-dev | 0.1.0 | shadcn/ui and Tailwind CSS v4 development workflows |
+| pre-commit | 0.1.0 | Pre-push checks for typechecking, linting, and testing |
 
 ## Architecture Overview
 
@@ -165,6 +166,32 @@ plugins/<plugin-name>/
 | cache-refresh | SessionStart | Checks if documentation cache needs refreshing |
 | learnings-capture | Stop | Prompts for learnings capture after shadcn work |
 
+## Pre-Commit Plugin (v0.1.0)
+
+### Skills
+
+| Skill | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| pre-commit-setup | Repository analysis and config generation | "set up pre-commit", "configure pre-push checks", "add typecheck hooks" |
+
+### Hooks
+
+| Hook | Event | Purpose |
+|------|-------|---------|
+| check-pre-push | PreToolUse | Runs typecheck/lint/test before git push |
+
+### Config File
+
+Location: `${CLAUDE_PROJECT_DIR}/.claude/pre-commit.json`
+
+Supported ecosystems:
+- JavaScript/TypeScript (npm, yarn, pnpm, bun)
+- Python (mypy, ruff, pytest)
+- Rust (cargo check, clippy, cargo test)
+- Go (go build, golangci-lint, go test)
+
+Each check can be set to `"block"` (deny push) or `"warn"` (allow with message).
+
 ## Root-Level Skills
 
 | Skill | Purpose |
@@ -222,21 +249,28 @@ functional-claude/
     │   ├── agents/
     │   │   └── prisma-troubleshoot/
     │   └── .cache/
-    └── shadcn-dev/
+    ├── shadcn-dev/
+    │   ├── .claude-plugin/plugin.json
+    │   ├── hooks/hooks.json
+    │   ├── commands/
+    │   │   └── shadcn-recon.md
+    │   ├── skills/
+    │   │   ├── shadcn-dev/          # Main skill (overview)
+    │   │   ├── shadcn-components/
+    │   │   ├── shadcn-forms/
+    │   │   ├── shadcn-theming/
+    │   │   ├── shadcn-data-tables/
+    │   │   └── tailwindv4/
+    │   ├── agents/
+    │   │   └── shadcn-troubleshoot/
+    │   └── .cache/
+    └── pre-commit/
         ├── .claude-plugin/plugin.json
-        ├── hooks/hooks.json
-        ├── commands/
-        │   └── shadcn-recon.md
-        ├── skills/
-        │   ├── shadcn-dev/          # Main skill (overview)
-        │   ├── shadcn-components/
-        │   ├── shadcn-forms/
-        │   ├── shadcn-theming/
-        │   ├── shadcn-data-tables/
-        │   └── tailwindv4/
-        ├── agents/
-        │   └── shadcn-troubleshoot/
-        └── .cache/
+        ├── hooks/
+        │   ├── hooks.json
+        │   └── check-pre-push.js
+        └── skills/
+            └── pre-commit-setup/
 ```
 
 ## Version Synchronization

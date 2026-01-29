@@ -1,0 +1,5 @@
+{
+  "name": "pre-commit",
+  "version": "0.1.0",
+  "description": "Pre-push checks for typechecking, linting, and testing with auto-detection and configurable enforcement"
+}
