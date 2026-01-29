@@ -127,21 +127,26 @@ process.stdin.on('end', async () => {
       }
     }
 
-    // Build summary message
+    // Build summary message - positive framing, minimal noise
     const parts = [];
 
     if (hyperInfo.version) {
-      parts.push(`Hyper ${hyperInfo.version} detected`);
+      parts.push(`Hyper ${hyperInfo.version}`);
+    } else if (hyperInfo.config_path) {
+      parts.push('Hyper ready');
     } else {
-      parts.push('Hyper version not detected');
+      // No config found at all
+      console.log(JSON.stringify({
+        continue: true,
+        systemMessage: '[hyper-dev] No Hyper config found'
+      }));
+      process.exit(0);
     }
 
+    // Only mention plugins if there are any
     if (installedPlugins.length > 0) {
-      parts.push(`${installedPlugins.length} plugins installed`);
-    }
-
-    if (docsNeedRefresh) {
-      parts.push('docs cache refreshed');
+      const pluginWord = installedPlugins.length === 1 ? 'plugin' : 'plugins';
+      parts.push(`${installedPlugins.length} ${pluginWord}`);
     }
 
     console.log(JSON.stringify({
