@@ -1,5 +1,7 @@
 {
-  "SessionStart": [
+  "description": "shadcn-dev hooks - cache refresh and learnings capture",
+  "hooks": {
+    "SessionStart": [
     {
       "hooks": [
         {
@@ -19,4 +21,5 @@
       ]
     }
   ]
+  }
 }
