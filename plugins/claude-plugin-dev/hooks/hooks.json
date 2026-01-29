@@ -1,4 +1,16 @@
 {
-  "description": "Claude plugin development hooks for documentation cache management",
-  "hooks": {}
+  "description": "Claude plugin development hooks for learnings capture",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/plugin-dev-learnings.js\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
 }

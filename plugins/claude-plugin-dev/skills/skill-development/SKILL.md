@@ -3,7 +3,7 @@ name: skill-development
 description: This skill should be used when the user asks to "create a skill",
   "write SKILL.md", "skill frontmatter", "skill description", or needs guidance
   on writing effective skills with proper triggers and progressive disclosure.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Skill Development

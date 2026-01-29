@@ -161,10 +161,40 @@ process.stdin.on('end', () => {
         if (lastVersion === pluginVersion) {
           // Check if any non-trivial files were changed
           const pluginStagedFiles = stagedFiles.filter(f => f.startsWith(`plugins/${pluginName}/`));
-          const trivialPatterns = [/\.md$/i, /\.gitignore$/i, /\.cache\//];
-          const nonTrivialChanges = pluginStagedFiles.some(f =>
-            !trivialPatterns.some(p => p.test(f))
-          );
+
+          // Files that ARE significant (plugin behavior):
+          // - SKILL.md, AGENT.md (plugin component definitions)
+          // - hooks.json, *.js in hooks/ (hook implementations)
+          // - plugin.json (manifest)
+          // - .mcp.json (MCP config)
+          const significantPatterns = [
+            /SKILL\.md$/i,
+            /AGENT\.md$/i,
+            /hooks\.json$/i,
+            /hooks\/.*\.js$/i,
+            /plugin\.json$/i,
+            /\.mcp\.json$/i
+          ];
+
+          // Files that are trivial (documentation only):
+          const trivialPatterns = [
+            /README\.md$/i,
+            /\.gitignore$/i,
+            /\.cache\//,
+            /references\/.*\.md$/i,  // Reference docs are informational
+            /examples\//             // Example files
+          ];
+
+          const nonTrivialChanges = pluginStagedFiles.some(f => {
+            // If it matches a significant pattern, it's definitely non-trivial
+            if (significantPatterns.some(p => p.test(f))) return true;
+            // If it matches a trivial pattern, it's trivial
+            if (trivialPatterns.some(p => p.test(f))) return false;
+            // Default: non-.md files are non-trivial, .md files need checking
+            if (!f.endsWith('.md')) return true;
+            // Other .md files in root of plugin are likely important
+            return !f.includes('/references/');
+          });
 
           if (nonTrivialChanges) {
             issues.push(`${pluginName}: Code changes detected but version not bumped (still ${pluginVersion})`);
