@@ -236,13 +236,24 @@ When bumping versions:
 
 ## Hook Patterns
 
-### Security Hook (Root Level)
+### Root-Level Hooks
 
-Located at `hooks/hooks.json` - validates all Write/Edit operations for sensitive data:
+Located at `hooks/hooks.json`:
+
+**Security Hook** (PreToolUse on Write/Edit):
+- Validates all Write/Edit operations for sensitive data
 - API keys, tokens, secrets
 - .env files with real values
 - Private URLs, credentials
 - Personal information
+
+**Version Bump Hook** (PreToolUse on Bash):
+- Triggers on `git commit` commands
+- Validates plugin version synchronization:
+  - plugin.json version is bumped for code changes
+  - marketplace.json has matching version
+  - All SKILL.md files have matching version in frontmatter
+- Blocks commits with version mismatches
 
 ### Plugin Hooks
 
