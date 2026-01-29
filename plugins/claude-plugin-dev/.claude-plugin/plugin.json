@@ -1,0 +1,5 @@
+{
+  "name": "claude-plugin-dev",
+  "version": "0.1.0",
+  "description": "Documentation and conventions for building Claude Code plugins with cached official docs and patterns from anthropics/claude-plugins-official"
+}

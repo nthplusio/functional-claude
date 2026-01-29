@@ -16,8 +16,9 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | wezterm-dev | 0.7.8 | WezTerm terminal configuration and customization |
 | hyper-dev | 0.3.2 | Hyper terminal configuration and plugin development |
 | prisma-dev | 0.1.3 | Prisma ORM development with schema analysis and migration safety |
-| shadcn-dev | 0.1.0 | shadcn/ui and Tailwind CSS v4 development workflows |
+| shadcn-dev | 0.1.2 | shadcn/ui and Tailwind CSS v4 development workflows |
 | pre-commit | 0.1.0 | Pre-push checks for typechecking, linting, and testing |
+| claude-plugin-dev | 0.1.0 | Plugin development documentation and conventions |
 
 ## Architecture Overview
 
@@ -192,6 +193,35 @@ Supported ecosystems:
 
 Each check can be set to `"block"` (deny push) or `"warn"` (allow with message).
 
+## claude-plugin-dev Plugin (v0.1.0)
+
+Plugin development documentation with cached official docs and patterns.
+
+### Skills
+
+| Skill | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| claude-plugin-dev | Overview, quick reference | "create a plugin", "plugin structure", "how do plugins work" |
+| plugin-structure | Directory layout and manifest | "plugin layout", "plugin.json", "plugin directories" |
+| skill-development | Writing SKILL.md files | "create a skill", "skill description", "skill frontmatter" |
+| agent-development | Writing AGENT.md files | "create an agent", "subagent", "agent tools" |
+| hook-development | Creating hooks.json | "create a hook", "PreToolUse", "hook events" |
+| mcp-integration | MCP server configuration | "add MCP server", ".mcp.json", "external tools" |
+
+### Agent
+
+| Agent | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| plugin-validator | Validate plugin structure | "validate plugin", "check plugin", "review my plugin" |
+
+### Reference Files
+
+| File | Purpose |
+|------|---------|
+| references/docs-cache.md | Compressed official documentation |
+| references/conventions.md | Patterns from anthropics/claude-plugins-official |
+| references/examples.md | Complete plugin examples |
+
 ## Root-Level Skills
 
 | Skill | Purpose |
@@ -264,13 +294,27 @@ functional-claude/
     │   ├── agents/
     │   │   └── shadcn-troubleshoot/
     │   └── .cache/
-    └── pre-commit/
+    ├── pre-commit/
+    │   ├── .claude-plugin/plugin.json
+    │   ├── hooks/
+    │   │   ├── hooks.json
+    │   │   └── check-pre-push.js
+    │   └── skills/
+    │       └── pre-commit-setup/
+    └── claude-plugin-dev/
         ├── .claude-plugin/plugin.json
-        ├── hooks/
-        │   ├── hooks.json
-        │   └── check-pre-push.js
-        └── skills/
-            └── pre-commit-setup/
+        ├── hooks/hooks.json
+        ├── skills/
+        │   ├── claude-plugin-dev/      # Main skill (overview)
+        │   │   └── references/
+        │   ├── plugin-structure/
+        │   ├── skill-development/
+        │   ├── agent-development/
+        │   ├── hook-development/
+        │   └── mcp-integration/
+        ├── agents/
+        │   └── plugin-validator/
+        └── .cache/
 ```
 
 ## Version Synchronization
