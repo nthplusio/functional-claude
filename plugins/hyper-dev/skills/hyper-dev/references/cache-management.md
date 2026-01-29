@@ -1,12 +1,21 @@
 # Cache Management
 
-The hyper-dev plugin maintains a local cache file to store fetched Hyper documentation and session learnings.
+The hyper-dev plugin maintains multiple cache files for documentation, version detection, and plugin ecosystem data.
 
 ## Cache Location
 
-**File:** `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md`
+**Directory:** `${CLAUDE_PLUGIN_ROOT}/.cache/`
 
-The `.cache/` directory is within the plugin itself and is gitignored. This keeps learnings relative to the plugin that uses them.
+The `.cache/` directory is within the plugin itself and is gitignored. This keeps data relative to the plugin.
+
+## Cache Files
+
+| File | Purpose | Refresh |
+|------|---------|---------|
+| `learnings.md` | Documentation and session learnings | Daily |
+| `hyper-config.json` | Version detection, installed plugins | Daily (SessionStart) |
+| `docs-index.json` | Documentation source index | Daily (SessionStart) |
+| `plugin-ecosystem.json` | Top 25 popular plugins | Weekly (SessionStart) |
 
 ## Cache Structure
 
@@ -43,9 +52,31 @@ settings:
 
 ## Automatic Behavior
 
-### Daily Reference Refresh (SessionStart)
+### SessionStart Hook
 
-On session start, the plugin checks if the cache needs refreshing:
+On session start, the `hyper-session-start.js` hook runs:
+
+1. **Version Detection:**
+   - Tries `hyper --version` CLI
+   - Falls back to app installation paths (platform-specific)
+   - Writes results to `hyper-config.json`
+
+2. **Config Discovery:**
+   - Finds `.hyper.js` config file location
+   - Extracts installed plugins list
+
+3. **Documentation Index:**
+   - Updates `docs-index.json` with source URLs
+   - Marks Context7 sources (xterm.js, Electron)
+
+4. **Plugin Ecosystem (Weekly):**
+   - Queries npm for hyper-plugin packages
+   - Indexes top 25 by popularity
+   - Writes to `plugin-ecosystem.json`
+
+### Daily Reference Refresh
+
+The cache checks freshness on each session:
 
 1. If `.cache/learnings.md` doesn't exist, creates it
 2. If `last_refresh` is not today's date, fetches fresh documentation
@@ -64,6 +95,12 @@ At session end, if Hyper work was done:
 1. Prompts to capture learnings
 2. User describes successful patterns, mistakes, or plugin techniques
 3. Appends to Learnings section with date prefix
+
+**Enhanced categories detected:**
+- Successful Patterns
+- Mistakes to Avoid
+- Plugin Patterns
+- Ecosystem Discoveries
 
 ## Manual Operations
 
@@ -126,6 +163,61 @@ settings:
 ### Mistakes to Avoid
 
 ### Plugin Patterns
+```
+
+## hyper-config.json Structure
+
+Version detection and configuration cache:
+
+```json
+{
+  "detected_version": "3.4.1",
+  "detection_method": "cli",
+  "detection_timestamp": "2026-01-29T10:00:00Z",
+  "config_path": "~/.hyper.js",
+  "installed_plugins": ["hypercwd", "hyper-search"]
+}
+```
+
+**Detection methods:** `cli`, `app_bundle` (macOS), `app_directory` (Windows), `package_json` (Linux), `none`
+
+## docs-index.json Structure
+
+Documentation source index:
+
+```json
+{
+  "last_refresh": "2026-01-29",
+  "sources": [
+    { "name": "hyper-website", "url": "https://hyper.is/", "type": "webfetch" },
+    { "name": "github-releases", "url": "https://github.com/vercel/hyper/releases", "type": "webfetch" },
+    { "name": "xterm-js", "library_id": "/xtermjs/xterm.js", "type": "context7" },
+    { "name": "electron", "library_id": "/websites/electronjs", "type": "context7" }
+  ]
+}
+```
+
+## plugin-ecosystem.json Structure
+
+Popular plugins index:
+
+```json
+{
+  "last_refresh": "2026-01-29",
+  "refresh_interval_days": 7,
+  "total_found": 150,
+  "indexed_count": 25,
+  "top_plugins": [
+    {
+      "name": "hypercwd",
+      "description": "Open new tabs in current directory",
+      "version": "2.0.0",
+      "npm_downloads_weekly": 5000,
+      "patterns": ["cwd detection"],
+      "key_exports": ["onApp", "decorateConfig"]
+    }
+  ]
+}
 ```
 
 ## Why .cache/?

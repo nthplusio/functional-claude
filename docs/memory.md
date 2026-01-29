@@ -14,7 +14,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | Plugin | Version | Description |
 |--------|---------|-------------|
 | wezterm-dev | 0.7.7 | WezTerm terminal configuration and customization |
-| hyper-dev | 0.2.7 | Hyper terminal configuration and plugin development |
+| hyper-dev | 0.3.0 | Hyper terminal configuration and plugin development |
 | prisma-dev | 0.1.3 | Prisma ORM development with schema analysis and migration safety |
 
 ## Architecture Overview
@@ -71,7 +71,7 @@ plugins/<plugin-name>/
 |-------|---------|-----------------|
 | wezterm-troubleshoot | Autonomous debugging | "wezterm not working", "fix wezterm", "debug wezterm" |
 
-## Hyper Plugin (v0.2.7)
+## Hyper Plugin (v0.3.0)
 
 ### Skills
 
@@ -82,12 +82,30 @@ plugins/<plugin-name>/
 | hyper-visual | Opacity, colors, cursor | "opacity", "colors", "cursor" |
 | hyper-plugins | Plugin development | "create plugin", "decorateConfig", "redux" |
 | hyper-themes | Theme creation | "create theme", "color scheme" |
+| hyper-ecosystem | Plugin discovery | "popular plugins", "find plugin", "recommendations" |
 
 ### Agent
 
 | Agent | Purpose | Trigger Phrases |
 |-------|---------|-----------------|
 | hyper-troubleshoot | Autonomous debugging | "hyper not working", "fix hyper", "debug hyper" |
+
+### Hooks
+
+| Hook | Event | Purpose |
+|------|-------|---------|
+| hyper-session-start | SessionStart | Detects Hyper version, refreshes caches |
+| verify-hyper-backup | PreToolUse | Verifies backup before config edits |
+| check-hyper-learnings | Stop | Prompts for learnings capture |
+
+### Cache Files
+
+| File | Refresh | Purpose |
+|------|---------|---------|
+| hyper-config.json | Daily | Version, config path, installed plugins |
+| docs-index.json | Daily | Documentation source URLs |
+| plugin-ecosystem.json | Weekly | Top 25 popular plugins |
+| learnings.md | Daily | Documentation and session learnings |
 
 ## Prisma Plugin (v0.1.3)
 

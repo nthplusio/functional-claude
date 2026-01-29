@@ -1,7 +1,7 @@
 ---
 name: hyper-plugins
 description: This skill should be used when the user asks to "create hyper plugin", "hyper plugin", "hyper extension", "decorateConfig", "hyper middleware", "hyper redux", "hyper react", "hyper electron", "hyper api", or mentions developing plugins for Hyper terminal.
-version: 0.2.7
+version: 0.3.0
 ---
 
 # Hyper Plugin Development
@@ -170,3 +170,8 @@ See `references/api.md` for complete action reference.
 3. **Handle errors gracefully** - Don't crash the terminal
 4. **Test across platforms** - macOS, Windows, Linux
 5. **Minimize performance impact** - Avoid heavy middleware operations
+
+## Related Skills
+
+- **hyper-ecosystem** - Discover and evaluate existing plugins before building
+- **hyper-themes** - Theme-specific plugin development

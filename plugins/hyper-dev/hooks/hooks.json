@@ -1,6 +1,17 @@
 {
-  "description": "Hyper development hooks - backup verification and learnings capture",
+  "description": "Hyper development hooks - version detection, backup verification, and learnings capture",
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/hyper-session-start.js",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Edit|Write",

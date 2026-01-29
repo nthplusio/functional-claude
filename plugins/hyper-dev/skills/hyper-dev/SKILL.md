@@ -1,21 +1,25 @@
 ---
 name: hyper-dev
 description: This skill should be used when the user asks to "configure Hyper", "hyper config", "hyper.js", "customize Hyper terminal", "set up hyper", or mentions general Hyper configuration questions. For specific topics, focused skills may be more appropriate.
-version: 0.2.7
+version: 0.3.0
 ---
 
 # Hyper Development
 
 Configure and customize Hyper terminal and develop plugins using JavaScript, React, and Redux.
 
-## First Action: Check Reference Cache
+## First Action: Check Cache Files
 
-Before proceeding, check if the cache needs refreshing:
+The SessionStart hook automatically detects Hyper version and refreshes caches. Check these files:
 
-1. Read `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md` (if it exists)
-2. Check the `last_refresh` date in the YAML frontmatter
-3. If missing or stale, refresh using the terminal-cache skill pattern
-4. Preserve any existing Learnings section when refreshing
+1. **Version info:** `${CLAUDE_PLUGIN_ROOT}/.cache/hyper-config.json`
+   - Detected Hyper version, config path, installed plugins
+
+2. **Learnings:** `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md`
+   - Accumulated patterns and documentation
+
+3. **Plugin ecosystem:** `${CLAUDE_PLUGIN_ROOT}/.cache/plugin-ecosystem.json`
+   - Top 25 popular plugins (weekly refresh)
 
 ## Before Starting: Backup Configuration
 
@@ -72,6 +76,7 @@ For specific configuration topics, use these focused skills:
 | Visual Customization | hyper-visual | "opacity", "colors", "cursor", "theme" |
 | Plugin Development | hyper-plugins | "create plugin", "decorateConfig", "redux" |
 | Theme Creation | hyper-themes | "create theme", "color scheme" |
+| Plugin Discovery | hyper-ecosystem | "popular plugins", "find plugin", "recommendations" |
 
 ## Troubleshooting
 
@@ -97,10 +102,37 @@ Install by adding to `plugins` array:
 plugins: ['hypercwd', 'hyper-search'],
 ```
 
+## Semantic Documentation Retrieval
+
+For deep technical questions, use Context7 to access up-to-date documentation:
+
+### xterm.js (Terminal Rendering)
+
+Hyper uses xterm.js for terminal rendering. Query for buffer API, addons, escape sequences:
+
+```
+Tool: mcp__plugin_context7_context7__query-docs
+  libraryId: /xtermjs/xterm.js
+  query: [your terminal question]
+```
+
+### Electron (Window/IPC)
+
+Hyper is built on Electron. Query for window management, IPC, native features:
+
+```
+Tool: mcp__plugin_context7_context7__query-docs
+  libraryId: /websites/electronjs
+  query: [your electron question]
+```
+
+See `references/semantic-retrieval.md` for detailed source selection guide.
+
 ## Reference Files
 
 - **`references/plugin-development.md`** - Complete plugin API reference
 - **`references/cache-management.md`** - Cache system documentation
+- **`references/semantic-retrieval.md`** - When to use Context7 vs local cache vs WebFetch
 
 ## Example Files
 
