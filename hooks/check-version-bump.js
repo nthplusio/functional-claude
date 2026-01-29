@@ -45,6 +45,22 @@ process.stdin.on('end', () => {
       process.exit(0);
     }
 
+    // Also check for files being added in the same command (git add X && git commit)
+    // PreToolUse runs BEFORE the command, so git add hasn't happened yet
+    const addMatch = command.match(/git\s+add\s+([^&|;]+)/);
+    if (addMatch) {
+      const addArgs = addMatch[1].trim();
+      // Handle specific file paths (not -A or .)
+      if (!addArgs.startsWith('-') && addArgs !== '.') {
+        const filesToAdd = addArgs.split(/\s+/).filter(f => f && !f.startsWith('-'));
+        for (const file of filesToAdd) {
+          if (!stagedFiles.includes(file)) {
+            stagedFiles.push(file);
+          }
+        }
+      }
+    }
+
     if (stagedFiles.length === 0) {
       console.log(JSON.stringify({ permissionDecision: "allow" }));
       process.exit(0);
