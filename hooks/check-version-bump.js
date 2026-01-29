@@ -14,6 +14,9 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+// Convert Windows paths to git-compatible forward slashes
+const toGitPath = (p) => p.replace(/\\/g, '/');
+
 let input = '';
 
 process.stdin.setEncoding('utf8');
@@ -145,10 +148,15 @@ process.stdin.on('end', () => {
 
       // Check if version was actually bumped (compare with last commit)
       try {
-        const lastVersion = execSync(
-          `git show HEAD:${pluginJsonPath} 2>/dev/null | grep -o '"version":\\s*"[^"]*"' | grep -o '[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+'`,
-          { encoding: 'utf8' }
-        ).trim();
+        const gitPluginJsonPath = toGitPath(pluginJsonPath);
+        // Get previous version from git - use stdio to suppress stderr cross-platform
+        const prevContent = execSync(`git show HEAD:${gitPluginJsonPath}`, {
+          encoding: 'utf8',
+          stdio: ['pipe', 'pipe', 'pipe']
+        });
+        const versionMatch = prevContent.match(/"version":\s*"([0-9]+\.[0-9]+\.[0-9]+)"/);
+        const lastVersion = versionMatch ? versionMatch[1] : null;
+        if (!lastVersion) throw new Error('No version found');
 
         if (lastVersion === pluginVersion) {
           // Check if any non-trivial files were changed
