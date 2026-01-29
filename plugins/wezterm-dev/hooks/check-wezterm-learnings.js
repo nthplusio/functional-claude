@@ -32,7 +32,8 @@ process.stdin.on('end', () => {
 
     // Read transcript and check for WezTerm-related work
     const transcript = fs.readFileSync(transcriptPath, 'utf8');
-    const weztermPattern = /wezterm\.lua|\.wezterm|wezterm-dev|wezterm config|wezterm-keybindings|wezterm-visual|wezterm-tabs/i;
+    // Match: config files, skill names, API terms, plugin development
+    const weztermPattern = /wezterm\.lua|\.wezterm|wezterm-dev|wezterm config|wezterm-keybindings|wezterm-visual|wezterm-tabs|wezterm-agent-deck|agent_deck|get_agent_state|count_agents_by_status|config\.leader|wezterm\.action|wezterm\.plugin|SplitVertical|SplitHorizontal|ActivatePaneDirection|AdjustPaneSize|format-tab-title|update-status|wezterm\.on\s*\(/i;
 
     if (weztermPattern.test(transcript)) {
       console.log(JSON.stringify({

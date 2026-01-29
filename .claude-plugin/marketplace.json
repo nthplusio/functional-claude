@@ -9,19 +9,19 @@
       "name": "wezterm-dev",
       "source": "./plugins/wezterm-dev",
       "description": "WezTerm terminal configuration and customization for Claude Code workflows",
-      "version": "0.7.6"
+      "version": "0.7.7"
     },
     {
       "name": "hyper-dev",
       "source": "./plugins/hyper-dev",
       "description": "Hyper terminal configuration and plugin development for Claude Code workflows",
-      "version": "0.2.6"
+      "version": "0.2.7"
     },
     {
       "name": "prisma-dev",
       "source": "./plugins/prisma-dev",
       "description": "Prisma ORM development workflows with schema analysis, migration safety, and query guidance",
-      "version": "0.1.2"
+      "version": "0.1.3"
     }
   ]
 }

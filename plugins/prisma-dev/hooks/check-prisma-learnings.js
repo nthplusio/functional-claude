@@ -1,6 +1,5 @@
 #!/usr/bin/env node
-// Check if session involved Hyper config work and prompt for learnings capture
-// JavaScript version of check-hyper-learnings.sh
+// Check if session involved Prisma work and prompt for learnings capture
 
 const fs = require('fs');
 
@@ -30,15 +29,15 @@ process.stdin.on('end', () => {
       process.exit(0);
     }
 
-    // Read transcript and check for Hyper-related work
+    // Read transcript and check for Prisma-related work
     const transcript = fs.readFileSync(transcriptPath, 'utf8');
-    // Match: config file, skill names, plugin projects (hyper-*), plugin API, general mentions
-    const hyperPattern = /\.hyper\.js|hyper-dev|hyper config|hyper-keybindings|hyper-visual|hyper-plugins|hyper-themes|hyper-\w+[-\w]*|decorateConfig|mapTermsState|reduceUI|reduceSessions|mapHyperState|getTermGroupProps|getTermProps|hyper\s*(plugin|extension)/i;
+    // Match: config files, skill names, client API, migrations, schema terms
+    const prismaPattern = /schema\.prisma|prisma-dev|prisma-schema|prisma-queries|prisma-migrations|prisma-recon|PrismaClient|@prisma\/client|prisma\s+migrate|prisma\s+db\s+push|prisma\s+generate|findMany|findUnique|findFirst|createMany|updateMany|deleteMany|upsert|\$transaction|\$queryRaw|\$executeRaw|@@index|@@unique|@@id|@relation|prisma\s+studio/i;
 
-    if (hyperPattern.test(transcript)) {
+    if (prismaPattern.test(transcript)) {
       console.log(JSON.stringify({
         ok: false,
-        reason: "This session involved Hyper configuration. Consider capturing any learnings to the plugin cache."
+        reason: "This session involved Prisma development. Consider capturing any learnings to the plugin cache."
       }));
       process.exit(0);
     }

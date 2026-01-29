@@ -1,5 +1,5 @@
 {
-  "description": "Prisma development hooks - migration safety and schema reconnaissance",
+  "description": "Prisma development hooks - migration safety, schema reconnaissance, and learnings capture",
   "hooks": {
     "PreToolUse": [
       {
@@ -20,6 +20,17 @@
             "type": "command",
             "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/prisma-recon.js",
             "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/check-prisma-learnings.js",
+            "timeout": 10
           }
         ]
       }
