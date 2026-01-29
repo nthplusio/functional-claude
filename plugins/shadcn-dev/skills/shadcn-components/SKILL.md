@@ -1,7 +1,7 @@
 ---
 name: shadcn-components
 description: This skill should be used when the user asks to "add a button", "create a dialog", "use card component", "shadcn accordion", "dropdown menu", "add alert", "tooltip component", or mentions specific shadcn/ui component usage, customization, or implementation patterns.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # shadcn/ui Component Usage
