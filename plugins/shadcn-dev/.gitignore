@@ -1,0 +1,5 @@
+# Cache directory - contains user-specific learnings and fetched docs
+.cache/
+
+# Local settings files
+*.local.md
