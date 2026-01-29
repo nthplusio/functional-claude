@@ -2,8 +2,11 @@
 name: plugin-validator
 description: Validate plugin structure and conventions. Use when reviewing a plugin
   for correctness, checking plugin structure, or before publishing a plugin.
-tools: Read, Grep, Glob, LS
-disallowedTools: Write, Edit, Bash
+tools:
+  - Read
+  - Grep
+  - Glob
+  - LS
 model: haiku
 ---
 
