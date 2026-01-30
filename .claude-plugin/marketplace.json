@@ -40,6 +40,12 @@
       "source": "./plugins/claude-plugin-dev",
       "description": "Documentation and conventions for building Claude Code plugins with guided workflows, AI-assisted agent creation, and dynamic documentation caching",
       "version": "0.2.0"
+    },
+    {
+      "name": "opentui-dev",
+      "source": "./plugins/opentui-dev",
+      "description": "OpenTUI terminal interface development with component design, layout architecture, and interactive prototyping",
+      "version": "0.1.0"
     }
   ]
 }

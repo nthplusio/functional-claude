@@ -19,6 +19,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | shadcn-dev | 0.1.2 | shadcn/ui and Tailwind CSS v4 development workflows |
 | pre-commit | 0.2.0 | Pre-push checks for typechecking, linting, building, and testing |
 | claude-plugin-dev | 0.2.0 | Plugin development with guided workflows and AI-assisted creation |
+| opentui-dev | 0.1.0 | OpenTUI terminal interface development with component design and layout |
 
 ## Architecture Overview
 
@@ -200,6 +201,46 @@ Each check can be set to `"block"` (deny push) or `"warn"` (allow with message).
 
 For monorepos, use manual override with filter commands (e.g., `pnpm --filter @scope/pkg build`).
 
+## opentui-dev Plugin (v0.1.0)
+
+OpenTUI terminal interface development with TypeScript/Bun.
+
+### Skills
+
+| Skill | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| opentui-dev | Overview, framework selection | "build TUI", "OpenTUI", "terminal interface" |
+| opentui-components | Components reference | "text component", "input field", "select options" |
+| opentui-layout | Flexbox layout system | "layout", "flexbox", "positioning" |
+| opentui-keyboard | Keyboard input handling | "keyboard shortcuts", "key events", "focus" |
+| opentui-animation | Timeline animations | "animation", "timeline", "easing" |
+
+### Agent
+
+| Agent | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| opentui-troubleshoot | Autonomous debugging | "opentui not working", "TUI crash", "layout broken" |
+
+### Command
+
+| Command | Purpose |
+|---------|---------|
+| /opentui-scaffold | Create new OpenTUI project with framework selection |
+
+### Reference Files
+
+| File | Purpose |
+|------|---------|
+| references/core-reference.md | Core imperative API |
+| references/react-reference.md | React reconciler patterns |
+| references/solid-reference.md | Solid reconciler patterns |
+| references/components-reference.md | All components by category |
+| references/layout-reference.md | Yoga/Flexbox layout |
+| references/keyboard-reference.md | Input handling |
+| references/animation-reference.md | Timeline animations |
+| references/testing-reference.md | Test renderer and snapshots |
+| references/cache-management.md | Cache refresh strategy and learnings |
+
 ## claude-plugin-dev Plugin (v0.2.0)
 
 Plugin development documentation with guided workflows and AI-assisted creation.
@@ -318,21 +359,36 @@ functional-claude/
     │   │   └── check-pre-push.js
     │   └── skills/
     │       └── pre-commit-setup/
-    └── claude-plugin-dev/
+    ├── claude-plugin-dev/
+    │   ├── .claude-plugin/plugin.json
+    │   ├── hooks/hooks.json
+    │   ├── skills/
+    │   │   ├── claude-plugin-dev/      # Main skill (overview)
+    │   │   │   └── references/
+    │   │   ├── plugin-structure/
+    │   │   ├── skill-development/
+    │   │   ├── agent-development/
+    │   │   ├── hook-development/
+    │   │   └── mcp-integration/
+    │   ├── agents/
+    │   │   ├── agent-creator.md
+    │   │   ├── plugin-validator.md
+    │   │   └── skill-reviewer.md
+    │   └── .cache/
+    └── opentui-dev/
         ├── .claude-plugin/plugin.json
         ├── hooks/hooks.json
+        ├── commands/
+        │   └── opentui-scaffold.md
         ├── skills/
-        │   ├── claude-plugin-dev/      # Main skill (overview)
+        │   ├── opentui-dev/           # Main skill (overview)
         │   │   └── references/
-        │   ├── plugin-structure/
-        │   ├── skill-development/
-        │   ├── agent-development/
-        │   ├── hook-development/
-        │   └── mcp-integration/
+        │   ├── opentui-components/
+        │   ├── opentui-layout/
+        │   ├── opentui-keyboard/
+        │   └── opentui-animation/
         ├── agents/
-        │   ├── agent-creator.md
-        │   ├── plugin-validator.md
-        │   └── skill-reviewer.md
+        │   └── opentui-troubleshoot.md
         └── .cache/
 ```
 
