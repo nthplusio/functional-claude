@@ -17,7 +17,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | hyper-dev | 0.3.2 | Hyper terminal configuration and plugin development |
 | prisma-dev | 0.1.3 | Prisma ORM development with schema analysis and migration safety |
 | shadcn-dev | 0.1.2 | shadcn/ui and Tailwind CSS v4 development workflows |
-| pre-commit | 0.1.0 | Pre-push checks for typechecking, linting, and testing |
+| pre-commit | 0.2.0 | Pre-push checks for typechecking, linting, building, and testing |
 | claude-plugin-dev | 0.2.0 | Plugin development with guided workflows and AI-assisted creation |
 
 ## Architecture Overview
@@ -135,7 +135,7 @@ plugins/<plugin-name>/
 | block-manual-migration | PreToolUse | Blocks manual .sql creation in migrations/ |
 | prisma-recon | SessionStart | Analyzes schema and caches findings |
 
-## shadcn-dev Plugin (v0.1.0)
+## shadcn-dev Plugin (v0.1.2)
 
 ### Skills
 
@@ -167,7 +167,7 @@ plugins/<plugin-name>/
 | cache-refresh | SessionStart | Checks if documentation cache needs refreshing |
 | learnings-capture | Stop | Prompts for learnings capture after shadcn work |
 
-## Pre-Commit Plugin (v0.1.0)
+## Pre-Commit Plugin (v0.2.0)
 
 ### Skills
 
@@ -179,19 +179,27 @@ plugins/<plugin-name>/
 
 | Hook | Event | Purpose |
 |------|-------|---------|
-| check-pre-push | PreToolUse | Runs typecheck/lint/test before git push |
+| check-pre-push | PreToolUse | Runs typecheck/lint/build/test before git push |
 
 ### Config File
 
 Location: `${CLAUDE_PROJECT_DIR}/.claude/pre-commit.json`
 
+Supported checks (in execution order):
+1. **typecheck** - Type checking (tsc, mypy, cargo check, go build)
+2. **lint** - Linting (eslint, biome, ruff, clippy, golangci-lint)
+3. **build** - Build verification (npm run build, cargo build, python -m build, go build)
+4. **test** - Testing (npm test, pytest, cargo test, go test)
+
 Supported ecosystems:
 - JavaScript/TypeScript (npm, yarn, pnpm, bun)
-- Python (mypy, ruff, pytest)
-- Rust (cargo check, clippy, cargo test)
+- Python (mypy, ruff, pytest, python -m build)
+- Rust (cargo check, clippy, cargo build, cargo test)
 - Go (go build, golangci-lint, go test)
 
 Each check can be set to `"block"` (deny push) or `"warn"` (allow with message).
+
+For monorepos, use manual override with filter commands (e.g., `pnpm --filter @scope/pkg build`).
 
 ## claude-plugin-dev Plugin (v0.2.0)
 

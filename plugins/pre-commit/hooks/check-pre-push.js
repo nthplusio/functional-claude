@@ -54,7 +54,7 @@ process.stdin.on('end', () => {
     }
 
     const checks = config.checks || {};
-    const checkOrder = ['typecheck', 'lint', 'test'];
+    const checkOrder = ['typecheck', 'lint', 'build', 'test'];
     const failures = [];
     const warnings = [];
 

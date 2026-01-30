@@ -32,8 +32,8 @@
     {
       "name": "pre-commit",
       "source": "./plugins/pre-commit",
-      "description": "Pre-push checks for typechecking, linting, and testing with auto-detection and configurable enforcement",
-      "version": "0.1.0"
+      "description": "Pre-push checks for typechecking, linting, building, and testing with auto-detection and configurable enforcement",
+      "version": "0.2.0"
     },
     {
       "name": "claude-plugin-dev",
