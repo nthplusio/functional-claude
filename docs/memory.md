@@ -18,7 +18,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | prisma-dev | 0.1.3 | Prisma ORM development with schema analysis and migration safety |
 | shadcn-dev | 0.1.2 | shadcn/ui and Tailwind CSS v4 development workflows |
 | pre-commit | 0.1.0 | Pre-push checks for typechecking, linting, and testing |
-| claude-plugin-dev | 0.1.0 | Plugin development documentation and conventions |
+| claude-plugin-dev | 0.2.0 | Plugin development with guided workflows and AI-assisted creation |
 
 ## Architecture Overview
 
@@ -193,9 +193,9 @@ Supported ecosystems:
 
 Each check can be set to `"block"` (deny push) or `"warn"` (allow with message).
 
-## claude-plugin-dev Plugin (v0.1.0)
+## claude-plugin-dev Plugin (v0.2.0)
 
-Plugin development documentation with cached official docs and patterns.
+Plugin development documentation with guided workflows and AI-assisted creation.
 
 ### Skills
 
@@ -207,12 +207,22 @@ Plugin development documentation with cached official docs and patterns.
 | agent-development | Writing AGENT.md files | "create an agent", "subagent", "agent tools" |
 | hook-development | Creating hooks.json | "create a hook", "PreToolUse", "hook events" |
 | mcp-integration | MCP server configuration | "add MCP server", ".mcp.json", "external tools" |
+| command-development | Writing slash commands | "create a command", "slash command", "$ARGUMENTS" |
+| plugin-settings | User configuration patterns | ".local.md", "plugin settings", "configuration file" |
 
-### Agent
+### Agents
 
 | Agent | Purpose | Trigger Phrases |
 |-------|---------|-----------------|
 | plugin-validator | Validate plugin structure | "validate plugin", "check plugin", "review my plugin" |
+| agent-creator | AI-assisted agent generation | "create an agent", "generate an agent", "design an agent" |
+| skill-reviewer | Skill quality review | "review my skill", "check skill quality", "improve skill" |
+
+### Commands
+
+| Command | Purpose |
+|---------|---------|
+| /create-plugin | 8-phase guided plugin creation workflow |
 
 ### Reference Files
 

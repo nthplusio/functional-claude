@@ -38,8 +38,8 @@
     {
       "name": "claude-plugin-dev",
       "source": "./plugins/claude-plugin-dev",
-      "description": "Documentation and conventions for building Claude Code plugins with cached official docs and patterns from anthropics/claude-plugins-official",
-      "version": "0.1.1"
+      "description": "Documentation and conventions for building Claude Code plugins with guided workflows, AI-assisted agent creation, and dynamic documentation caching",
+      "version": "0.2.0"
     }
   ]
 }

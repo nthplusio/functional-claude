@@ -2,8 +2,8 @@
 name: hook-development
 description: This skill should be used when the user asks to "create a hook",
   "add PreToolUse hook", "validate tool use", "hook events", "hooks.json",
-  or mentions hook events (PreToolUse, PostToolUse, Stop, SessionStart).
-version: 0.1.1
+  "prompt-based hook", or mentions hook events (PreToolUse, PostToolUse, Stop).
+version: 0.2.0
 ---
 
 # Hook Development
@@ -39,6 +39,33 @@ hooks/
 }
 ```
 
+## Hook Types
+
+### Command Hooks
+
+Execute a script and use exit codes:
+
+```json
+{
+  "type": "command",
+  "command": "${CLAUDE_PLUGIN_ROOT}/hooks/validate.js",
+  "timeout": 30
+}
+```
+
+### Prompt-Based Hooks
+
+Let Claude evaluate conditions:
+
+```json
+{
+  "type": "prompt",
+  "prompt": "Check if this file modification follows coding standards. If it violates any standards, explain why and set permissionDecision to 'deny'."
+}
+```
+
+Prompt hooks are useful for semantic checks that are hard to script.
+
 ## Hook Events
 
 | Event | When It Fires |
@@ -59,7 +86,7 @@ hooks/
 
 | Variable | Scope | Description |
 |----------|-------|-------------|
-| `${CLAUDE_PLUGIN_ROOT}` | Plugin hooks | Absolute path to plugin directory |
+| `${CLAUDE_PLUGIN_ROOT}` | Plugin hooks | Absolute path to plugin |
 | `"$CLAUDE_PROJECT_DIR"` | Project hooks | Project root (quoted) |
 
 **Critical:** Plugin hooks use `${CLAUDE_PLUGIN_ROOT}` with braces. Project hooks use `"$CLAUDE_PROJECT_DIR"` with quotes.
@@ -69,7 +96,7 @@ hooks/
 | Code | Meaning |
 |------|---------|
 | 0 | Success - allow action |
-| 2 | Block - deny action, show stderr to Claude |
+| 2 | Block - deny action, show stderr |
 | Other | Non-blocking error |
 
 ## Common Matchers
@@ -78,9 +105,22 @@ hooks/
 - `Bash` - Shell commands
 - `*` or `""` - All tools
 - `mcp__.*` - All MCP tools
-- `mcp__server__.*` - Specific MCP server
 
-## Hook Patterns
+## Temporarily Active Hooks
+
+Hooks can be enabled/disabled via `.local.md` config:
+
+```javascript
+// In hook script
+const config = parseLocalMd(pluginRoot);
+if (!config.hooks?.validation_enabled) {
+  process.exit(0); // Skip hook
+}
+```
+
+See `/claude-plugin-dev:plugin-settings` for configuration patterns.
+
+## Common Patterns
 
 ### Validation (PreToolUse)
 
@@ -99,7 +139,7 @@ hooks/
 }
 ```
 
-### Session Start
+### Cache Refresh (SessionStart)
 
 ```json
 {
@@ -107,7 +147,7 @@ hooks/
     "SessionStart": [{
       "hooks": [{
         "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.js",
+        "command": "${CLAUDE_PLUGIN_ROOT}/hooks/refresh-cache.js",
         "timeout": 30
       }]
     }]
@@ -115,7 +155,7 @@ hooks/
 }
 ```
 
-### Stop (Learnings Capture)
+### Learnings Capture (Stop)
 
 ```json
 {
@@ -132,8 +172,6 @@ hooks/
 ```
 
 ## JSON Output (PreToolUse)
-
-Return JSON to stdout for permission decisions:
 
 ```json
 {
@@ -161,16 +199,15 @@ process.stdin.on('end', () => {
     const data = JSON.parse(input || '{}');
     const content = data.tool_input?.content || '';
 
-    // Validation logic here
     if (shouldBlock(content)) {
       console.error('Reason for blocking');
-      process.exit(2); // Block
+      process.exit(2);
     }
 
     console.log(JSON.stringify({ permissionDecision: "allow" }));
     process.exit(0);
   } catch (err) {
-    process.exit(0); // Allow on error
+    process.exit(0);
   }
 });
 ```
@@ -178,7 +215,7 @@ process.stdin.on('end', () => {
 ## Checklist
 
 - [ ] Uses `${CLAUDE_PLUGIN_ROOT}` for plugin paths
-- [ ] Uses `"$CLAUDE_PROJECT_DIR"` for project paths
 - [ ] Appropriate timeout values
-- [ ] Exit codes documented in scripts
-- [ ] Matcher patterns are correct
+- [ ] Exit codes documented
+- [ ] Matcher patterns correct
+- [ ] Error handling present

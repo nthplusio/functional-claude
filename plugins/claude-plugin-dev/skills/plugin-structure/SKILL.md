@@ -1,9 +1,9 @@
 ---
 name: plugin-structure
 description: This skill should be used when the user asks to "create plugin structure",
-  "set up plugin directories", "plugin layout", "plugin manifest", or needs guidance
-  on organizing plugin files and folders.
-version: 0.1.1
+  "set up plugin directories", "plugin layout", "plugin manifest", "plugin.json",
+  or needs guidance on organizing plugin files and folders.
+version: 0.2.0
 ---
 
 # Plugin Structure
@@ -29,10 +29,24 @@ my-plugin/
 │   └── hooks.json         # Event handlers
 ├── .mcp.json              # MCP server configs
 ├── .lsp.json              # LSP server configs
+├── .local.example.md      # Configuration template
+├── .cache/                # Runtime cache (gitignored)
 └── README.md
 ```
 
-**Critical:** Only `plugin.json` goes inside `.claude-plugin/`. All other components (skills, agents, hooks) go in the plugin root.
+**Critical:** Only `plugin.json` goes inside `.claude-plugin/`. All other components go in the plugin root.
+
+## Guided Creation
+
+Use `/create-plugin` for an interactive 8-phase workflow that guides you through:
+1. Discovery - Understanding purpose
+2. Component planning - What you need
+3. Detailed design - Component specifics
+4. Structure creation - Files and directories
+5. Implementation - Building components
+6. Validation - Checking correctness
+7. Testing - Verifying functionality
+8. Documentation - Finalizing README
 
 ## Plugin Manifest (plugin.json)
 
@@ -51,7 +65,7 @@ my-plugin/
 ```json
 {
   "name": "my-plugin",
-  "description": "Brief description of what it does",
+  "description": "Brief description",
   "version": "1.0.0",
   "author": {
     "name": "Your Name",
@@ -72,17 +86,9 @@ my-plugin/
 | Agent name | Describe role | `plugin-validator` |
 | Version | Semver | `1.0.0` |
 
-## Structure Patterns
+## Component Patterns
 
-### Minimal (LSP only)
-
-```
-typescript-lsp/
-└── .claude-plugin/
-    └── plugin.json    # Can define lspServers inline
-```
-
-### Single Skill
+### Single Skill (Simple)
 
 ```
 code-reviewer/
@@ -93,23 +99,33 @@ code-reviewer/
         └── SKILL.md
 ```
 
-### Multi-Skill
+### Multi-Skill (Full)
 
 ```
 api-dev/
-├── .claude-plugin/
-│   └── plugin.json
+├── .claude-plugin/plugin.json
 ├── skills/
-│   ├── api-dev/           # Main overview skill
+│   ├── api-dev/           # Main overview
 │   │   ├── SKILL.md
 │   │   └── references/
 │   ├── api-testing/       # Focused skill
-│   │   └── SKILL.md
 │   └── api-docs/          # Focused skill
-│       └── SKILL.md
-└── agents/
-    └── api-reviewer/
-        └── AGENT.md
+├── agents/
+│   └── api-reviewer/
+├── commands/
+│   └── api-check.md
+├── hooks/hooks.json
+├── .cache/.gitignore
+└── README.md
+```
+
+### Cache Directory Pattern
+
+Always include for runtime data:
+
+```
+.cache/
+└── .gitignore          # Contains: *
 ```
 
 ## Testing
@@ -118,11 +134,21 @@ api-dev/
 claude --plugin-dir ./my-plugin
 ```
 
+## Validation
+
+Use the plugin-validator agent to check structure:
+
+```
+Validate my plugin at ./my-plugin
+```
+
 ## Checklist
 
-- [ ] `.claude-plugin/plugin.json` exists with name, version, description
-- [ ] Version follows semver (MAJOR.MINOR.PATCH)
-- [ ] Skills in `skills/skill-name/SKILL.md` format
-- [ ] Agents in `agents/agent-name/AGENT.md` format
+- [ ] `.claude-plugin/plugin.json` exists
+- [ ] Has name, version, description
+- [ ] Version follows semver
+- [ ] Skills in `skills/name/SKILL.md`
+- [ ] Agents in `agents/name/AGENT.md`
 - [ ] Hooks in `hooks/hooks.json`
-- [ ] Components NOT inside `.claude-plugin/`
+- [ ] Components NOT in `.claude-plugin/`
+- [ ] .cache/ directory with .gitignore

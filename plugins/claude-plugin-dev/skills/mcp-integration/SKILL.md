@@ -1,9 +1,9 @@
 ---
 name: mcp-integration
 description: This skill should be used when the user asks to "add MCP server",
-  "integrate MCP", "external tools", ".mcp.json", or needs guidance on
-  bundling Model Context Protocol servers with plugins.
-version: 0.1.1
+  "integrate MCP", "external tools", ".mcp.json", "Model Context Protocol",
+  or needs guidance on bundling MCP servers with plugins.
+version: 0.2.0
 ---
 
 # MCP Integration
@@ -33,7 +33,13 @@ my-plugin/
 }
 ```
 
-## Server Types
+## Server Types Comparison
+
+| Type | Transport | Use Case |
+|------|-----------|----------|
+| stdio | Local process | Bundled servers, local tools |
+| http | Remote HTTP | Cloud services, APIs |
+| sse | Server-sent events | Real-time updates |
 
 ### stdio (Local Process)
 
@@ -69,6 +75,38 @@ my-plugin/
 }
 ```
 
+## Authentication Patterns
+
+### API Keys via Environment
+
+```json
+{
+  "api-server": {
+    "command": "npx",
+    "args": ["-y", "@some/mcp-server"],
+    "env": {
+      "API_KEY": "${MY_API_KEY}",
+      "API_SECRET": "${MY_API_SECRET}"
+    }
+  }
+}
+```
+
+### Token-Based
+
+```json
+{
+  "oauth-server": {
+    "url": "https://api.example.com/mcp",
+    "headers": {
+      "Authorization": "Bearer ${ACCESS_TOKEN}"
+    }
+  }
+}
+```
+
+Document required environment variables in README.
+
 ## Inline in Marketplace
 
 For simple MCP servers, define directly in marketplace.json:
@@ -88,22 +126,6 @@ For simple MCP servers, define directly in marketplace.json:
 ```
 
 **Note:** `strict: false` is required when defining mcpServers inline.
-
-## Environment Variables
-
-Use `${VAR_NAME}` syntax for environment variable substitution:
-
-```json
-{
-  "database": {
-    "command": "${CLAUDE_PLUGIN_ROOT}/servers/db-server",
-    "env": {
-      "DB_URL": "${DATABASE_URL}",
-      "API_KEY": "${DB_API_KEY}"
-    }
-  }
-}
-```
 
 ## Common Patterns
 
@@ -127,10 +149,7 @@ Use `${VAR_NAME}` syntax for environment variable substitution:
 {
   "custom": {
     "command": "node",
-    "args": ["${CLAUDE_PLUGIN_ROOT}/servers/custom-server.js"],
-    "env": {
-      "CONFIG_PATH": "${CLAUDE_PLUGIN_ROOT}/config.json"
-    }
+    "args": ["${CLAUDE_PLUGIN_ROOT}/servers/server.js"]
   }
 }
 ```
@@ -152,7 +171,7 @@ Use `${VAR_NAME}` syntax for environment variable substitution:
 
 ## Tool Naming
 
-MCP tools are namespaced as `mcp__<server>__<tool>`:
+MCP tools are namespaced: `mcp__<server>__<tool>`
 
 - `mcp__postgres__query`
 - `mcp__github__create_issue`
@@ -177,22 +196,10 @@ external_plugins/
     └── .mcp.json
 ```
 
-In marketplace.json:
-
-```json
-{
-  "name": "service-name",
-  "description": "Integration description",
-  "category": "productivity",
-  "source": "./external_plugins/service-name",
-  "homepage": "https://github.com/..."
-}
-```
-
 ## Checklist
 
 - [ ] Server command is valid
 - [ ] Environment variables use `${VAR}` syntax
 - [ ] Plugin paths use `${CLAUDE_PLUGIN_ROOT}`
-- [ ] Required env vars documented in README
+- [ ] Required env vars documented
 - [ ] Server tested locally
