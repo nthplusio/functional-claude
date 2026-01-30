@@ -115,4 +115,4 @@ Cache directory is gitignored.
 
 ## Version
 
-0.1.0
+0.1.3

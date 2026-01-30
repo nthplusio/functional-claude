@@ -1,7 +1,8 @@
 ---
+name: shadcn-recon
 description: Analyze project for shadcn/ui and Tailwind CSS setup, recommend components
 argument-hint: [focus-area]
-allowed-tools:
+tools:
   - Read
   - Glob
   - Grep
