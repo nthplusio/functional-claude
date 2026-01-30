@@ -20,9 +20,8 @@ my-plugin/
 │   └── skill-name/
 │       ├── SKILL.md
 │       └── references/
-├── agents/                # AGENT.md files
-│   └── agent-name/
-│       └── AGENT.md
+├── agents/                # Agent definition files
+│   └── agent-name.md
 ├── commands/              # Slash command definitions
 │   └── command-name.md
 ├── hooks/
@@ -111,7 +110,7 @@ api-dev/
 │   ├── api-testing/       # Focused skill
 │   └── api-docs/          # Focused skill
 ├── agents/
-│   └── api-reviewer/
+│   └── api-reviewer.md
 ├── commands/
 │   └── api-check.md
 ├── hooks/hooks.json
@@ -148,7 +147,7 @@ Validate my plugin at ./my-plugin
 - [ ] Has name, version, description
 - [ ] Version follows semver
 - [ ] Skills in `skills/name/SKILL.md`
-- [ ] Agents in `agents/name/AGENT.md`
+- [ ] Agents in `agents/name.md`
 - [ ] Hooks in `hooks/hooks.json`
 - [ ] Components NOT in `.claude-plugin/`
 - [ ] .cache/ directory with .gitignore

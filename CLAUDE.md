@@ -47,7 +47,7 @@ plugins/<plugin-name>/
 │   ├── <focused-skill>/    # Topic-specific skill
 │   └── ...
 ├── agents/
-│   └── <agent-name>/       # Autonomous agent (debugging, setup)
+│   └── <agent-name>.md     # Autonomous agent (flat file)
 └── .cache/                 # Gitignored runtime cache
 ```
 

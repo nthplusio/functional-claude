@@ -50,8 +50,7 @@ plugin-name/
 │   └── focused-skill/
 │       └── SKILL.md
 ├── agents/
-│   └── agent-name/
-│       └── AGENT.md
+│   └── agent-name.md
 ├── commands/
 │   └── command-name.md
 ├── hooks/
@@ -286,7 +285,7 @@ For wrapping third-party MCP servers:
 - [ ] `.claude-plugin/plugin.json` exists with name, description
 - [ ] Version follows semver (MAJOR.MINOR.PATCH)
 - [ ] Skills in `skills/skill-name/SKILL.md` format
-- [ ] Agents in `agents/agent-name/AGENT.md` format
+- [ ] Agents in `agents/agent-name.md` format
 - [ ] Hooks in `hooks/hooks.json`
 - [ ] README.md with usage instructions
 

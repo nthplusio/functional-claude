@@ -14,8 +14,7 @@ Guide for creating specialized subagents with AGENT.md files.
 
 ```
 agents/
-└── agent-name/
-    └── AGENT.md
+└── agent-name.md       # Flat file (not subdirectory)
 ```
 
 ## AGENT.md Format

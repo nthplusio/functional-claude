@@ -51,8 +51,7 @@ plugins/<plugin-name>/
 │       ├── SKILL.md
 │       └── references/
 ├── agents/
-│   └── <agent-name>/         # Autonomous agent
-│       └── AGENT.md
+│   └── <agent-name>.md       # Autonomous agent (flat file)
 └── .cache/                   # Gitignored - runtime cache
 ```
 
@@ -271,7 +270,7 @@ functional-claude/
     │   │   ├── wezterm-tabs/
     │   │   └── wezterm-agent-deck/
     │   ├── agents/
-    │   │   └── wezterm-troubleshoot/
+    │   │   └── wezterm-troubleshoot.md
     │   └── .cache/
     ├── hyper-dev/
     │   ├── .claude-plugin/plugin.json
@@ -283,7 +282,7 @@ functional-claude/
     │   │   ├── hyper-plugins/
     │   │   └── hyper-themes/
     │   ├── agents/
-    │   │   └── hyper-troubleshoot/
+    │   │   └── hyper-troubleshoot.md
     │   └── .cache/
     ├── prisma-dev/
     │   ├── .claude-plugin/plugin.json
@@ -295,7 +294,7 @@ functional-claude/
     │   │   ├── prisma-queries/
     │   │   └── prisma-recon/
     │   ├── agents/
-    │   │   └── prisma-troubleshoot/
+    │   │   └── prisma-troubleshoot.md
     │   └── .cache/
     ├── shadcn-dev/
     │   ├── .claude-plugin/plugin.json
@@ -310,7 +309,7 @@ functional-claude/
     │   │   ├── shadcn-data-tables/
     │   │   └── tailwindv4/
     │   ├── agents/
-    │   │   └── shadcn-troubleshoot/
+    │   │   └── shadcn-troubleshoot.md
     │   └── .cache/
     ├── pre-commit/
     │   ├── .claude-plugin/plugin.json
@@ -331,7 +330,9 @@ functional-claude/
         │   ├── hook-development/
         │   └── mcp-integration/
         ├── agents/
-        │   └── plugin-validator/
+        │   ├── agent-creator.md
+        │   ├── plugin-validator.md
+        │   └── skill-reviewer.md
         └── .cache/
 ```
 
@@ -481,10 +482,10 @@ claude --plugin-dir ./plugins/wezterm-dev
 
 ### Creating a New Agent
 
-1. Create directory: `plugins/<name>/agents/<agent-name>/`
-2. Create AGENT.md with YAML frontmatter
-3. Define tools list and system prompt
-4. Test with troubleshooting scenarios
+1. Create file: `plugins/<name>/agents/<agent-name>.md`
+2. Add YAML frontmatter with name, description, tools
+3. Define system prompt in markdown body
+4. Test with triggering scenarios
 
 ## Conventions
 
