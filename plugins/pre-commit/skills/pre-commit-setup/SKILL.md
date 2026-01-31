@@ -3,7 +3,7 @@ name: pre-commit-setup
 description: This skill should be used when the user asks to "set up pre-commit",
   "configure pre-push checks", "add typecheck/lint/test hooks", "initialize pre-commit",
   or when starting a new project that needs quality checks before pushing.
-version: 0.2.0
+version: 0.2.1
 ---
 
 # Pre-Commit Setup
