@@ -163,17 +163,20 @@ process.stdin.on('end', () => {
           const pluginStagedFiles = stagedFiles.filter(f => f.startsWith(`plugins/${pluginName}/`));
 
           // Files that ARE significant (plugin behavior):
-          // - SKILL.md, AGENT.md (plugin component definitions)
+          // - SKILL.md (skill definitions)
+          // - agents/*.md (agent definitions)
+          // - commands/*.md (command definitions)
           // - hooks.json, *.js in hooks/ (hook implementations)
           // - plugin.json (manifest)
           // - .mcp.json (MCP config)
           const significantPatterns = [
             /SKILL\.md$/i,
-            /AGENT\.md$/i,
+            /agents\/.*\.md$/i,  // Agent files in agents/ directory
             /hooks\.json$/i,
             /hooks\/.*\.js$/i,
             /plugin\.json$/i,
-            /\.mcp\.json$/i
+            /\.mcp\.json$/i,
+            /commands\/.*\.md$/i  // Command files
           ];
 
           // Files that are trivial (documentation only):
