@@ -27,7 +27,7 @@
       "name": "shadcn-dev",
       "source": "./plugins/shadcn-dev",
       "description": "shadcn/ui and Tailwind CSS v4 development workflows for React applications",
-      "version": "0.1.2"
+      "version": "0.1.3"
     },
     {
       "name": "pre-commit",

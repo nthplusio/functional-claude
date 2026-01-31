@@ -10,12 +10,14 @@ Build terminal user interfaces with OpenTUI - a TypeScript library for creating 
 
 ## First Action: Check Reference Cache
 
-Before proceeding, check if the cache needs refreshing:
+Before proceeding, check and initialize the cache:
 
-1. Read `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md` (if it exists)
-2. Check the `last_refresh` date in the YAML frontmatter
-3. If missing or older than 7 days, suggest refreshing documentation
-4. Preserve any existing Learnings section when refreshing
+1. Read `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md`
+2. **If the file doesn't exist:** Create it using the template in `references/cache-management.md`, then fetch fresh documentation from the sources listed there
+3. **If `last_refresh` is older than 7 days:** Refresh documentation from sources, preserving the Learnings section
+4. **If cache exists and is fresh:** Proceed with the task
+
+**This is required** - the cache provides up-to-date component APIs and patterns that improve response quality.
 
 ## Critical Rules
 

@@ -16,7 +16,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | wezterm-dev | 0.7.8 | WezTerm terminal configuration and customization |
 | hyper-dev | 0.3.2 | Hyper terminal configuration and plugin development |
 | prisma-dev | 0.1.3 | Prisma ORM development with schema analysis and migration safety |
-| shadcn-dev | 0.1.2 | shadcn/ui and Tailwind CSS v4 development workflows |
+| shadcn-dev | 0.1.3 | shadcn/ui and Tailwind CSS v4 development workflows |
 | pre-commit | 0.2.0 | Pre-push checks for typechecking, linting, building, and testing |
 | claude-plugin-dev | 0.2.0 | Plugin development with guided workflows and AI-assisted creation |
 | opentui-dev | 0.1.0 | OpenTUI terminal interface development with component design and layout |
