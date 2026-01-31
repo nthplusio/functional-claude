@@ -15,7 +15,7 @@
       "name": "hyper-dev",
       "source": "./plugins/hyper-dev",
       "description": "Hyper terminal configuration and plugin development for Claude Code workflows",
-      "version": "0.3.2"
+      "version": "0.3.3"
     },
     {
       "name": "prisma-dev",

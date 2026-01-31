@@ -7,6 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
 const { execSync } = require('child_process');
 
 // Read JSON input from stdin
@@ -86,17 +87,22 @@ process.stdin.on('end', async () => {
       }
     }
 
-    // Update docs index timestamp
+    // Update docs index and fetch documentation content
     if (docsNeedRefresh) {
       fs.writeFileSync(docsIndexPath, JSON.stringify({
         last_refresh: today,
         sources: [
           { name: 'hyper-website', url: 'https://hyper.is/', type: 'webfetch' },
           { name: 'github-releases', url: 'https://github.com/vercel/hyper/releases', type: 'webfetch' },
+          { name: 'hyper-plugins', url: 'https://hyper.is/plugins', type: 'webfetch' },
           { name: 'xterm-js', library_id: '/xtermjs/xterm.js', type: 'context7' },
-          { name: 'electron', library_id: '/websites/electronjs', type: 'context7' }
+          { name: 'electron', library_id: '/websites/electronjs', type: 'context7' },
+          { name: 'react', library_id: '/facebook/react', type: 'context7' }
         ]
       }, null, 2));
+
+      // Fetch and cache documentation (async, don't block session start)
+      refreshLearningsCache(cacheDir, today).catch(() => {});
     }
 
     // Check if plugin ecosystem needs refresh (weekly)
@@ -354,4 +360,198 @@ function findInstalledPlugins(configPath) {
   } catch (e) {
     return [];
   }
+}
+
+/**
+ * Fetch URL content with timeout
+ */
+function fetchUrl(url, timeout = 10000) {
+  return new Promise((resolve, reject) => {
+    const request = https.get(url, { timeout }, (res) => {
+      // Handle redirects
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        fetchUrl(res.headers.location, timeout).then(resolve).catch(reject);
+        return;
+      }
+
+      if (res.statusCode !== 200) {
+        reject(new Error(`HTTP ${res.statusCode}`));
+        return;
+      }
+
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => resolve(data));
+    });
+
+    request.on('error', reject);
+    request.on('timeout', () => {
+      request.destroy();
+      reject(new Error('Request timeout'));
+    });
+  });
+}
+
+/**
+ * Extract text content from HTML (basic extraction)
+ */
+function extractTextFromHtml(html) {
+  // Remove script and style tags
+  let text = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+  text = text.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+
+  // Remove HTML tags but keep content
+  text = text.replace(/<[^>]+>/g, ' ');
+
+  // Decode common HTML entities
+  text = text.replace(/&nbsp;/g, ' ');
+  text = text.replace(/&amp;/g, '&');
+  text = text.replace(/&lt;/g, '<');
+  text = text.replace(/&gt;/g, '>');
+  text = text.replace(/&quot;/g, '"');
+  text = text.replace(/&#39;/g, "'");
+
+  // Normalize whitespace
+  text = text.replace(/\s+/g, ' ').trim();
+
+  return text;
+}
+
+/**
+ * Fetch and cache Hyper documentation
+ */
+async function refreshLearningsCache(cacheDir, today) {
+  const learningsPath = path.join(cacheDir, 'learnings.md');
+
+  // Read existing learnings to preserve them
+  let existingLearnings = '';
+  let existingSettings = {
+    auto_refresh: true,
+    capture_learnings: true
+  };
+  let learningsCount = 0;
+
+  if (fs.existsSync(learningsPath)) {
+    try {
+      const content = fs.readFileSync(learningsPath, 'utf8');
+
+      // Extract settings from frontmatter
+      const settingsMatch = content.match(/settings:\s*\n([\s\S]*?)(?=---|\n\n)/);
+      if (settingsMatch) {
+        const autoRefreshMatch = settingsMatch[1].match(/auto_refresh:\s*(true|false)/);
+        const captureLearningsMatch = settingsMatch[1].match(/capture_learnings:\s*(true|false)/);
+        if (autoRefreshMatch) existingSettings.auto_refresh = autoRefreshMatch[1] === 'true';
+        if (captureLearningsMatch) existingSettings.capture_learnings = captureLearningsMatch[1] === 'true';
+      }
+
+      // Check if auto_refresh is disabled
+      if (!existingSettings.auto_refresh) {
+        return; // Don't refresh if disabled
+      }
+
+      // Extract existing learnings section
+      const learningsMatch = content.match(/## Learnings\s*([\s\S]*?)$/);
+      if (learningsMatch) {
+        existingLearnings = learningsMatch[1].trim();
+        // Count learnings entries
+        const entryMatches = existingLearnings.match(/- \[\d{4}-\d{2}-\d{2}\]/g);
+        learningsCount = entryMatches ? entryMatches.length : 0;
+      }
+    } catch (e) {
+      // Ignore read errors
+    }
+  }
+
+  // Fetch documentation from sources
+  const docSections = [];
+
+  // Fetch from GitHub releases (latest release info)
+  try {
+    const releasesHtml = await fetchUrl('https://github.com/vercel/hyper/releases');
+    const text = extractTextFromHtml(releasesHtml);
+
+    // Extract latest release info
+    const releaseMatch = text.match(/v?(\d+\.\d+\.\d+).*?(?:Released|released|ago)/i);
+    if (releaseMatch) {
+      docSections.push(`### Latest Release\n\nVersion ${releaseMatch[0].slice(0, 100)}`);
+    }
+  } catch (e) {
+    // Skip on error
+  }
+
+  // Fetch plugin API info from Hyper website
+  try {
+    const websiteHtml = await fetchUrl('https://hyper.is/');
+    const text = extractTextFromHtml(websiteHtml);
+
+    // Extract key info
+    if (text.length > 100) {
+      const snippet = text.slice(0, 500).replace(/\s+/g, ' ');
+      docSections.push(`### Hyper Overview\n\n${snippet}...`);
+    }
+  } catch (e) {
+    // Skip on error
+  }
+
+  // Add static plugin API reference (always available)
+  docSections.push(`### Plugin API Quick Reference
+
+**Configuration:**
+- \`decorateConfig(config)\` - Modify user config, add CSS
+- \`config.css\` - App-wide CSS styles
+- \`config.termCSS\` - Terminal-specific CSS
+
+**Lifecycle Hooks:**
+- \`onApp(app)\` - Electron app ready
+- \`onWindow(window)\` - BrowserWindow created
+- \`onUnload(window)\` - Plugin being unloaded
+
+**Component Decorators:**
+- \`decorateTerm(Term, { React, notify })\` - Wrap terminal
+- \`decorateHyper(Hyper, { React })\` - Wrap main component
+- \`decorateHeader(Header, { React })\` - Customize header
+- \`decorateTabs(Tabs, { React })\` - Customize tab bar
+- \`decorateTab(Tab, { React })\` - Customize individual tabs
+
+**Redux Integration:**
+- \`middleware(store)(next)(action)\` - Action interceptor
+- \`reduceUI(state, action)\` - UI state reducer
+- \`reduceSessions(state, action)\` - Sessions reducer
+
+**Common Actions:**
+- \`SESSION_ADD\`, \`SESSION_PTY_DATA\`, \`SESSION_PTY_EXIT\`
+- \`UI_FONT_SIZE_SET\`, \`UI_WINDOW_MAXIMIZE\`
+- \`TERM_GROUP_REQUEST\`, \`TAB_SET_ACTIVE\`
+
+**Context7 Sources for Deep Docs:**
+- xterm.js: \`/xtermjs/xterm.js\` - Terminal rendering, buffer API
+- Electron: \`/websites/electronjs\` - Window, IPC, native features
+- React: \`/facebook/react\` - Component patterns (Hyper uses React)`);
+
+  // Build the learnings.md content
+  const learningsContent = `---
+last_refresh: ${today}
+cache_version: 1
+learnings_count: ${learningsCount}
+settings:
+  auto_refresh: ${existingSettings.auto_refresh}
+  capture_learnings: ${existingSettings.capture_learnings}
+---
+
+## Reference Cache
+
+${docSections.join('\n\n')}
+
+## Learnings
+
+${existingLearnings || `### Successful Patterns
+
+### Mistakes to Avoid
+
+### Plugin Patterns
+
+### Ecosystem Discoveries`}
+`;
+
+  fs.writeFileSync(learningsPath, learningsContent);
 }

@@ -8,7 +8,9 @@ This guide explains when and how to use different documentation sources for Hype
 |---------------|--------|--------|
 | Terminal rendering, buffer API | Context7 (xterm.js) | `mcp__plugin_context7_context7__query-docs` |
 | Electron window, IPC, native features | Context7 (Electron) | `mcp__plugin_context7_context7__query-docs` |
+| React components, hooks, patterns | Context7 (React) | `mcp__plugin_context7_context7__query-docs` |
 | Hyper config, .hyper.js syntax | Local cache | Read `.cache/learnings.md` |
+| Hyper plugin API quick reference | Local cache | Read `.cache/learnings.md` |
 | Hyper version info, installed plugins | Local cache | Read `.cache/hyper-config.json` |
 | Popular plugins, ecosystem | Local cache | Read `.cache/plugin-ecosystem.json` |
 | Release notes, breaking changes | WebFetch | Fetch from GitHub |
@@ -57,6 +59,27 @@ Parameters:
 - "IPC communication between main and renderer"
 - "Registering global shortcuts"
 - "App ready event handling"
+
+### React Documentation
+
+Hyper plugins use React for component decoration. Query for:
+- Component lifecycle and hooks
+- Higher-order components (HOCs)
+- Props and state management
+- React.createElement patterns
+
+```
+Tool: mcp__plugin_context7_context7__query-docs
+Parameters:
+  libraryId: /facebook/react
+  query: [your react question]
+```
+
+**Example queries:**
+- "Higher-order component patterns"
+- "React.createElement with props spreading"
+- "Component lifecycle methods class components"
+- "useEffect cleanup patterns"
 
 ## Local Cache Sources
 
@@ -136,6 +159,12 @@ Question about Hyper?
 ├─ Electron/window/native?
 │  └─ Use Context7: /websites/electronjs
 │
+├─ React components/decorators?
+│  └─ Use Context7: /facebook/react
+│
+├─ Plugin API/exports?
+│  └─ Read local cache: learnings.md (Reference Cache section)
+│
 ├─ Config syntax/patterns?
 │  └─ Read local cache: learnings.md
 │
@@ -156,8 +185,9 @@ Question about Hyper?
 
 | Source | Cache Duration | Refresh Trigger |
 |--------|---------------|-----------------|
-| Context7 | 7 days | Automatic (via Context7) |
-| Local config | 24 hours | SessionStart hook |
+| Context7 (xterm.js, Electron, React) | 7 days | Automatic (via Context7) |
+| learnings.md (Reference Cache) | 24 hours | SessionStart hook |
+| hyper-config.json | 24 hours | SessionStart hook |
 | Plugin ecosystem | 7 days | SessionStart hook |
 | WebFetch | Per-session | Manual request |
 
