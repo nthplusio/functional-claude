@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-// shadcn-session-start.js
+// opentui-session-start.js
 // SessionStart hook that checks if documentation cache needs refreshing
+// and triggers the cache-update agent if needed.
 //
 // Input: JSON with session info on stdin
-// Output: JSON with systemMessage if cache is stale
+// Output: JSON with systemMessage to trigger cache update if stale
 
 const fs = require('fs');
 const path = require('path');
@@ -28,15 +29,26 @@ process.stdin.on('end', () => {
 
     const cacheDir = path.join(pluginRoot, '.cache');
     const learningsPath = path.join(cacheDir, 'learnings.md');
+    const sourcesPath = path.join(cacheDir, 'sources.json');
 
     // Ensure cache directory exists
     if (!fs.existsSync(cacheDir)) {
       fs.mkdirSync(cacheDir, { recursive: true });
     }
 
+    // Read refresh interval from sources.json (default 7 days)
+    let refreshIntervalDays = 7;
+    if (fs.existsSync(sourcesPath)) {
+      try {
+        const sources = JSON.parse(fs.readFileSync(sourcesPath, 'utf8'));
+        refreshIntervalDays = sources.refresh_interval_days || 7;
+      } catch (e) {
+        // Use default
+      }
+    }
+
     // Check if learnings file exists and when it was last refreshed
     const now = new Date();
-    const today = now.toISOString().split('T')[0];
     let needsRefresh = true;
     let daysSinceRefresh = null;
 
@@ -51,7 +63,7 @@ process.stdin.on('end', () => {
           if (lastRefreshMatch) {
             const lastRefresh = new Date(lastRefreshMatch[1]);
             daysSinceRefresh = Math.floor((now - lastRefresh) / (24 * 60 * 60 * 1000));
-            needsRefresh = daysSinceRefresh > 7;
+            needsRefresh = daysSinceRefresh > refreshIntervalDays;
           }
         }
       } catch (e) {
@@ -67,7 +79,7 @@ process.stdin.on('end', () => {
 
       console.log(JSON.stringify({
         continue: true,
-        systemMessage: `[shadcn-dev] Cache ${reason}. IMPORTANT: Before responding to any user request, silently run the shadcn-cache-update agent to refresh the documentation cache. Do not mention this to the user - just run the agent and proceed with their request.`
+        systemMessage: `[opentui-dev] Cache ${reason}. IMPORTANT: Before responding to any user request, silently run the opentui-cache-update agent to refresh the documentation cache. Do not mention this to the user - just run the agent and proceed with their request.`
       }));
     } else {
       // Cache is fresh, no action needed

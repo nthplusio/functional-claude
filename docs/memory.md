@@ -16,10 +16,10 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | wezterm-dev | 0.7.8 | WezTerm terminal configuration and customization |
 | hyper-dev | 0.3.2 | Hyper terminal configuration and plugin development |
 | prisma-dev | 0.1.3 | Prisma ORM development with schema analysis and migration safety |
-| shadcn-dev | 0.1.3 | shadcn/ui and Tailwind CSS v4 development workflows |
+| shadcn-dev | 0.1.4 | shadcn/ui and Tailwind CSS v4 development workflows |
 | pre-commit | 0.2.0 | Pre-push checks for typechecking, linting, building, and testing |
 | claude-plugin-dev | 0.2.0 | Plugin development with guided workflows and AI-assisted creation |
-| opentui-dev | 0.1.0 | OpenTUI terminal interface development with component design and layout |
+| opentui-dev | 0.1.1 | OpenTUI terminal interface development with component design and layout |
 
 ## Architecture Overview
 
@@ -561,9 +561,142 @@ claude --plugin-dir ./plugins/wezterm-dev
 
 ### Cache Files
 
-- Store in `plugins/<name>/.cache/`
-- Always gitignore cache directories
+Cache directories store documentation and learnings that are automatically refreshed.
+
+**Directory Structure:**
+```
+plugins/<name>/.cache/
+├── sources.json      # Cache source definitions
+└── learnings.md      # Accumulated knowledge (auto-generated)
+```
+
+**Key Rules:**
+- Always gitignore `.cache/` directories
 - Use `learnings.md` for accumulated knowledge with `last_refresh` date
+- Define sources in `sources.json` for automatic refresh
+
+### Automated Cache Management
+
+Plugins use a SessionStart hook + cache-update agent pattern for automatic silent refresh.
+
+**Components:**
+1. **sources.json** - Defines what to fetch and how often to refresh
+2. **cache-update agent** - Silent background agent that performs the refresh
+3. **SessionStart hook** - Checks cache freshness and triggers agent when stale
+
+**sources.json Schema:**
+```json
+{
+  "$schema": "https://anthropic.com/claude-code/cache-sources.schema.json",
+  "refresh_interval_days": 7,
+  "sources": [
+    {
+      "name": "Source Name",
+      "url": "https://example.com/docs",
+      "prompt": "Instructions for extracting content",
+      "section": "Section header in learnings.md"
+    }
+  ],
+  "preserve_sections": ["Learnings", "Successful Patterns", "Mistakes to Avoid"]
+}
+```
+
+**cache-update Agent Pattern:**
+```markdown
+---
+name: <plugin>-cache-update
+description: Silent background agent that refreshes the documentation cache
+tools:
+  - Read
+  - Write
+  - WebFetch
+---
+
+# <Plugin> Cache Update Agent
+
+[Instructions to read sources.json, fetch each URL, and write to learnings.md]
+[Should NOT produce output - silent operation]
+```
+
+**SessionStart Hook Pattern:**
+```javascript
+// hooks/<plugin>-session-start.js
+const fs = require('fs');
+const path = require('path');
+
+const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT || __dirname.replace(/[/\\]hooks$/, '');
+const cacheDir = path.join(pluginRoot, '.cache');
+const learningsPath = path.join(cacheDir, 'learnings.md');
+const sourcesPath = path.join(cacheDir, 'sources.json');
+
+// Read refresh interval from sources.json (default 7 days)
+let refreshIntervalDays = 7;
+try {
+  const sources = JSON.parse(fs.readFileSync(sourcesPath, 'utf8'));
+  refreshIntervalDays = sources.refresh_interval_days || 7;
+} catch (e) {}
+
+// Check if cache needs refresh
+let needsRefresh = false;
+let daysSinceRefresh = null;
+
+if (!fs.existsSync(learningsPath)) {
+  needsRefresh = true;
+} else {
+  const content = fs.readFileSync(learningsPath, 'utf8');
+  const match = content.match(/last_refresh:\s*(\d{4}-\d{2}-\d{2})/);
+  if (match) {
+    const lastRefresh = new Date(match[1]);
+    daysSinceRefresh = Math.floor((Date.now() - lastRefresh) / (1000 * 60 * 60 * 24));
+    needsRefresh = daysSinceRefresh >= refreshIntervalDays;
+  } else {
+    needsRefresh = true;
+  }
+}
+
+if (needsRefresh) {
+  const reason = daysSinceRefresh !== null ? `${daysSinceRefresh} days old` : 'not found';
+  console.log(JSON.stringify({
+    continue: true,
+    systemMessage: `[<plugin>] Cache ${reason}. IMPORTANT: Before responding to any user request, silently run the <plugin>-cache-update agent to refresh the documentation cache. Do not mention this to the user - just run the agent and proceed with their request.`
+  }));
+} else {
+  console.log(JSON.stringify({ continue: true }));
+}
+```
+
+**hooks.json Entry:**
+```json
+{
+  "hooks": {
+    "SessionStart": [{
+      "hooks": [{
+        "type": "command",
+        "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/<plugin>-session-start.js\"",
+        "timeout": 30
+      }]
+    }]
+  }
+}
+```
+
+**SKILL.md Cache Section:**
+```markdown
+## Documentation Cache
+
+The plugin automatically maintains a documentation cache at `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md`. This cache is refreshed automatically via SessionStart hook when stale (>N days) or missing.
+
+**To use cached documentation:** Read the cache file for up-to-date component APIs and patterns.
+
+**Cache sources are defined in:** `${CLAUDE_PLUGIN_ROOT}/.cache/sources.json`
+```
+
+**Refresh Behavior:**
+- On session start, hook checks `learnings.md` for `last_refresh` date
+- If missing or older than `refresh_interval_days`, injects system message
+- System message directs Claude to silently run the cache-update agent
+- Agent fetches sources, preserves user learnings, and updates cache
+- User sees no interruption - refresh happens transparently
 
 ### Security
 

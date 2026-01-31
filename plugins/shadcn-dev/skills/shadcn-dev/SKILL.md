@@ -1,23 +1,20 @@
 ---
 name: shadcn-dev
 description: This skill should be used when the user asks to "set up shadcn", "configure shadcn", "shadcn project setup", "install shadcn", "shadcn init", "ui components for react", or mentions general shadcn/ui configuration questions. For specific topics like theming, forms, or data tables, focused skills may be more appropriate.
-version: 0.1.3
+version: 0.1.4
 ---
 
 # shadcn/ui Development
 
 Configure and build React applications with shadcn/ui components and Tailwind CSS v4.
 
-## First Action: Check Reference Cache
+## Documentation Cache
 
-Before proceeding, check and initialize the cache:
+The plugin automatically maintains a documentation cache at `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md`. This cache is refreshed automatically via SessionStart hook when stale (>7 days) or missing.
 
-1. Read `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md`
-2. **If the file doesn't exist:** Create it using the template in `references/cache-management.md`, then fetch fresh documentation from the sources listed there
-3. **If `last_refresh` is older than 7 days:** Refresh documentation from sources, preserving the Learnings section
-4. **If cache exists and is fresh:** Proceed with the task
+**To use cached documentation:** Read the cache file for up-to-date component APIs and patterns.
 
-**This is required** - the cache provides up-to-date component APIs and patterns that improve response quality.
+**Cache sources are defined in:** `${CLAUDE_PLUGIN_ROOT}/.cache/sources.json`
 
 ## shadcn/ui Overview
 
