@@ -1,12 +1,32 @@
 ---
 name: opentui-troubleshoot
-description: Use this agent when the user encounters OpenTUI errors, runtime crashes, layout issues, input problems, build failures, or needs debugging help. Trigger phrases include "opentui not working", "TUI crash", "layout broken", "input not responding", "build error", "fix opentui".
+description: |
+  Use this agent when the user encounters OpenTUI errors, runtime crashes, layout issues, input problems, build failures, or needs debugging help. Trigger phrases include "opentui not working", "TUI crash", "layout broken", "input not responding", "build error", "fix opentui".
+
+  <example>
+  Context: User experiencing OpenTUI issues
+  user: "opentui not working"
+  assistant: "I'll use the opentui-troubleshoot agent to diagnose this."
+  <commentary>
+  Troubleshooting request detected. Delegate to debugging agent.
+  </commentary>
+  </example>
+
+  <example>
+  Context: User has layout problems
+  user: "my TUI layout is broken, components are overlapping"
+  assistant: "I'll use the opentui-troubleshoot agent to investigate the layout issue."
+  <commentary>
+  Layout issue reported. Delegate to troubleshoot agent for systematic diagnosis.
+  </commentary>
+  </example>
 tools:
   - Read
   - Glob
   - Grep
   - Bash
   - WebFetch
+model: sonnet
 ---
 
 # OpenTUI Troubleshoot Agent

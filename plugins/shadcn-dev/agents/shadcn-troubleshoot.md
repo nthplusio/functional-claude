@@ -1,14 +1,33 @@
 ---
 name: shadcn-troubleshoot
-description: This agent provides autonomous debugging for shadcn/ui and Tailwind CSS issues. Use when the user says "shadcn not working", "fix shadcn", "debug shadcn", "component not rendering", "styling not applied", "tailwind not working", "hydration error", "shadcn error", "cn function error", or asks troubleshooting questions about shadcn/ui or Tailwind CSS behavior.
-model: inherit
-color: cyan
+description: |
+  This agent provides autonomous debugging for shadcn/ui and Tailwind CSS issues. Use when the user says "shadcn not working", "fix shadcn", "debug shadcn", "component not rendering", "styling not applied", "tailwind not working", "hydration error", "shadcn error", "cn function error", or asks troubleshooting questions about shadcn/ui or Tailwind CSS behavior.
+
+  <example>
+  Context: User experiencing shadcn/ui issues
+  user: "shadcn not working"
+  assistant: "I'll use the shadcn-troubleshoot agent to diagnose this."
+  <commentary>
+  Troubleshooting request detected. Delegate to debugging agent.
+  </commentary>
+  </example>
+
+  <example>
+  Context: User has styling problems
+  user: "my shadcn button styles aren't being applied"
+  assistant: "I'll use the shadcn-troubleshoot agent to investigate the styling issue."
+  <commentary>
+  Styling issue reported. Delegate to troubleshoot agent for systematic diagnosis.
+  </commentary>
+  </example>
 tools:
   - Read
   - Bash
   - Grep
   - Glob
   - WebFetch
+model: sonnet
+color: cyan
 ---
 
 # shadcn/ui Troubleshoot Agent

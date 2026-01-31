@@ -1,12 +1,32 @@
 ---
 name: hyper-troubleshoot
-description: Use this agent when the user says "hyper not working", "fix hyper", "debug hyper", "hyper issue", "hyper problem", "hyper error", "hyper crash", "hyper won't start", "hyper blank screen", or asks troubleshooting questions about Hyper terminal behavior.
+description: |
+  Use this agent when the user says "hyper not working", "fix hyper", "debug hyper", "hyper issue", "hyper problem", "hyper error", "hyper crash", "hyper won't start", "hyper blank screen", or asks troubleshooting questions about Hyper terminal behavior.
+
+  <example>
+  Context: User experiencing Hyper issues
+  user: "hyper not working"
+  assistant: "I'll use the hyper-troubleshoot agent to diagnose this."
+  <commentary>
+  Troubleshooting request detected. Delegate to debugging agent.
+  </commentary>
+  </example>
+
+  <example>
+  Context: User has plugin problems
+  user: "my hyper plugins aren't loading"
+  assistant: "I'll use the hyper-troubleshoot agent to investigate the plugin issue."
+  <commentary>
+  Plugin issue reported. Delegate to troubleshoot agent for systematic diagnosis.
+  </commentary>
+  </example>
 tools:
   - Read
   - Bash
   - Grep
   - Glob
   - WebFetch
+model: sonnet
 ---
 
 # Hyper Troubleshoot Agent

@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 // Check if session involved Prisma work and prompt for learnings capture
+// Enhanced pattern matching for:
+// - Successful Patterns
+// - Mistakes to Avoid
+// - Schema Patterns
+// - Query Optimizations
 
 const fs = require('fs');
 
@@ -31,13 +36,76 @@ process.stdin.on('end', () => {
 
     // Read transcript and check for Prisma-related work
     const transcript = fs.readFileSync(transcriptPath, 'utf8');
-    // Match: config files, skill names, client API, migrations, schema terms
-    const prismaPattern = /schema\.prisma|prisma-dev|prisma-schema|prisma-queries|prisma-migrations|prisma-recon|PrismaClient|@prisma\/client|prisma\s+migrate|prisma\s+db\s+push|prisma\s+generate|findMany|findUnique|findFirst|createMany|updateMany|deleteMany|upsert|\$transaction|\$queryRaw|\$executeRaw|@@index|@@unique|@@id|@relation|prisma\s+studio/i;
 
-    if (prismaPattern.test(transcript)) {
+    // Pattern categories for detection
+    const patterns = {
+      // Schema file and models
+      schema: /schema\.prisma|prisma\/schema|model\s+\w+\s*\{|@id|@unique|@default|@@index|@@unique|@@map/i,
+
+      // Skill names
+      skills: /prisma-dev|prisma-schema|prisma-queries|prisma-migrations|prisma-recon|prisma-troubleshoot/i,
+
+      // Client and queries
+      queries: /PrismaClient|@prisma\/client|findMany|findUnique|findFirst|findFirstOrThrow|findUniqueOrThrow|createMany|updateMany|deleteMany|upsert|aggregate|groupBy|count/i,
+
+      // Relations and joins
+      relations: /@relation|include\s*:|select\s*:|_count|connect|disconnect|set|connectOrCreate/i,
+
+      // Migrations
+      migrations: /prisma\s+migrate|migration\s+\w+|prisma\s+db\s+push|prisma\s+db\s+pull|migrate\s+dev|migrate\s+deploy|migrate\s+reset|migrate\s+status/i,
+
+      // Raw queries and transactions
+      rawQueries: /\$queryRaw|\$executeRaw|\$transaction|interactive\s+transaction/i,
+
+      // Error codes
+      errors: /P1\d{3}|P2\d{3}|P3\d{3}|prisma.*error|PrismaClientKnownRequestError|PrismaClientValidationError/i,
+
+      // Generation and introspection
+      generation: /prisma\s+generate|prisma\s+studio|prisma\s+format|prisma\s+validate|prisma\s+init/i,
+
+      // Connection and configuration
+      connection: /DATABASE_URL|datasource\s+db|provider\s*=|prisma.*connection|connection\s+pool/i,
+
+      // General mentions
+      general: /\bprisma\s*(orm|client|schema|model|query)\b/i
+    };
+
+    // Check if any pattern matches
+    let matched = false;
+    const matchedCategories = [];
+
+    for (const [category, pattern] of Object.entries(patterns)) {
+      if (pattern.test(transcript)) {
+        matched = true;
+        matchedCategories.push(category);
+      }
+    }
+
+    if (matched) {
+      // Build contextual message based on what was detected
+      let reason = "This session involved Prisma work";
+
+      if (matchedCategories.includes('migrations')) {
+        reason += " (migrations)";
+      } else if (matchedCategories.includes('schema') || matchedCategories.includes('relations')) {
+        reason += " (schema design)";
+      } else if (matchedCategories.includes('queries') || matchedCategories.includes('rawQueries')) {
+        reason += " (queries and data access)";
+      } else if (matchedCategories.includes('errors')) {
+        reason += " (error handling)";
+      } else if (matchedCategories.includes('connection')) {
+        reason += " (connection configuration)";
+      }
+
+      reason += ". Consider capturing learnings:\n";
+      reason += "- Successful Patterns: Working schema designs or queries\n";
+      reason += "- Mistakes to Avoid: Errors encountered and solutions\n";
+      reason += "- Schema Patterns: Reusable model/relation patterns\n";
+      reason += "- Query Optimizations: Performance improvements";
+
       console.log(JSON.stringify({
         ok: false,
-        reason: "This session involved Prisma development. Consider capturing any learnings to the plugin cache."
+        reason: reason
       }));
       process.exit(0);
     }

@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 // Check if session involved WezTerm config work and prompt for learnings capture
-// JavaScript version of check-wezterm-learnings.sh
+// JavaScript version with enhanced pattern matching for:
+// - Successful Patterns
+// - Mistakes to Avoid
+// - Plugin Patterns
+// - Configuration Discoveries
 
 const fs = require('fs');
 
@@ -32,13 +36,78 @@ process.stdin.on('end', () => {
 
     // Read transcript and check for WezTerm-related work
     const transcript = fs.readFileSync(transcriptPath, 'utf8');
-    // Match: config files, skill names, API terms, plugin development
-    const weztermPattern = /wezterm\.lua|\.wezterm|wezterm-dev|wezterm config|wezterm-keybindings|wezterm-visual|wezterm-tabs|wezterm-agent-deck|agent_deck|get_agent_state|count_agents_by_status|config\.leader|wezterm\.action|wezterm\.plugin|SplitVertical|SplitHorizontal|ActivatePaneDirection|AdjustPaneSize|format-tab-title|update-status|wezterm\.on\s*\(/i;
 
-    if (weztermPattern.test(transcript)) {
+    // Pattern categories for detection
+    const patterns = {
+      // Config file and paths
+      config: /wezterm\.lua|\.wezterm\.lua|\.config\/wezterm|wezterm\.config_builder/i,
+
+      // Skill names
+      skills: /wezterm-dev|wezterm-keybindings|wezterm-visual|wezterm-tabs|wezterm-agent-deck|wezterm-troubleshoot/i,
+
+      // Keybindings and leader key
+      keybindings: /config\.leader|config\.keys|SendKey|SplitVertical|SplitHorizontal|ActivatePaneDirection|AdjustPaneSize|ActivateTab|CloseCurrentPane|SpawnTab|key\s*=\s*['"][^'"]+['"]\s*,\s*mods\s*=/i,
+
+      // Visual customization
+      visual: /window_background_opacity|window_decorations|color_scheme|font_size|font\s*=\s*wezterm\.font|tab_bar_at_bottom|use_fancy_tab_bar|window_frame|cursor_blink/i,
+
+      // Tab bar and status
+      tabs: /format-tab-title|update-status|tab_bar_style|wezterm\.format|wezterm\.nerdfonts|process_icons|get_cwd|get_process_name/i,
+
+      // Plugin development
+      plugins: /wezterm\.plugin|plugin\.require|plugin:require|wezterm\.on\s*\(|wezterm\.action\.|wezterm\.action_callback/i,
+
+      // Agent Deck integration
+      agentDeck: /agent_deck|get_agent_state|count_agents_by_status|agent-deck|AgentDeck/i,
+
+      // Multiplexing and panes
+      multiplexing: /mux:get_active|mux:get_domain|spawn|PaneSelect|RotatePanes|TogglePaneZoom|unix_domain|ssh_domain/i,
+
+      // Events and callbacks
+      events: /wezterm\.on\s*\(['"]|update-right-status|bell|window-config-reloaded|window-resized|window-focus-changed/i,
+
+      // General mentions
+      general: /\bwezterm\s*(terminal|config|configuration|theme)\b/i
+    };
+
+    // Check if any pattern matches
+    let matched = false;
+    const matchedCategories = [];
+
+    for (const [category, pattern] of Object.entries(patterns)) {
+      if (pattern.test(transcript)) {
+        matched = true;
+        matchedCategories.push(category);
+      }
+    }
+
+    if (matched) {
+      // Build contextual message based on what was detected
+      let reason = "This session involved WezTerm work";
+
+      if (matchedCategories.includes('keybindings')) {
+        reason += " (keybindings)";
+      } else if (matchedCategories.includes('plugins') || matchedCategories.includes('events')) {
+        reason += " (plugin/event development)";
+      } else if (matchedCategories.includes('visual')) {
+        reason += " (visual customization)";
+      } else if (matchedCategories.includes('tabs')) {
+        reason += " (tab bar customization)";
+      } else if (matchedCategories.includes('agentDeck')) {
+        reason += " (Agent Deck integration)";
+      } else if (matchedCategories.includes('multiplexing')) {
+        reason += " (multiplexing/panes)";
+      }
+
+      reason += ". Consider capturing learnings:\n";
+      reason += "- Successful Patterns: Working configurations or Lua code\n";
+      reason += "- Mistakes to Avoid: Errors encountered and solutions\n";
+      reason += "- Plugin Patterns: Reusable plugin techniques\n";
+      reason += "- Configuration Discoveries: Useful options or settings";
+
       console.log(JSON.stringify({
         ok: false,
-        reason: "This session involved WezTerm configuration. Consider capturing any learnings to the plugin cache."
+        reason: reason
       }));
       process.exit(0);
     }

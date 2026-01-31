@@ -1,12 +1,32 @@
 ---
 name: wezterm-troubleshoot
-description: Use this agent when the user says "wezterm not working", "fix wezterm", "debug wezterm", "wezterm issue", "wezterm problem", "wezterm error", "why is my wezterm config not working", "wezterm won't start", "wezterm crash", or asks troubleshooting questions about WezTerm behavior.
+description: |
+  Use this agent when the user says "wezterm not working", "fix wezterm", "debug wezterm", "wezterm issue", "wezterm problem", "wezterm error", "why is my wezterm config not working", "wezterm won't start", "wezterm crash", or asks troubleshooting questions about WezTerm behavior.
+
+  <example>
+  Context: User experiencing WezTerm issues
+  user: "wezterm not working"
+  assistant: "I'll use the wezterm-troubleshoot agent to diagnose this."
+  <commentary>
+  Troubleshooting request detected. Delegate to debugging agent.
+  </commentary>
+  </example>
+
+  <example>
+  Context: User has keybinding problems
+  user: "my leader key isn't working in wezterm"
+  assistant: "I'll use the wezterm-troubleshoot agent to investigate the keybinding issue."
+  <commentary>
+  Keybinding issue reported. Delegate to troubleshoot agent for systematic diagnosis.
+  </commentary>
+  </example>
 tools:
   - Read
   - Bash
   - Grep
   - Glob
   - WebFetch
+model: sonnet
 ---
 
 # WezTerm Troubleshoot Agent

@@ -1,12 +1,32 @@
 ---
 name: prisma-troubleshoot
-description: Use this agent when the user says "prisma not working", "fix prisma", "debug prisma", "prisma error", "prisma issue", "prisma problem", "migration failed", "prisma generate error", "database connection error", "P1001", "P2002", or asks troubleshooting questions about Prisma behavior.
+description: |
+  Use this agent when the user says "prisma not working", "fix prisma", "debug prisma", "prisma error", "prisma issue", "prisma problem", "migration failed", "prisma generate error", "database connection error", "P1001", "P2002", or asks troubleshooting questions about Prisma behavior.
+
+  <example>
+  Context: User experiencing Prisma errors
+  user: "prisma not working"
+  assistant: "I'll use the prisma-troubleshoot agent to diagnose this."
+  <commentary>
+  Troubleshooting request detected. Delegate to debugging agent.
+  </commentary>
+  </example>
+
+  <example>
+  Context: User has migration problems
+  user: "my prisma migration failed with P3006"
+  assistant: "I'll use the prisma-troubleshoot agent to investigate the migration failure."
+  <commentary>
+  Migration error reported. Delegate to troubleshoot agent for systematic diagnosis.
+  </commentary>
+  </example>
 tools:
   - Read
   - Bash
   - Grep
   - Glob
   - WebFetch
+model: sonnet
 ---
 
 # Prisma Troubleshoot Agent

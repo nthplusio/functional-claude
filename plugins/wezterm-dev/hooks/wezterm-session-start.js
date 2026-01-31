@@ -1,13 +1,14 @@
 #!/usr/bin/env node
-// shadcn-session-start.js
-// SessionStart hook that detects shadcn/ui setup and refreshes cache
+// wezterm-session-start.js
+// SessionStart hook that detects WezTerm version and refreshes cache
 //
 // Input: JSON with session info on stdin
-// Output: JSON with systemMessage containing status
+// Output: JSON with systemMessage containing version and cache status
 
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+const { execSync } = require('child_process');
 
 // Read JSON input from stdin
 let input = '';
@@ -29,7 +30,7 @@ process.stdin.on('end', async () => {
     }
 
     const cacheDir = path.join(pluginRoot, '.cache');
-    const configCachePath = path.join(cacheDir, 'shadcn-config.json');
+    const configCachePath = path.join(cacheDir, 'wezterm-config.json');
     const docsIndexPath = path.join(cacheDir, 'docs-index.json');
     const learningsPath = path.join(cacheDir, 'learnings.md');
 
@@ -38,8 +39,8 @@ process.stdin.on('end', async () => {
       fs.mkdirSync(cacheDir, { recursive: true });
     }
 
-    // Detect shadcn/ui setup in project
-    const shadcnInfo = detectShadcnSetup(projectDir);
+    // Detect WezTerm version and installation
+    const weztermInfo = detectWeztermVersion();
 
     // Check if we have a cached config
     let cachedConfig = null;
@@ -51,23 +52,20 @@ process.stdin.on('end', async () => {
       }
     }
 
-    // Check if config changed or cache is stale (>24h)
+    // Check if version changed or cache is stale (>24h)
     const now = new Date();
     const today = now.toISOString().split('T')[0];
     const needsRefresh = !cachedConfig ||
-      cachedConfig.style !== shadcnInfo.style ||
+      cachedConfig.detected_version !== weztermInfo.version ||
       !cachedConfig.detection_timestamp ||
       (now - new Date(cachedConfig.detection_timestamp)) > 24 * 60 * 60 * 1000;
 
     // Update config cache
     const newConfig = {
-      detected: shadcnInfo.detected,
-      style: shadcnInfo.style,
-      base_color: shadcnInfo.baseColor,
-      components_path: shadcnInfo.componentsPath,
-      installed_components: shadcnInfo.installedComponents,
+      detected_version: weztermInfo.version,
+      detection_method: weztermInfo.method,
       detection_timestamp: now.toISOString(),
-      config_path: shadcnInfo.configPath
+      config_path: weztermInfo.config_path
     };
 
     fs.writeFileSync(configCachePath, JSON.stringify(newConfig, null, 2));
@@ -90,11 +88,9 @@ process.stdin.on('end', async () => {
       fs.writeFileSync(docsIndexPath, JSON.stringify({
         last_refresh: today,
         sources: [
-          { name: 'shadcn-cli', url: 'https://ui.shadcn.com/docs/cli', type: 'webfetch' },
-          { name: 'shadcn-components', url: 'https://ui.shadcn.com/docs/components', type: 'webfetch' },
-          { name: 'tailwindcss', library_id: '/tailwindlabs/tailwindcss', type: 'context7' },
-          { name: 'radix-ui', library_id: '/radix-ui/primitives', type: 'context7' },
-          { name: 'react-hook-form', library_id: '/react-hook-form/react-hook-form', type: 'context7' }
+          { name: 'wezterm-docs', url: 'https://wezfurlong.org/wezterm/', type: 'webfetch' },
+          { name: 'wezterm-config', url: 'https://wezfurlong.org/wezterm/config/files.html', type: 'webfetch' },
+          { name: 'wezterm-lua', url: 'https://wezfurlong.org/wezterm/config/lua/wezterm/', type: 'webfetch' }
         ]
       }, null, 2));
 
@@ -105,30 +101,22 @@ process.stdin.on('end', async () => {
     // Build summary message - positive framing, minimal noise
     const parts = [];
 
-    if (shadcnInfo.detected) {
-      if (shadcnInfo.style) {
-        parts.push(`shadcn/ui (${shadcnInfo.style})`);
-      } else {
-        parts.push('shadcn/ui ready');
-      }
-
-      // Only mention components if there are any
-      if (shadcnInfo.installedComponents.length > 0) {
-        const compWord = shadcnInfo.installedComponents.length === 1 ? 'component' : 'components';
-        parts.push(`${shadcnInfo.installedComponents.length} ${compWord}`);
-      }
+    if (weztermInfo.version) {
+      parts.push(`WezTerm ${weztermInfo.version}`);
+    } else if (weztermInfo.config_path) {
+      parts.push('WezTerm ready');
     } else {
-      // No shadcn config found
+      // No config found at all
       console.log(JSON.stringify({
         continue: true,
-        systemMessage: '[shadcn-dev] No components.json found'
+        systemMessage: '[wezterm-dev] No WezTerm config found'
       }));
       process.exit(0);
     }
 
     console.log(JSON.stringify({
       continue: true,
-      systemMessage: `[shadcn-dev] ${parts.join(', ')}`
+      systemMessage: `[wezterm-dev] ${parts.join(', ')}`
     }));
     process.exit(0);
 
@@ -146,67 +134,124 @@ process.stdin.on('error', () => {
 });
 
 /**
- * Detect shadcn/ui setup in project
+ * Detect WezTerm version using multiple methods
  */
-function detectShadcnSetup(projectDir) {
+function detectWeztermVersion() {
   const result = {
-    detected: false,
-    style: null,
-    baseColor: null,
-    componentsPath: null,
-    configPath: null,
-    installedComponents: []
+    version: null,
+    method: 'none',
+    config_path: null
   };
 
-  // Look for components.json
-  const configPaths = [
-    path.join(projectDir, 'components.json'),
-    path.join(projectDir, 'src', 'components.json')
-  ];
-
+  // Find config file
+  const configPaths = getWeztermConfigPaths();
   for (const configPath of configPaths) {
     if (fs.existsSync(configPath)) {
-      result.configPath = configPath;
-      result.detected = true;
-
-      try {
-        const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-        result.style = config.style || null;
-        result.baseColor = config.tailwind?.baseColor || null;
-
-        // Get components path from aliases
-        if (config.aliases?.components) {
-          // Convert alias like "@/components" to actual path
-          const alias = config.aliases.components;
-          if (alias.startsWith('@/')) {
-            result.componentsPath = path.join(projectDir, alias.slice(2));
-          } else {
-            result.componentsPath = path.join(projectDir, alias);
-          }
-        }
-      } catch (e) {
-        // Config exists but can't be parsed
-      }
+      result.config_path = configPath;
       break;
     }
   }
 
-  // Find installed components
-  if (result.componentsPath) {
-    const uiPath = path.join(result.componentsPath, 'ui');
-    if (fs.existsSync(uiPath)) {
-      try {
-        const files = fs.readdirSync(uiPath);
-        result.installedComponents = files
-          .filter(f => f.endsWith('.tsx') || f.endsWith('.jsx'))
-          .map(f => f.replace(/\.(tsx|jsx)$/, ''));
-      } catch (e) {
-        // Can't read directory
+  // Method 1: Try CLI command
+  try {
+    const output = execSync('wezterm --version', {
+      encoding: 'utf8',
+      timeout: 5000,
+      stdio: ['pipe', 'pipe', 'pipe']
+    }).trim();
+
+    // Parse version from output like "wezterm 20230712-072601-f4abf8fd"
+    const versionMatch = output.match(/wezterm\s+(\d{8}-\d{6}-[a-f0-9]+|\d+\.\d+\.\d+)/i);
+    if (versionMatch) {
+      result.version = versionMatch[1];
+      result.method = 'cli';
+      return result;
+    }
+  } catch (e) {
+    // CLI not available
+  }
+
+  // Method 2: Check common installation paths
+  const platform = process.platform;
+
+  if (platform === 'darwin') {
+    // macOS: Check app bundle
+    const appPaths = [
+      '/Applications/WezTerm.app/Contents/Info.plist',
+      `${process.env.HOME}/Applications/WezTerm.app/Contents/Info.plist`
+    ];
+
+    for (const appPath of appPaths) {
+      if (fs.existsSync(appPath)) {
+        try {
+          const plist = fs.readFileSync(appPath, 'utf8');
+          const versionMatch = plist.match(/<key>CFBundleShortVersionString<\/key>\s*<string>([^<]+)<\/string>/);
+          if (versionMatch) {
+            result.version = versionMatch[1];
+            result.method = 'app_bundle';
+            return result;
+          }
+        } catch (e) {
+          // Can't read plist
+        }
+      }
+    }
+  } else if (platform === 'win32') {
+    // Windows: Check common installation paths
+    const programFiles = process.env.PROGRAMFILES || 'C:\\Program Files';
+
+    // Try to find wezterm installation
+    const appPaths = [
+      path.join(programFiles, 'WezTerm', 'wezterm.exe'),
+      path.join(programFiles, 'WezTerm', 'wezterm-gui.exe')
+    ];
+
+    for (const appPath of appPaths) {
+      if (fs.existsSync(appPath)) {
+        result.method = 'app_found';
+        // Can't easily get version from exe, but we know it's installed
+        break;
+      }
+    }
+  } else if (platform === 'linux') {
+    // Linux: Check common paths
+    const appPaths = [
+      '/usr/bin/wezterm',
+      '/usr/local/bin/wezterm',
+      `${process.env.HOME}/.local/bin/wezterm`
+    ];
+
+    for (const appPath of appPaths) {
+      if (fs.existsSync(appPath)) {
+        result.method = 'app_found';
+        break;
       }
     }
   }
 
   return result;
+}
+
+/**
+ * Get platform-specific WezTerm config paths
+ */
+function getWeztermConfigPaths() {
+  const platform = process.platform;
+  const home = process.env.HOME || process.env.USERPROFILE || '';
+
+  if (platform === 'win32') {
+    return [
+      path.join(home, '.wezterm.lua'),
+      path.join(home, '.config', 'wezterm', 'wezterm.lua')
+    ];
+  } else {
+    // macOS and Linux
+    const configHome = process.env.XDG_CONFIG_HOME || path.join(home, '.config');
+    return [
+      path.join(home, '.wezterm.lua'),
+      path.join(configHome, 'wezterm', 'wezterm.lua')
+    ];
+  }
 }
 
 /**
@@ -265,7 +310,7 @@ function extractTextFromHtml(html) {
 }
 
 /**
- * Fetch and cache shadcn documentation
+ * Fetch and cache WezTerm documentation
  */
 async function refreshLearningsCache(cacheDir, today, learningsPath) {
   // Read existing learnings to preserve them
@@ -310,27 +355,14 @@ async function refreshLearningsCache(cacheDir, today, learningsPath) {
   // Fetch documentation from sources
   const docSections = [];
 
-  // Fetch CLI docs
+  // Fetch main docs page
   try {
-    const cliHtml = await fetchUrl('https://ui.shadcn.com/docs/cli');
-    const text = extractTextFromHtml(cliHtml);
-
-    if (text.length > 100) {
-      const snippet = text.slice(0, 800).replace(/\s+/g, ' ');
-      docSections.push(`### CLI Reference (fetched)\n\n${snippet}...`);
-    }
-  } catch (e) {
-    // Skip on error
-  }
-
-  // Fetch components overview
-  try {
-    const componentsHtml = await fetchUrl('https://ui.shadcn.com/docs/components');
-    const text = extractTextFromHtml(componentsHtml);
+    const docsHtml = await fetchUrl('https://wezfurlong.org/wezterm/');
+    const text = extractTextFromHtml(docsHtml);
 
     if (text.length > 100) {
       const snippet = text.slice(0, 600).replace(/\s+/g, ' ');
-      docSections.push(`### Components Overview (fetched)\n\n${snippet}...`);
+      docSections.push(`### Overview (fetched)\n\n${snippet}...`);
     }
   } catch (e) {
     // Skip on error
@@ -339,27 +371,50 @@ async function refreshLearningsCache(cacheDir, today, learningsPath) {
   // Add static reference (always available)
   docSections.push(`### Quick Reference
 
-**CLI Commands:**
-\`\`\`bash
-npx shadcn@latest init     # Initialize project
-npx shadcn@latest add      # Add components
-npx shadcn@latest diff     # Check for updates
+**Config File Locations:**
+- Windows: \`~/.wezterm.lua\`
+- macOS/Linux: \`~/.wezterm.lua\` or \`~/.config/wezterm/wezterm.lua\`
+
+**Basic Config Structure:**
+\`\`\`lua
+local wezterm = require 'wezterm'
+local config = wezterm.config_builder()
+
+-- Your config here
+config.font = wezterm.font('JetBrains Mono')
+config.color_scheme = 'Catppuccin Mocha'
+
+return config
 \`\`\`
 
-**Init Flags:** \`-y\` (yes), \`-d\` (defaults), \`-c <path>\` (cwd), \`-s\` (silent)
-**Add Flags:** \`-y\` (yes), \`-o\` (overwrite), \`-a\` (all), \`-p <path>\` (path)
+**Keybinding Format:**
+\`\`\`lua
+config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1000 }
+config.keys = {
+  { key = '|', mods = 'LEADER', action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' } },
+  { key = '-', mods = 'LEADER', action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' } },
+}
+\`\`\`
 
-**Component Categories:**
-- Layout: aspect-ratio, collapsible, resizable, scroll-area, separator
-- Forms: button, checkbox, form, input, label, radio-group, select, slider, switch, textarea
-- Data: avatar, badge, calendar, card, carousel, chart, table
-- Feedback: alert, alert-dialog, dialog, drawer, popover, sheet, sonner, toast, tooltip
-- Navigation: breadcrumb, command, context-menu, dropdown-menu, menubar, navigation-menu, pagination, sidebar, tabs
+**Common Actions:**
+- \`SplitHorizontal\`, \`SplitVertical\` - Split panes
+- \`ActivatePaneDirection\` - Move between panes
+- \`AdjustPaneSize\` - Resize panes
+- \`SpawnTab\` - New tab
+- \`CloseCurrentPane\` - Close current pane
 
-**Context7 Sources for Deep Docs:**
-- Tailwind CSS: \`/tailwindlabs/tailwindcss\`
-- Radix UI: \`/radix-ui/primitives\`
-- React Hook Form: \`/react-hook-form/react-hook-form\``);
+**Event Handlers:**
+\`\`\`lua
+wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
+  return { { Text = tab.active_pane.title } }
+end)
+\`\`\`
+
+**Nerd Fonts:**
+\`\`\`lua
+wezterm.nerdfonts.fa_folder  --
+wezterm.nerdfonts.dev_git    --
+\`\`\``);
 
   // Build the learnings.md content
   const learningsContent = `---
@@ -381,7 +436,9 @@ ${existingLearnings || `### Successful Patterns
 
 ### Mistakes to Avoid
 
-### Component Customizations`}
+### Plugin Patterns
+
+### Configuration Discoveries`}
 `;
 
   fs.writeFileSync(learningsPath, learningsContent);

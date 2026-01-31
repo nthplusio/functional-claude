@@ -704,6 +704,204 @@ The plugin automatically maintains a documentation cache at `${CLAUDE_PLUGIN_ROO
 - Never commit .env files with real values
 - Root security hook blocks sensitive data automatically
 
+## Canonical Hook Patterns
+
+This section documents the standard patterns that all plugins should follow. Each plugin maintains its own copy of these utilities since plugins are installed in isolation.
+
+### SessionStart Hook Pattern
+
+SessionStart hooks should do work in the hook itself (not delegate to agents) and output user-friendly status messages.
+
+**Standard Output Format:**
+```
+[plugin-name] Brief status (e.g., "Hyper 3.4.1, 5 plugins")
+```
+
+**Reference Implementation:** `plugins/hyper-dev/hooks/hyper-session-start.js`
+
+**Key Components:**
+1. Detect installation/version
+2. Check cache staleness
+3. Refresh documentation cache asynchronously (don't block session)
+4. Output user-friendly status message
+
+**Utility Functions (copy to each plugin):**
+
+```javascript
+// Fetch URL with timeout and redirect handling
+function fetchUrl(url, timeout = 10000) {
+  return new Promise((resolve, reject) => {
+    const request = https.get(url, { timeout }, (res) => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        fetchUrl(res.headers.location, timeout).then(resolve).catch(reject);
+        return;
+      }
+      if (res.statusCode !== 200) {
+        reject(new Error(`HTTP ${res.statusCode}`));
+        return;
+      }
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => resolve(data));
+    });
+    request.on('error', reject);
+    request.on('timeout', () => { request.destroy(); reject(new Error('Request timeout')); });
+  });
+}
+
+// Extract text from HTML for caching
+function extractTextFromHtml(html) {
+  let text = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+  text = text.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+  text = text.replace(/<[^>]+>/g, ' ');
+  text = text.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<');
+  text = text.replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+  return text.replace(/\s+/g, ' ').trim();
+}
+```
+
+### Learnings Capture (Stop Hook) Pattern
+
+Stop hooks should use rich category-based pattern matching with contextual messages.
+
+**Reference Implementation:** `plugins/hyper-dev/hooks/check-hyper-learnings.js`
+
+**Standard Structure:**
+
+```javascript
+const patterns = {
+  config: /...config file patterns.../i,
+  skills: /...skill name patterns.../i,
+  api: /...API term patterns.../i,
+  // plugin-specific categories
+};
+
+// Match patterns and build contextual message
+const matchedCategories = [];
+for (const [category, pattern] of Object.entries(patterns)) {
+  if (pattern.test(transcript)) {
+    matchedCategories.push(category);
+  }
+}
+
+if (matchedCategories.length > 0) {
+  let reason = "This session involved [plugin] work";
+  if (matchedCategories.includes('specific_category')) {
+    reason += " (specific context)";
+  }
+  reason += ". Consider capturing learnings:\n";
+  reason += "- Successful Patterns: ...\n";
+  reason += "- Mistakes to Avoid: ...\n";
+  // plugin-specific categories
+}
+```
+
+**Standard Learnings Categories:**
+- Successful Patterns
+- Mistakes to Avoid
+- Plugin-specific category (e.g., "Plugin Patterns", "Schema Patterns")
+- Discovery category (e.g., "Configuration Discoveries", "Ecosystem Discoveries")
+
+### Backup Verification (PreToolUse) Pattern
+
+PreToolUse hooks should protect config files by requiring dated backups before edits.
+
+**Reference Implementation:** `plugins/hyper-dev/hooks/verify-hyper-backup.js`
+
+**Key Features:**
+1. Check if target file matches protected patterns
+2. Look for backup with today's date: `{file}.bak.YYYY-MM-DD`
+3. Block with clear instructions if no backup found
+4. Always allow on errors (fail open)
+
+### Agent Frontmatter Standards
+
+All agents should include these fields:
+
+```yaml
+---
+name: agent-name
+description: |
+  Description with trigger phrases.
+
+  <example>
+  Context: When this triggers
+  user: "example request"
+  assistant: "I'll use the agent-name agent to handle this."
+  <commentary>
+  Why this triggers the agent.
+  </commentary>
+  </example>
+tools:
+  - Read
+  - Bash
+  - Grep
+  - Glob
+  - WebFetch
+model: sonnet
+---
+```
+
+**Required Fields:**
+- `name`: kebab-case identifier
+- `description`: Multi-line with trigger phrases AND example block(s)
+- `tools`: Minimal set needed for the agent's task
+- `model`: Usually `sonnet` for troubleshooting agents
+
+### Cache Architecture Standards
+
+All plugins with caching should follow this structure:
+
+```
+.cache/
+├── sources.json           # What to fetch and when
+├── {plugin}-config.json   # Installation/version detection
+├── docs-index.json        # Fetch timestamps
+└── learnings.md           # Docs + user learnings
+```
+
+**sources.json Schema:**
+```json
+{
+  "$schema": "https://anthropic.com/claude-code/cache-sources.schema.json",
+  "refresh_interval_days": 7,
+  "sources": [
+    {
+      "name": "Source Name",
+      "url": "https://example.com/docs",
+      "prompt": "Instructions for extracting content",
+      "section": "Section header in learnings.md"
+    }
+  ],
+  "preserve_sections": ["Learnings", "Successful Patterns", "Mistakes to Avoid"]
+}
+```
+
+**learnings.md Format:**
+```markdown
+---
+last_refresh: YYYY-MM-DD
+cache_version: 1
+learnings_count: N
+settings:
+  auto_refresh: true
+  capture_learnings: true
+---
+
+## Reference Cache
+
+### Section Name
+[Cached content]
+
+## Learnings
+
+### Successful Patterns
+[User learnings - preserved across refreshes]
+
+### Mistakes to Avoid
+[User learnings - preserved across refreshes]
+```
+
 ## Official Documentation
 
 - **Claude Code Plugins Reference**: https://code.claude.com/docs/en/plugins-reference

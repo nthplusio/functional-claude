@@ -1,6 +1,17 @@
 {
-  "description": "Claude plugin development hooks for learnings capture",
+  "description": "Claude plugin development hooks - cache refresh and learnings capture",
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/plugin-dev-session-start.js\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// shadcn-session-start.js
-// SessionStart hook that detects shadcn/ui setup and refreshes cache
+// plugin-dev-session-start.js
+// SessionStart hook that detects plugin development context and refreshes cache
 //
 // Input: JSON with session info on stdin
 // Output: JSON with systemMessage containing status
@@ -29,7 +29,7 @@ process.stdin.on('end', async () => {
     }
 
     const cacheDir = path.join(pluginRoot, '.cache');
-    const configCachePath = path.join(cacheDir, 'shadcn-config.json');
+    const configCachePath = path.join(cacheDir, 'plugin-dev-config.json');
     const docsIndexPath = path.join(cacheDir, 'docs-index.json');
     const learningsPath = path.join(cacheDir, 'learnings.md');
 
@@ -38,8 +38,8 @@ process.stdin.on('end', async () => {
       fs.mkdirSync(cacheDir, { recursive: true });
     }
 
-    // Detect shadcn/ui setup in project
-    const shadcnInfo = detectShadcnSetup(projectDir);
+    // Detect plugin development context
+    const pluginInfo = detectPluginContext(projectDir);
 
     // Check if we have a cached config
     let cachedConfig = null;
@@ -55,19 +55,15 @@ process.stdin.on('end', async () => {
     const now = new Date();
     const today = now.toISOString().split('T')[0];
     const needsRefresh = !cachedConfig ||
-      cachedConfig.style !== shadcnInfo.style ||
       !cachedConfig.detection_timestamp ||
       (now - new Date(cachedConfig.detection_timestamp)) > 24 * 60 * 60 * 1000;
 
     // Update config cache
     const newConfig = {
-      detected: shadcnInfo.detected,
-      style: shadcnInfo.style,
-      base_color: shadcnInfo.baseColor,
-      components_path: shadcnInfo.componentsPath,
-      installed_components: shadcnInfo.installedComponents,
-      detection_timestamp: now.toISOString(),
-      config_path: shadcnInfo.configPath
+      is_plugin_project: pluginInfo.isPluginProject,
+      is_marketplace: pluginInfo.isMarketplace,
+      plugin_count: pluginInfo.pluginCount,
+      detection_timestamp: now.toISOString()
     };
 
     fs.writeFileSync(configCachePath, JSON.stringify(newConfig, null, 2));
@@ -90,11 +86,7 @@ process.stdin.on('end', async () => {
       fs.writeFileSync(docsIndexPath, JSON.stringify({
         last_refresh: today,
         sources: [
-          { name: 'shadcn-cli', url: 'https://ui.shadcn.com/docs/cli', type: 'webfetch' },
-          { name: 'shadcn-components', url: 'https://ui.shadcn.com/docs/components', type: 'webfetch' },
-          { name: 'tailwindcss', library_id: '/tailwindlabs/tailwindcss', type: 'context7' },
-          { name: 'radix-ui', library_id: '/radix-ui/primitives', type: 'context7' },
-          { name: 'react-hook-form', library_id: '/react-hook-form/react-hook-form', type: 'context7' }
+          { name: 'claude-code-plugins', url: 'https://code.claude.com/docs/en/plugins-reference', type: 'webfetch' }
         ]
       }, null, 2));
 
@@ -105,30 +97,17 @@ process.stdin.on('end', async () => {
     // Build summary message - positive framing, minimal noise
     const parts = [];
 
-    if (shadcnInfo.detected) {
-      if (shadcnInfo.style) {
-        parts.push(`shadcn/ui (${shadcnInfo.style})`);
-      } else {
-        parts.push('shadcn/ui ready');
-      }
-
-      // Only mention components if there are any
-      if (shadcnInfo.installedComponents.length > 0) {
-        const compWord = shadcnInfo.installedComponents.length === 1 ? 'component' : 'components';
-        parts.push(`${shadcnInfo.installedComponents.length} ${compWord}`);
-      }
+    if (pluginInfo.isMarketplace) {
+      parts.push(`Marketplace (${pluginInfo.pluginCount} plugins)`);
+    } else if (pluginInfo.isPluginProject) {
+      parts.push('Plugin project detected');
     } else {
-      // No shadcn config found
-      console.log(JSON.stringify({
-        continue: true,
-        systemMessage: '[shadcn-dev] No components.json found'
-      }));
-      process.exit(0);
+      parts.push('Plugin dev ready');
     }
 
     console.log(JSON.stringify({
       continue: true,
-      systemMessage: `[shadcn-dev] ${parts.join(', ')}`
+      systemMessage: `[claude-plugin-dev] ${parts.join(', ')}`
     }));
     process.exit(0);
 
@@ -146,63 +125,53 @@ process.stdin.on('error', () => {
 });
 
 /**
- * Detect shadcn/ui setup in project
+ * Detect plugin development context
  */
-function detectShadcnSetup(projectDir) {
+function detectPluginContext(projectDir) {
   const result = {
-    detected: false,
-    style: null,
-    baseColor: null,
-    componentsPath: null,
-    configPath: null,
-    installedComponents: []
+    isPluginProject: false,
+    isMarketplace: false,
+    pluginCount: 0
   };
 
-  // Look for components.json
-  const configPaths = [
-    path.join(projectDir, 'components.json'),
-    path.join(projectDir, 'src', 'components.json')
-  ];
-
-  for (const configPath of configPaths) {
-    if (fs.existsSync(configPath)) {
-      result.configPath = configPath;
-      result.detected = true;
-
-      try {
-        const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-        result.style = config.style || null;
-        result.baseColor = config.tailwind?.baseColor || null;
-
-        // Get components path from aliases
-        if (config.aliases?.components) {
-          // Convert alias like "@/components" to actual path
-          const alias = config.aliases.components;
-          if (alias.startsWith('@/')) {
-            result.componentsPath = path.join(projectDir, alias.slice(2));
-          } else {
-            result.componentsPath = path.join(projectDir, alias);
-          }
-        }
-      } catch (e) {
-        // Config exists but can't be parsed
+  // Check for marketplace.json (indicates this is a marketplace repo)
+  const marketplacePath = path.join(projectDir, '.claude-plugin', 'marketplace.json');
+  if (fs.existsSync(marketplacePath)) {
+    result.isMarketplace = true;
+    try {
+      const marketplace = JSON.parse(fs.readFileSync(marketplacePath, 'utf8'));
+      if (marketplace.plugins && Array.isArray(marketplace.plugins)) {
+        result.pluginCount = marketplace.plugins.length;
       }
-      break;
+    } catch (e) {
+      // Can't parse marketplace.json
     }
   }
 
-  // Find installed components
-  if (result.componentsPath) {
-    const uiPath = path.join(result.componentsPath, 'ui');
-    if (fs.existsSync(uiPath)) {
-      try {
-        const files = fs.readdirSync(uiPath);
-        result.installedComponents = files
-          .filter(f => f.endsWith('.tsx') || f.endsWith('.jsx'))
-          .map(f => f.replace(/\.(tsx|jsx)$/, ''));
-      } catch (e) {
-        // Can't read directory
+  // Check for plugin.json (indicates this is a plugin)
+  const pluginJsonPath = path.join(projectDir, '.claude-plugin', 'plugin.json');
+  if (fs.existsSync(pluginJsonPath)) {
+    result.isPluginProject = true;
+  }
+
+  // Check for plugins directory (marketplace structure)
+  const pluginsDir = path.join(projectDir, 'plugins');
+  if (fs.existsSync(pluginsDir)) {
+    try {
+      const entries = fs.readdirSync(pluginsDir, { withFileTypes: true });
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          const pluginJson = path.join(pluginsDir, entry.name, '.claude-plugin', 'plugin.json');
+          if (fs.existsSync(pluginJson)) {
+            result.isPluginProject = true;
+            if (!result.isMarketplace) {
+              result.pluginCount++;
+            }
+          }
+        }
       }
+    } catch (e) {
+      // Can't read plugins directory
     }
   }
 
@@ -265,7 +234,7 @@ function extractTextFromHtml(html) {
 }
 
 /**
- * Fetch and cache shadcn documentation
+ * Fetch and cache plugin development documentation
  */
 async function refreshLearningsCache(cacheDir, today, learningsPath) {
   // Read existing learnings to preserve them
@@ -310,27 +279,14 @@ async function refreshLearningsCache(cacheDir, today, learningsPath) {
   // Fetch documentation from sources
   const docSections = [];
 
-  // Fetch CLI docs
+  // Fetch plugin reference docs
   try {
-    const cliHtml = await fetchUrl('https://ui.shadcn.com/docs/cli');
-    const text = extractTextFromHtml(cliHtml);
+    const docsHtml = await fetchUrl('https://code.claude.com/docs/en/plugins-reference');
+    const text = extractTextFromHtml(docsHtml);
 
     if (text.length > 100) {
       const snippet = text.slice(0, 800).replace(/\s+/g, ' ');
-      docSections.push(`### CLI Reference (fetched)\n\n${snippet}...`);
-    }
-  } catch (e) {
-    // Skip on error
-  }
-
-  // Fetch components overview
-  try {
-    const componentsHtml = await fetchUrl('https://ui.shadcn.com/docs/components');
-    const text = extractTextFromHtml(componentsHtml);
-
-    if (text.length > 100) {
-      const snippet = text.slice(0, 600).replace(/\s+/g, ' ');
-      docSections.push(`### Components Overview (fetched)\n\n${snippet}...`);
+      docSections.push(`### Plugin Reference (fetched)\n\n${snippet}...`);
     }
   } catch (e) {
     // Skip on error
@@ -339,27 +295,62 @@ async function refreshLearningsCache(cacheDir, today, learningsPath) {
   // Add static reference (always available)
   docSections.push(`### Quick Reference
 
-**CLI Commands:**
-\`\`\`bash
-npx shadcn@latest init     # Initialize project
-npx shadcn@latest add      # Add components
-npx shadcn@latest diff     # Check for updates
+**Plugin Structure:**
+\`\`\`
+plugin-name/
+├── .claude-plugin/
+│   └── plugin.json       # Required manifest
+├── hooks/
+│   └── hooks.json        # Hook definitions
+├── skills/
+│   └── skill-name/
+│       └── SKILL.md      # Skill definition
+├── agents/
+│   └── agent-name.md     # Agent definition
+└── commands/
+    └── command-name.md   # Slash command
 \`\`\`
 
-**Init Flags:** \`-y\` (yes), \`-d\` (defaults), \`-c <path>\` (cwd), \`-s\` (silent)
-**Add Flags:** \`-y\` (yes), \`-o\` (overwrite), \`-a\` (all), \`-p <path>\` (path)
+**plugin.json:**
+\`\`\`json
+{
+  "name": "plugin-name",
+  "version": "0.1.0",
+  "description": "Brief description"
+}
+\`\`\`
 
-**Component Categories:**
-- Layout: aspect-ratio, collapsible, resizable, scroll-area, separator
-- Forms: button, checkbox, form, input, label, radio-group, select, slider, switch, textarea
-- Data: avatar, badge, calendar, card, carousel, chart, table
-- Feedback: alert, alert-dialog, dialog, drawer, popover, sheet, sonner, toast, tooltip
-- Navigation: breadcrumb, command, context-menu, dropdown-menu, menubar, navigation-menu, pagination, sidebar, tabs
+**SKILL.md Frontmatter:**
+\`\`\`yaml
+---
+name: Skill Display Name
+description: When to use this skill and trigger phrases
+version: 0.1.0
+---
+\`\`\`
 
-**Context7 Sources for Deep Docs:**
-- Tailwind CSS: \`/tailwindlabs/tailwindcss\`
-- Radix UI: \`/radix-ui/primitives\`
-- React Hook Form: \`/react-hook-form/react-hook-form\``);
+**AGENT.md Frontmatter:**
+\`\`\`yaml
+---
+name: agent-name
+description: When to use this agent with example blocks
+tools:
+  - Read
+  - Bash
+  - Grep
+model: sonnet
+---
+\`\`\`
+
+**Hook Events:**
+- \`PreToolUse\` - Before tool execution (can block)
+- \`PostToolUse\` - After tool execution
+- \`Stop\` - Session ending (learnings capture)
+- \`SessionStart\` - Session beginning (cache refresh)
+
+**Environment Variables:**
+- \`\${CLAUDE_PLUGIN_ROOT}\` - Plugin directory
+- \`\${CLAUDE_PROJECT_DIR}\` - User's project directory`);
 
   // Build the learnings.md content
   const learningsContent = `---
@@ -381,7 +372,9 @@ ${existingLearnings || `### Successful Patterns
 
 ### Mistakes to Avoid
 
-### Component Customizations`}
+### Hook Patterns
+
+### Skill Design Tips`}
 `;
 
   fs.writeFileSync(learningsPath, learningsContent);
