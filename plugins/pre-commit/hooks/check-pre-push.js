@@ -12,8 +12,6 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
-
 let input = '';
 
 process.stdin.setEncoding('utf8');
@@ -24,6 +22,7 @@ process.stdin.on('data', chunk => {
 process.stdin.on('end', () => {
   try {
     const data = JSON.parse(input || '{}');
+    const projectDir = data.cwd || process.env.CLAUDE_PROJECT_DIR || process.cwd();
     const command = data.tool_input?.command || '';
 
     // Only check git push commands
