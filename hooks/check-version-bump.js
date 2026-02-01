@@ -8,7 +8,7 @@
 // - plugins/<name>/skills/*/SKILL.md (frontmatter version)
 //
 // Input: JSON with tool_input on stdin (command for Bash tool)
-// Output: JSON response - {"permissionDecision": "allow"} or {"permissionDecision": "deny", "reason": "..."}
+// Output: JSON response with hookSpecificOutput wrapper for PreToolUse hooks
 
 const { execSync } = require('child_process');
 const fs = require('fs');
@@ -16,6 +16,21 @@ const path = require('path');
 
 // Convert Windows paths to git-compatible forward slashes
 const toGitPath = (p) => p.replace(/\\/g, '/');
+
+// Helper to output proper hook response format
+function respond(decision, reason = null) {
+  const response = {
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      permissionDecision: decision
+    }
+  };
+  if (reason) {
+    response.hookSpecificOutput.permissionDecisionReason = reason;
+  }
+  console.log(JSON.stringify(response));
+  process.exit(0);
+}
 
 let input = '';
 
@@ -31,8 +46,7 @@ process.stdin.on('end', () => {
 
     // Only check git commit commands
     if (!command.match(/git\s+commit/)) {
-      console.log(JSON.stringify({ permissionDecision: "allow" }));
-      process.exit(0);
+      respond("allow", "Not a git commit command");
     }
 
     // Get staged files
@@ -44,8 +58,7 @@ process.stdin.on('end', () => {
         .filter(f => f);
     } catch (e) {
       // Not in a git repo or no staged files
-      console.log(JSON.stringify({ permissionDecision: "allow" }));
-      process.exit(0);
+      respond("allow", "Not in a git repo or no staged files");
     }
 
     // Also check for files being added in the same command (git add X && git commit)
@@ -65,8 +78,7 @@ process.stdin.on('end', () => {
     }
 
     if (stagedFiles.length === 0) {
-      console.log(JSON.stringify({ permissionDecision: "allow" }));
-      process.exit(0);
+      respond("allow", "No staged files");
     }
 
     // Find which plugins have modified files
@@ -80,8 +92,7 @@ process.stdin.on('end', () => {
 
     if (modifiedPlugins.size === 0) {
       // No plugin files modified
-      console.log(JSON.stringify({ permissionDecision: "allow" }));
-      process.exit(0);
+      respond("allow", "No plugin files modified");
     }
 
     // Check version consistency for each modified plugin
@@ -219,21 +230,17 @@ Please ensure:
 3. All SKILL.md files have matching version in frontmatter
 4. docs/memory.md is updated with new version`;
 
-      console.log(JSON.stringify({ permissionDecision: "deny", reason }));
-      process.exit(0);
+      respond("deny", reason);
     }
 
-    console.log(JSON.stringify({ permissionDecision: "allow" }));
-    process.exit(0);
+    respond("allow", "Version check passed");
 
   } catch (err) {
     // On any error, allow to avoid blocking
-    console.log(JSON.stringify({ permissionDecision: "allow" }));
-    process.exit(0);
+    respond("allow", "Error during check, allowing to avoid blocking");
   }
 });
 
 process.stdin.on('error', () => {
-  console.log(JSON.stringify({ permissionDecision: "allow" }));
-  process.exit(0);
+  respond("allow", "Stdin error, allowing to avoid blocking");
 });
