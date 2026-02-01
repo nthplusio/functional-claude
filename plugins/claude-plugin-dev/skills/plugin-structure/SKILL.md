@@ -3,7 +3,7 @@ name: plugin-structure
 description: This skill should be used when the user asks to "create plugin structure",
   "set up plugin directories", "plugin layout", "plugin manifest", "plugin.json",
   or needs guidance on organizing plugin files and folders.
-version: 0.2.0
+version: 0.2.1
 ---
 
 # Plugin Structure

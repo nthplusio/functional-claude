@@ -4,7 +4,7 @@
 // and prompts for learnings capture
 //
 // Input: JSON with session info and transcript_path on stdin
-// Output: JSON with ok:false and reason if learnings should be captured
+// Output: JSON with decision:"block" and reason if learnings should be captured
 
 const fs = require('fs');
 
@@ -22,7 +22,8 @@ process.stdin.on('end', () => {
 
     // Check if stop_hook_active is true (already continuing from a stop hook)
     if (data.stop_hook_active === true) {
-      console.log(JSON.stringify({ ok: true }));
+      // Allow stop - no output needed, or empty object
+      console.log(JSON.stringify({}));
       process.exit(0);
     }
 
@@ -30,7 +31,8 @@ process.stdin.on('end', () => {
     const transcriptPath = data.transcript_path;
 
     if (!transcriptPath || !fs.existsSync(transcriptPath)) {
-      console.log(JSON.stringify({ ok: true }));
+      // Allow stop - no transcript to check
+      console.log(JSON.stringify({}));
       process.exit(0);
     }
 
@@ -100,24 +102,25 @@ process.stdin.on('end', () => {
       reason += "- Best Practices: Techniques that improve plugin quality";
 
       console.log(JSON.stringify({
-        ok: false,
+        decision: "block",
         reason: reason
       }));
       process.exit(0);
     }
 
-    console.log(JSON.stringify({ ok: true }));
+    // Allow stop - no plugin development detected
+    console.log(JSON.stringify({}));
     process.exit(0);
 
   } catch (err) {
-    // On any error, return ok to avoid blocking
-    console.log(JSON.stringify({ ok: true }));
+    // On any error, allow stop to avoid blocking
+    console.log(JSON.stringify({}));
     process.exit(0);
   }
 });
 
 // Handle stdin errors gracefully
 process.stdin.on('error', () => {
-  console.log(JSON.stringify({ ok: true }));
+  console.log(JSON.stringify({}));
   process.exit(0);
 });
