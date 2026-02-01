@@ -13,13 +13,13 @@ This document contains accumulated knowledge about the functional-claude plugin 
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| wezterm-dev | 0.7.8 | WezTerm terminal configuration and customization |
-| hyper-dev | 0.3.3 | Hyper terminal configuration and plugin development |
-| prisma-dev | 0.1.3 | Prisma ORM development with schema analysis and migration safety |
-| shadcn-dev | 0.1.4 | shadcn/ui and Tailwind CSS v4 development workflows |
+| wezterm-dev | 0.7.9 | WezTerm terminal configuration and customization |
+| hyper-dev | 0.3.4 | Hyper terminal configuration and plugin development |
+| prisma-dev | 0.1.4 | Prisma ORM development with schema analysis and migration safety |
+| shadcn-dev | 0.1.5 | shadcn/ui and Tailwind CSS v4 development workflows |
 | pre-commit | 0.2.1 | Pre-push checks for typechecking, linting, building, and testing |
-| claude-plugin-dev | 0.2.0 | Plugin development with guided workflows and AI-assisted creation |
-| opentui-dev | 0.1.1 | OpenTUI terminal interface development with component design and layout |
+| claude-plugin-dev | 0.2.1 | Plugin development with guided workflows and AI-assisted creation |
+| opentui-dev | 0.1.2 | OpenTUI terminal interface development with component design and layout |
 
 ## Architecture Overview
 
@@ -56,7 +56,7 @@ plugins/<plugin-name>/
 └── .cache/                   # Gitignored - runtime cache
 ```
 
-## WezTerm Plugin (v0.7.8)
+## WezTerm Plugin (v0.7.9)
 
 ### Skills
 
@@ -74,7 +74,7 @@ plugins/<plugin-name>/
 |-------|---------|-----------------|
 | wezterm-troubleshoot | Autonomous debugging | "wezterm not working", "fix wezterm", "debug wezterm" |
 
-## Hyper Plugin (v0.3.2)
+## Hyper Plugin (v0.3.4)
 
 ### Skills
 
@@ -110,7 +110,7 @@ plugins/<plugin-name>/
 | plugin-ecosystem.json | Weekly | Top 25 popular plugins |
 | learnings.md | Daily | Documentation and session learnings |
 
-## Prisma Plugin (v0.1.3)
+## Prisma Plugin (v0.1.4)
 
 ### Skills
 
@@ -135,7 +135,7 @@ plugins/<plugin-name>/
 | block-manual-migration | PreToolUse | Blocks manual .sql creation in migrations/ |
 | prisma-recon | SessionStart | Analyzes schema and caches findings |
 
-## shadcn-dev Plugin (v0.1.2)
+## shadcn-dev Plugin (v0.1.5)
 
 ### Skills
 
@@ -201,7 +201,7 @@ Each check can be set to `"block"` (deny push) or `"warn"` (allow with message).
 
 For monorepos, use manual override with filter commands (e.g., `pnpm --filter @scope/pkg build`).
 
-## opentui-dev Plugin (v0.1.0)
+## opentui-dev Plugin (v0.1.2)
 
 OpenTUI terminal interface development with TypeScript/Bun.
 
@@ -241,7 +241,7 @@ OpenTUI terminal interface development with TypeScript/Bun.
 | references/testing-reference.md | Test renderer and snapshots |
 | references/cache-management.md | Cache refresh strategy and learnings |
 
-## claude-plugin-dev Plugin (v0.2.0)
+## claude-plugin-dev Plugin (v0.2.1)
 
 Plugin development documentation with guided workflows and AI-assisted creation.
 
@@ -467,7 +467,7 @@ Each plugin can define hooks in `plugins/<name>/hooks/hooks.json`:
 **Stop hooks** - Run when Claude finishes:
 - Check transcript for plugin-related work
 - Prompt for learnings capture if relevant
-- Response format: `{"ok": true}` or `{"ok": false, "reason": "..."}`
+- Response format: `{}` (allow) or `{"decision": "block", "reason": "..."}` (block)
 
 ### Hook Types
 
@@ -481,6 +481,65 @@ Each plugin can define hooks in `plugins/<name>/hooks/hooks.json`:
 ```
 
 Note: Use command-based hooks (bash scripts that output JSON) instead of prompt-based hooks for reliable JSON output.
+
+### Hook Output Formats (Critical)
+
+**Different hook events require different JSON output formats.** Using the wrong format will cause hooks to silently fail.
+
+| Hook Event | Allow Format | Block Format |
+|------------|--------------|--------------|
+| **PreToolUse** | `{ "hookSpecificOutput": { "hookEventName": "PreToolUse", "permissionDecision": "allow" } }` | `{ "hookSpecificOutput": { "hookEventName": "PreToolUse", "permissionDecision": "deny", "permissionDecisionReason": "..." } }` |
+| **Stop** | `{}` | `{ "decision": "block", "reason": "..." }` |
+| **SessionStart** | `{ "continue": true }` or `{ "continue": true, "systemMessage": "..." }` | N/A |
+
+**Common Mistakes:**
+1. Using `{ ok: true/false }` for Stop hooks - this is WRONG
+2. Using `{ permissionDecision: "allow" }` without the `hookSpecificOutput` wrapper for PreToolUse - this is WRONG
+3. Calling `process.exit(0)` before async operations complete in SessionStart hooks
+
+**PreToolUse Helper Function:**
+```javascript
+function respond(decision, reason = null) {
+  const response = {
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      permissionDecision: decision
+    }
+  };
+  if (reason) {
+    response.hookSpecificOutput.permissionDecisionReason = reason;
+  }
+  console.log(JSON.stringify(response));
+  process.exit(0);
+}
+```
+
+**Stop Hook Pattern:**
+```javascript
+if (shouldBlock) {
+  console.log(JSON.stringify({ decision: "block", reason: "..." }));
+} else {
+  console.log(JSON.stringify({}));  // Allow - empty object
+}
+```
+
+**SessionStart Async Pattern:**
+```javascript
+// Track async operations
+let refreshPromise = null;
+if (needsRefresh) {
+  refreshPromise = refreshCache().catch(() => {});
+}
+
+// Output response immediately
+console.log(JSON.stringify({ continue: true, systemMessage: "..." }));
+
+// Wait for async to complete before exiting
+if (refreshPromise) {
+  await refreshPromise;
+}
+// Let Node exit naturally - don't call process.exit(0)
+```
 
 ### Environment Variables in Hooks
 
