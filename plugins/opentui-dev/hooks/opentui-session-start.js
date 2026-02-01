@@ -83,6 +83,7 @@ process.stdin.on('end', async () => {
     }
 
     // Update docs index and fetch documentation content
+    let refreshPromise = null;
     if (docsNeedRefresh) {
       fs.writeFileSync(docsIndexPath, JSON.stringify({
         last_refresh: today,
@@ -92,8 +93,8 @@ process.stdin.on('end', async () => {
         ]
       }, null, 2));
 
-      // Fetch and cache documentation (async, don't block session start)
-      refreshLearningsCache(cacheDir, today, learningsPath).catch(() => {});
+      // Fetch and cache documentation (runs in background, we wait before exit)
+      refreshPromise = refreshLearningsCache(cacheDir, today, learningsPath).catch(() => {});
     }
 
     // Build summary message - positive framing, minimal noise
@@ -118,23 +119,26 @@ process.stdin.on('end', async () => {
       process.exit(0);
     }
 
+    // Output response immediately (doesn't block Claude)
     console.log(JSON.stringify({
       continue: true,
       systemMessage: `[opentui-dev] ${parts.join(', ')}`
     }));
-    process.exit(0);
+
+    // Wait for cache refresh to complete before exiting
+    if (refreshPromise) {
+      await refreshPromise;
+    }
 
   } catch (err) {
     // On any error, continue without blocking
     console.log(JSON.stringify({ continue: true }));
-    process.exit(0);
   }
 });
 
 // Handle stdin errors gracefully
 process.stdin.on('error', () => {
   console.log(JSON.stringify({ continue: true }));
-  process.exit(0);
 });
 
 /**

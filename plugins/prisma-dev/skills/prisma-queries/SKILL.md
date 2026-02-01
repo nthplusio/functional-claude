@@ -1,7 +1,7 @@
 ---
 name: prisma-queries
 description: This skill should be used when the user asks about "prisma client", "findMany", "findUnique", "create", "update", "delete", "prisma query", "include", "select", "where", "prisma transactions", "nested writes", or mentions database queries and CRUD operations with Prisma.
-version: 0.1.3
+version: 0.1.4
 ---
 
 # Prisma Queries

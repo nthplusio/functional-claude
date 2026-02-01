@@ -88,6 +88,7 @@ process.stdin.on('end', async () => {
     }
 
     // Update docs index and fetch documentation content
+    const pendingPromises = [];
     if (docsNeedRefresh) {
       fs.writeFileSync(docsIndexPath, JSON.stringify({
         last_refresh: today,
@@ -101,8 +102,8 @@ process.stdin.on('end', async () => {
         ]
       }, null, 2));
 
-      // Fetch and cache documentation (async, don't block session start)
-      refreshLearningsCache(cacheDir, today).catch(() => {});
+      // Fetch and cache documentation (runs in background, we wait before exit)
+      pendingPromises.push(refreshLearningsCache(cacheDir, today).catch(() => {}));
     }
 
     // Check if plugin ecosystem needs refresh (weekly)
@@ -120,13 +121,13 @@ process.stdin.on('end', async () => {
       }
     }
 
-    // Trigger plugin indexer if needed (async, don't block)
+    // Trigger plugin indexer if needed (runs in background, we wait before exit)
     if (ecosystemNeedsRefresh) {
       const indexerPath = path.join(pluginRoot, 'hooks', 'lib', 'plugin-indexer.js');
       if (fs.existsSync(indexerPath)) {
         try {
           // Run indexer asynchronously
-          require(indexerPath).refreshIndex(cacheDir).catch(() => {});
+          pendingPromises.push(require(indexerPath).refreshIndex(cacheDir).catch(() => {}));
         } catch (e) {
           // Indexer not available yet, skip
         }
@@ -155,23 +156,26 @@ process.stdin.on('end', async () => {
       parts.push(`${installedPlugins.length} ${pluginWord}`);
     }
 
+    // Output response immediately (doesn't block Claude)
     console.log(JSON.stringify({
       continue: true,
       systemMessage: `[hyper-dev] ${parts.join(', ')}`
     }));
-    process.exit(0);
+
+    // Wait for all cache refreshes to complete before exiting
+    if (pendingPromises.length > 0) {
+      await Promise.all(pendingPromises);
+    }
 
   } catch (err) {
     // On any error, continue without blocking
     console.log(JSON.stringify({ continue: true }));
-    process.exit(0);
   }
 });
 
 // Handle stdin errors gracefully
 process.stdin.on('error', () => {
   console.log(JSON.stringify({ continue: true }));
-  process.exit(0);
 });
 
 /**

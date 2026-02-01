@@ -1,7 +1,7 @@
 ---
 name: shadcn-dev
 description: This skill should be used when the user asks to "set up shadcn", "configure shadcn", "shadcn project setup", "install shadcn", "shadcn init", "ui components for react", or mentions general shadcn/ui configuration questions. For specific topics like theming, forms, or data tables, focused skills may be more appropriate.
-version: 0.1.4
+version: 0.1.5
 ---
 
 # shadcn/ui Development

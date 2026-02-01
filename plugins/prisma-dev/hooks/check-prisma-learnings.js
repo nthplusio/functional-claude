@@ -22,7 +22,7 @@ process.stdin.on('end', () => {
 
     // Check if stop_hook_active is true (already continuing from a stop hook)
     if (data.stop_hook_active === true) {
-      console.log(JSON.stringify({ ok: true }));
+      console.log(JSON.stringify({}));
       process.exit(0);
     }
 
@@ -30,7 +30,7 @@ process.stdin.on('end', () => {
     const transcriptPath = data.transcript_path;
 
     if (!transcriptPath || !fs.existsSync(transcriptPath)) {
-      console.log(JSON.stringify({ ok: true }));
+      console.log(JSON.stringify({}));
       process.exit(0);
     }
 
@@ -104,24 +104,24 @@ process.stdin.on('end', () => {
       reason += "- Query Optimizations: Performance improvements";
 
       console.log(JSON.stringify({
-        ok: false,
+        decision: "block",
         reason: reason
       }));
       process.exit(0);
     }
 
-    console.log(JSON.stringify({ ok: true }));
+    console.log(JSON.stringify({}));
     process.exit(0);
 
   } catch (err) {
     // On any error, return ok to avoid blocking
-    console.log(JSON.stringify({ ok: true }));
+    console.log(JSON.stringify({}));
     process.exit(0);
   }
 });
 
 // Handle stdin errors gracefully
 process.stdin.on('error', () => {
-  console.log(JSON.stringify({ ok: true }));
+  console.log(JSON.stringify({}));
   process.exit(0);
 });

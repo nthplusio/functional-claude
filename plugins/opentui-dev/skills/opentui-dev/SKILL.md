@@ -1,7 +1,7 @@
 ---
 name: opentui-dev
 description: This skill should be used when the user asks to "build a TUI", "create terminal UI", "OpenTUI", "opentui", "terminal interface", or needs guidance on TUI development with TypeScript/Bun. Covers Core imperative API, React reconciler, and Solid reconciler.
-version: 0.1.1
+version: 0.1.2
 ---
 
 # OpenTUI Development

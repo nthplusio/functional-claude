@@ -1,7 +1,7 @@
 ---
 name: shadcn-forms
 description: This skill should be used when the user asks about "form validation", "react-hook-form", "zod schema", "form submission", "input validation", "form errors", "useForm hook", "form field", or mentions form handling, validation, or react-hook-form integration with shadcn.
-version: 0.1.4
+version: 0.1.5
 ---
 
 # shadcn/ui Forms
