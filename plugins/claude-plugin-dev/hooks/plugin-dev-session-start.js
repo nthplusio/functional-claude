@@ -8,6 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+const { execSync } = require('child_process');
 
 // Read JSON input from stdin
 let input = '';
@@ -82,7 +83,7 @@ process.stdin.on('end', async () => {
     }
 
     // Update docs index and fetch documentation content
-    let refreshPromise = null;
+    let refreshResult = null;
     if (docsNeedRefresh) {
       fs.writeFileSync(docsIndexPath, JSON.stringify({
         last_refresh: today,
@@ -91,8 +92,12 @@ process.stdin.on('end', async () => {
         ]
       }, null, 2));
 
-      // Fetch and cache documentation (runs in background, we wait before exit)
-      refreshPromise = refreshLearningsCache(cacheDir, today, learningsPath).catch(() => {});
+      // Fetch and cache documentation (runs synchronously before response)
+      try {
+        refreshResult = await refreshLearningsCache(cacheDir, today, learningsPath);
+      } catch (e) {
+        refreshResult = { success: false, needsWebFetch: true };
+      }
     }
 
     // Build summary message - positive framing, minimal noise
@@ -106,16 +111,19 @@ process.stdin.on('end', async () => {
       parts.push('Plugin dev ready');
     }
 
-    // Output response immediately (doesn't block Claude)
+    // Build system message
+    let systemMessage = `[claude-plugin-dev] ${parts.join(', ')}`;
+
+    // If cache fetch failed or produced poor content, instruct Claude to use WebFetch
+    if (refreshResult && refreshResult.needsWebFetch) {
+      systemMessage += `\n\n[Cache refresh incomplete] When you need plugin documentation, use WebFetch on https://code.claude.com/docs/en/plugins-reference to get complete reference content.`;
+    }
+
+    // Output response
     console.log(JSON.stringify({
       continue: true,
-      systemMessage: `[claude-plugin-dev] ${parts.join(', ')}`
+      systemMessage: systemMessage
     }));
-
-    // Wait for cache refresh to complete before exiting
-    if (refreshPromise) {
-      await refreshPromise;
-    }
 
   } catch (err) {
     // On any error, continue without blocking
@@ -215,32 +223,116 @@ function fetchUrl(url, timeout = 10000) {
 }
 
 /**
- * Extract text content from HTML (basic extraction)
+ * Use Claude CLI to fetch and summarize documentation
+ * Returns the summarized content or null if it fails
  */
-function extractTextFromHtml(html) {
-  // Remove script and style tags
-  let text = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
-  text = text.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+function fetchWithClaudeCli(url, prompt, timeout = 60000) {
+  try {
+    const fullPrompt = `${prompt}
 
-  // Remove HTML tags but keep content
-  text = text.replace(/<[^>]+>/g, ' ');
+URL: ${url}
 
-  // Decode common HTML entities
-  text = text.replace(/&nbsp;/g, ' ');
-  text = text.replace(/&amp;/g, '&');
-  text = text.replace(/&lt;/g, '<');
-  text = text.replace(/&gt;/g, '>');
-  text = text.replace(/&quot;/g, '"');
-  text = text.replace(/&#39;/g, "'");
+IMPORTANT: Use WebFetch to fetch the URL, then extract and format the key information as clean markdown. Focus on:
+- Plugin structure and manifest schema
+- Hook events and output formats
+- Skill and agent frontmatter
+- Environment variables
+- Code examples
 
-  // Normalize whitespace
-  text = text.replace(/\s+/g, ' ').trim();
+Output ONLY the extracted documentation in markdown format, no commentary.`;
 
-  return text;
+    const result = execSync(
+      `claude --print --model haiku --allowed-tools WebFetch --dangerously-skip-permissions "${fullPrompt.replace(/"/g, '\\"')}"`,
+      {
+        encoding: 'utf8',
+        timeout: timeout,
+        maxBuffer: 1024 * 1024, // 1MB
+        windowsHide: true,
+        stdio: ['pipe', 'pipe', 'pipe']
+      }
+    );
+
+    return result.trim();
+  } catch (e) {
+    // Claude CLI failed - return null to fall back to HTTP fetch
+    return null;
+  }
+}
+
+/**
+ * Extract structured content from HTML documentation pages
+ * Focuses on main content area and converts to readable markdown-like format
+ */
+function extractDocContent(html) {
+  // Remove script, style, nav, header, footer elements
+  let content = html
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, '')
+    .replace(/<header[^>]*>[\s\S]*?<\/header>/gi, '')
+    .replace(/<footer[^>]*>[\s\S]*?<\/footer>/gi, '')
+    .replace(/<aside[^>]*>[\s\S]*?<\/aside>/gi, '');
+
+  // Try to extract main content area
+  const mainMatch = content.match(/<main[^>]*>([\s\S]*?)<\/main>/i) ||
+                    content.match(/<article[^>]*>([\s\S]*?)<\/article>/i) ||
+                    content.match(/class="[^"]*content[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
+
+  if (mainMatch) {
+    content = mainMatch[1];
+  }
+
+  // Convert headings to markdown-style
+  content = content
+    .replace(/<h1[^>]*>([\s\S]*?)<\/h1>/gi, '\n## $1\n')
+    .replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, '\n### $1\n')
+    .replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi, '\n#### $1\n')
+    .replace(/<h[456][^>]*>([\s\S]*?)<\/h[456]>/gi, '\n**$1**\n');
+
+  // Convert code blocks
+  content = content
+    .replace(/<pre[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/gi, '\n```\n$1\n```\n')
+    .replace(/<code[^>]*>([\s\S]*?)<\/code>/gi, '`$1`');
+
+  // Convert lists
+  content = content
+    .replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, '- $1\n')
+    .replace(/<[uo]l[^>]*>/gi, '\n')
+    .replace(/<\/[uo]l>/gi, '\n');
+
+  // Convert paragraphs and line breaks
+  content = content
+    .replace(/<p[^>]*>([\s\S]*?)<\/p>/gi, '\n$1\n')
+    .replace(/<br\s*\/?>/gi, '\n');
+
+  // Remove remaining HTML tags
+  content = content.replace(/<[^>]+>/g, '');
+
+  // Decode HTML entities
+  content = content
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&mdash;/g, '—')
+    .replace(/&ndash;/g, '–')
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(code));
+
+  // Clean up whitespace while preserving structure
+  content = content
+    .replace(/[ \t]+/g, ' ')           // Collapse horizontal whitespace
+    .replace(/\n{3,}/g, '\n\n')        // Max 2 newlines
+    .replace(/^\s+|\s+$/gm, '')        // Trim lines
+    .trim();
+
+  return content;
 }
 
 /**
  * Fetch and cache plugin development documentation
+ * Returns { success: boolean, needsWebFetch: boolean } to indicate if Claude should use WebFetch
  */
 async function refreshLearningsCache(cacheDir, today, learningsPath) {
   // Read existing learnings to preserve them
@@ -266,7 +358,7 @@ async function refreshLearningsCache(cacheDir, today, learningsPath) {
 
       // Check if auto_refresh is disabled
       if (!existingSettings.auto_refresh) {
-        return; // Don't refresh if disabled
+        return { success: true, needsWebFetch: false };
       }
 
       // Extract existing learnings section
@@ -284,21 +376,61 @@ async function refreshLearningsCache(cacheDir, today, learningsPath) {
 
   // Fetch documentation from sources
   const docSections = [];
+  let fetchedContent = '';
+  let needsWebFetch = false;
+  let fetchMethod = 'none';
 
-  // Fetch plugin reference docs
-  try {
-    const docsHtml = await fetchUrl('https://code.claude.com/docs/en/plugins-reference');
-    const text = extractTextFromHtml(docsHtml);
+  const docsUrl = 'https://code.claude.com/docs/en/plugins-reference';
 
-    if (text.length > 100) {
-      const snippet = text.slice(0, 800).replace(/\s+/g, ' ');
-      docSections.push(`### Plugin Reference (fetched)\n\n${snippet}...`);
+  // Strategy 1: Try Claude CLI with WebFetch (best quality)
+  fetchedContent = fetchWithClaudeCli(
+    docsUrl,
+    'Extract the Claude Code plugin reference documentation.',
+    45000 // 45 second timeout
+  );
+
+  if (fetchedContent && fetchedContent.length > 500) {
+    fetchMethod = 'claude-cli';
+    // Limit size while preserving structure
+    const maxLength = 6000;
+    if (fetchedContent.length > maxLength) {
+      const cutPoint = fetchedContent.lastIndexOf('\n##', maxLength);
+      if (cutPoint > maxLength / 2) {
+        fetchedContent = fetchedContent.slice(0, cutPoint) + '\n\n[truncated]';
+      } else {
+        fetchedContent = fetchedContent.slice(0, maxLength) + '...\n\n[truncated]';
+      }
     }
-  } catch (e) {
-    // Skip on error
+    docSections.push(`### Plugin Reference (claude-cli ${today})\n\n${fetchedContent}`);
+  } else {
+    // Strategy 2: Fall back to HTTP + HTML extraction
+    try {
+      const docsHtml = await fetchUrl(docsUrl);
+      fetchedContent = extractDocContent(docsHtml);
+
+      if (fetchedContent.length > 500 && fetchedContent.includes('##')) {
+        fetchMethod = 'http-extract';
+        const maxLength = 4000;
+        if (fetchedContent.length > maxLength) {
+          const cutPoint = fetchedContent.lastIndexOf('\n##', maxLength);
+          if (cutPoint > maxLength / 2) {
+            fetchedContent = fetchedContent.slice(0, cutPoint) + '\n\n[truncated]';
+          } else {
+            fetchedContent = fetchedContent.slice(0, maxLength) + '...\n\n[truncated]';
+          }
+        }
+        docSections.push(`### Plugin Reference (http-extract ${today})\n\n${fetchedContent}`);
+      } else {
+        needsWebFetch = true;
+        docSections.push(`### Plugin Reference\n\n*Cache refresh incomplete - use WebFetch for better content*`);
+      }
+    } catch (e) {
+      needsWebFetch = true;
+      docSections.push(`### Plugin Reference\n\n*Fetch failed: ${e.message}*`);
+    }
   }
 
-  // Add static reference (always available)
+  // Add static quick reference (always available as fallback)
   docSections.push(`### Quick Reference
 
 **Plugin Structure:**
@@ -354,6 +486,11 @@ model: sonnet
 - \`Stop\` - Session ending (learnings capture)
 - \`SessionStart\` - Session beginning (cache refresh)
 
+**Hook Output Formats:**
+- PreToolUse: \`{ hookSpecificOutput: { hookEventName: "PreToolUse", permissionDecision: "allow|deny" } }\`
+- Stop: \`{}\` (allow) or \`{ decision: "block", reason: "..." }\`
+- SessionStart: \`{ continue: true, systemMessage: "..." }\`
+
 **Environment Variables:**
 - \`\${CLAUDE_PLUGIN_ROOT}\` - Plugin directory
 - \`\${CLAUDE_PROJECT_DIR}\` - User's project directory`);
@@ -361,7 +498,8 @@ model: sonnet
   // Build the learnings.md content
   const learningsContent = `---
 last_refresh: ${today}
-cache_version: 1
+cache_version: 3
+fetch_method: ${fetchMethod}
 learnings_count: ${learningsCount}
 settings:
   auto_refresh: ${existingSettings.auto_refresh}
@@ -384,4 +522,5 @@ ${existingLearnings || `### Successful Patterns
 `;
 
   fs.writeFileSync(learningsPath, learningsContent);
+  return { success: true, needsWebFetch };
 }

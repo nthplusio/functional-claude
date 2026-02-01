@@ -4,9 +4,13 @@
 // and prompts for learnings capture
 //
 // Input: JSON with session info and transcript_path on stdin
-// Output: JSON with decision:"block" and reason if learnings should be captured
+// Output: Informational feedback via stderr, allows stop via stdout
+//
+// Note: Using stderr for feedback + {} on stdout avoids the "error" display
+// while still showing the learnings reminder to Claude.
 
 const fs = require('fs');
+const path = require('path');
 
 // Read JSON input from stdin
 let input = '';
@@ -22,16 +26,27 @@ process.stdin.on('end', () => {
 
     // Check if stop_hook_active is true (already continuing from a stop hook)
     if (data.stop_hook_active === true) {
-      // Allow stop - no output needed, or empty object
       console.log(JSON.stringify({}));
       process.exit(0);
+    }
+
+    // Check if capture_learnings is disabled
+    const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT;
+    if (pluginRoot) {
+      const learningsPath = path.join(pluginRoot, '.cache', 'learnings.md');
+      if (fs.existsSync(learningsPath)) {
+        const content = fs.readFileSync(learningsPath, 'utf8');
+        if (/capture_learnings:\s*false/i.test(content)) {
+          console.log(JSON.stringify({}));
+          process.exit(0);
+        }
+      }
     }
 
     // Get transcript path from input
     const transcriptPath = data.transcript_path;
 
     if (!transcriptPath || !fs.existsSync(transcriptPath)) {
-      // Allow stop - no transcript to check
       console.log(JSON.stringify({}));
       process.exit(0);
     }
@@ -82,29 +97,24 @@ process.stdin.on('end', () => {
 
     if (matched) {
       // Build contextual message based on what was detected
-      let reason = "This session involved Claude Code plugin development";
+      let context = "";
 
       if (matchedCategories.includes('hookEvents') || matchedCategories.includes('hookTypes')) {
-        reason += " (hooks)";
+        context = " (hooks)";
       } else if (matchedCategories.includes('mcp')) {
-        reason += " (MCP integration)";
+        context = " (MCP integration)";
       } else if (matchedCategories.includes('agents')) {
-        reason += " (agent development)";
+        context = " (agent development)";
       } else if (matchedCategories.includes('validation')) {
-        reason += " (plugin validation)";
+        context = " (plugin validation)";
       } else if (matchedCategories.includes('structure')) {
-        reason += " (plugin structure)";
+        context = " (plugin structure)";
       }
 
-      reason += ". Consider capturing learnings:\n";
-      reason += "- Conventions: Patterns that follow Claude Code standards\n";
-      reason += "- Gotchas: Common mistakes and how to avoid them\n";
-      reason += "- Best Practices: Techniques that improve plugin quality";
-
-      console.log(JSON.stringify({
-        decision: "block",
-        reason: reason
-      }));
+      // Output feedback to stderr (shown to Claude but not as "error")
+      // Then allow stop with empty object on stdout
+      process.stderr.write(`[claude-plugin-dev] Session involved plugin development${context}. Consider capturing learnings to .cache/learnings.md\n`);
+      console.log(JSON.stringify({}));
       process.exit(0);
     }
 
@@ -113,7 +123,7 @@ process.stdin.on('end', () => {
     process.exit(0);
 
   } catch (err) {
-    // On any error, allow stop to avoid blocking
+    // On any error, allow stop
     console.log(JSON.stringify({}));
     process.exit(0);
   }

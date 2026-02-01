@@ -490,12 +490,14 @@ Note: Use command-based hooks (bash scripts that output JSON) instead of prompt-
 |------------|--------------|--------------|
 | **PreToolUse** | `{ "hookSpecificOutput": { "hookEventName": "PreToolUse", "permissionDecision": "allow" } }` | `{ "hookSpecificOutput": { "hookEventName": "PreToolUse", "permissionDecision": "deny", "permissionDecisionReason": "..." } }` |
 | **Stop** | `{}` | `{ "decision": "block", "reason": "..." }` |
+| **Stop (informational)** | `{}` on stdout + message on stderr | N/A (use stderr for feedback without "error" display) |
 | **SessionStart** | `{ "continue": true }` or `{ "continue": true, "systemMessage": "..." }` | N/A |
 
 **Common Mistakes:**
 1. Using `{ ok: true/false }` for Stop hooks - this is WRONG
 2. Using `{ permissionDecision: "allow" }` without the `hookSpecificOutput` wrapper for PreToolUse - this is WRONG
 3. Calling `process.exit(0)` before async operations complete in SessionStart hooks
+4. Using `{ "decision": "block", "reason": "..." }` for informational Stop hook messages - this shows as "error" in the UI. Use stderr for informational output + `{}` on stdout instead
 
 **PreToolUse Helper Function:**
 ```javascript
@@ -514,13 +516,23 @@ function respond(decision, reason = null) {
 }
 ```
 
-**Stop Hook Pattern:**
+**Stop Hook Pattern (blocking):**
 ```javascript
 if (shouldBlock) {
   console.log(JSON.stringify({ decision: "block", reason: "..." }));
 } else {
   console.log(JSON.stringify({}));  // Allow - empty object
 }
+```
+
+**Stop Hook Pattern (informational - avoids "error" display):**
+```javascript
+if (shouldShowFeedback) {
+  // Output message to stderr (shown to Claude but not as "error")
+  process.stderr.write('[plugin-name] Informational message here\n');
+}
+// Always allow stop with empty object on stdout
+console.log(JSON.stringify({}));
 ```
 
 **SessionStart Async Pattern:**
@@ -752,10 +764,38 @@ The plugin automatically maintains a documentation cache at `${CLAUDE_PLUGIN_ROO
 
 **Refresh Behavior:**
 - On session start, hook checks `learnings.md` for `last_refresh` date
-- If missing or older than `refresh_interval_days`, injects system message
-- System message directs Claude to silently run the cache-update agent
-- Agent fetches sources, preserves user learnings, and updates cache
-- User sees no interruption - refresh happens transparently
+- If missing or older than `refresh_interval_days`, refreshes cache
+- **Strategy 1 (preferred):** Use `claude --print --model haiku --allowed-tools WebFetch` for high-quality extraction
+- **Strategy 2 (fallback):** HTTP fetch + HTML extraction if CLI fails
+- User sees no interruption - refresh happens during hook execution
+
+**Claude CLI Cache Refresh Pattern:**
+```javascript
+const { execSync } = require('child_process');
+
+function fetchWithClaudeCli(url, prompt, timeout = 60000) {
+  try {
+    const fullPrompt = `${prompt}\n\nURL: ${url}\n\nUse WebFetch to fetch and extract key information as clean markdown.`;
+    const result = execSync(
+      `claude --print --model haiku --allowed-tools WebFetch --dangerously-skip-permissions "${fullPrompt.replace(/"/g, '\\"')}"`,
+      { encoding: 'utf8', timeout, maxBuffer: 1024 * 1024, windowsHide: true }
+    );
+    return result.trim();
+  } catch (e) {
+    return null; // Fall back to alternative method
+  }
+}
+```
+
+**Pros of Claude CLI approach:**
+- Much better content extraction (understands page structure)
+- Can follow links and aggregate content
+- Returns clean, formatted markdown
+
+**Cons:**
+- Slower (~10-30 seconds)
+- Incurs API cost per refresh
+- Requires Claude CLI to be available
 
 ### Security
 
@@ -808,7 +848,20 @@ function fetchUrl(url, timeout = 10000) {
   });
 }
 
-// Extract text from HTML for caching
+// Strategy 1: Use Claude CLI for high-quality extraction (preferred)
+function fetchWithClaudeCli(url, prompt, timeout = 60000) {
+  try {
+    const result = execSync(
+      `claude --print --model haiku --allowed-tools WebFetch --dangerously-skip-permissions "${prompt}"`,
+      { encoding: 'utf8', timeout, maxBuffer: 1024 * 1024, windowsHide: true }
+    );
+    return result.trim();
+  } catch (e) {
+    return null; // Fall back to HTTP extraction
+  }
+}
+
+// Strategy 2: Basic HTTP + HTML extraction (fallback)
 function extractTextFromHtml(html) {
   let text = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
   text = text.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
