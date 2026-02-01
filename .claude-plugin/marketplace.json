@@ -33,13 +33,13 @@
       "name": "pre-commit",
       "source": "./plugins/pre-commit",
       "description": "Pre-push checks for typechecking, linting, building, and testing with auto-detection and configurable enforcement",
-      "version": "0.2.1"
+      "version": "0.3.0"
     },
     {
       "name": "claude-plugin-dev",
       "source": "./plugins/claude-plugin-dev",
       "description": "Documentation and conventions for building Claude Code plugins with guided workflows, AI-assisted agent creation, and dynamic documentation caching",
-      "version": "0.2.1"
+      "version": "0.3.0"
     },
     {
       "name": "opentui-dev",

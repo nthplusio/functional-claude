@@ -3,7 +3,7 @@ name: hook-development
 description: This skill should be used when the user asks to "create a hook",
   "add PreToolUse hook", "validate tool use", "hook events", "hooks.json",
   "prompt-based hook", or mentions hook events (PreToolUse, PostToolUse, Stop).
-version: 0.2.1
+version: 0.3.0
 ---
 
 # Hook Development

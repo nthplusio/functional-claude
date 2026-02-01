@@ -3,7 +3,7 @@ name: plugin-settings
 description: This skill should be used when the user asks about ".local.md",
   "plugin settings", "configuration file", "temporarily active hooks",
   "user configuration", or needs guidance on plugin configuration patterns.
-version: 0.2.1
+version: 0.3.0
 ---
 
 # Plugin Settings
