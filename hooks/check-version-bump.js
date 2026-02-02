@@ -40,9 +40,15 @@ process.stdin.on('data', chunk => {
 });
 
 process.stdin.on('end', () => {
+  // Debug: log to stderr to diagnose hook issues
+  console.error(`[hook] CWD: ${process.cwd()}`);
+  console.error(`[hook] Input: ${input.substring(0, 200)}`);
+
   try {
     const data = JSON.parse(input || '{}');
     const command = data.tool_input?.command || '';
+
+    console.error(`[hook] Command: ${command.substring(0, 100)}`);
 
     // Only check git commit commands
     if (!command.match(/git\s+commit/)) {
