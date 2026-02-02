@@ -3,7 +3,7 @@ name: command-development
 description: This skill should be used when the user asks to "create a command",
   "slash command", "write a command", "$ARGUMENTS", "dynamic arguments",
   "@ file references", or needs guidance on building user-invocable slash commands.
-version: 0.3.0
+version: 0.3.1
 ---
 
 # Command Development

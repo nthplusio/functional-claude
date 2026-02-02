@@ -18,7 +18,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | prisma-dev | 0.1.4 | Prisma ORM development with schema analysis and migration safety |
 | shadcn-dev | 0.1.5 | shadcn/ui and Tailwind CSS v4 development workflows |
 | pre-commit | 0.2.1 | Pre-push checks for typechecking, linting, building, and testing |
-| claude-plugin-dev | 0.2.1 | Plugin development with guided workflows and AI-assisted creation |
+| claude-plugin-dev | 0.3.1 | Plugin development with guided workflows and AI-assisted creation |
 | opentui-dev | 0.1.2 | OpenTUI terminal interface development with component design and layout |
 
 ## Architecture Overview

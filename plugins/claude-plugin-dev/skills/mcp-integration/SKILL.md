@@ -3,7 +3,7 @@ name: mcp-integration
 description: This skill should be used when the user asks to "add MCP server",
   "integrate MCP", "external tools", ".mcp.json", "Model Context Protocol",
   or needs guidance on bundling MCP servers with plugins.
-version: 0.3.0
+version: 0.3.1
 ---
 
 # MCP Integration

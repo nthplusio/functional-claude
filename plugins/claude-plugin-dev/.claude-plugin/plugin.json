@@ -1,5 +1,5 @@
 {
   "name": "claude-plugin-dev",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Documentation and conventions for building Claude Code plugins with guided workflows, AI-assisted agent creation, and dynamic documentation caching"
 }
