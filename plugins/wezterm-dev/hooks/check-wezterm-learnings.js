@@ -105,11 +105,13 @@ process.stdin.on('end', () => {
       reason += "- Plugin Patterns: Reusable plugin techniques\n";
       reason += "- Configuration Discoveries: Useful options or settings";
 
-      // Output reminder to stderr (visible but not a blocking error)
-      console.error(`[wezterm-dev] ${reason}`);
+      // Allow stop but show message to user via stopReason
+      console.log(JSON.stringify({
+        stopReason: `[wezterm-dev] ${reason}`
+      }));
+      process.exit(0);
     }
 
-    // Always allow - learnings capture is just a reminder, not a block
     console.log(JSON.stringify({}));
     process.exit(0);
 

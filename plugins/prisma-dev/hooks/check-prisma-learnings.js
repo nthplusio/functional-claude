@@ -103,11 +103,13 @@ process.stdin.on('end', () => {
       reason += "- Schema Patterns: Reusable model/relation patterns\n";
       reason += "- Query Optimizations: Performance improvements";
 
-      // Output reminder to stderr (visible but not a blocking error)
-      console.error(`[prisma-dev] ${reason}`);
+      // Allow stop but show message to user via stopReason
+      console.log(JSON.stringify({
+        stopReason: `[prisma-dev] ${reason}`
+      }));
+      process.exit(0);
     }
 
-    // Always allow - learnings capture is just a reminder, not a block
     console.log(JSON.stringify({}));
     process.exit(0);
 

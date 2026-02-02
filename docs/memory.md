@@ -490,7 +490,7 @@ Note: Use command-based hooks (bash scripts that output JSON) instead of prompt-
 |------------|--------------|--------------|
 | **PreToolUse** | `{ "hookSpecificOutput": { "hookEventName": "PreToolUse", "permissionDecision": "allow" } }` | `{ "hookSpecificOutput": { "hookEventName": "PreToolUse", "permissionDecision": "deny", "permissionDecisionReason": "..." } }` |
 | **Stop** | `{}` | `{ "decision": "block", "reason": "..." }` |
-| **Stop (informational)** | `{}` on stdout + message on stderr | N/A (use stderr for feedback without "error" display) |
+| **Stop (with message)** | `{ "stopReason": "..." }` | N/A (shows message to user without blocking) |
 | **SessionStart** | `{ "continue": true }` or `{ "continue": true, "systemMessage": "..." }` | N/A |
 
 **Common Mistakes:**
@@ -525,14 +525,14 @@ if (shouldBlock) {
 }
 ```
 
-**Stop Hook Pattern (informational - avoids "error" display):**
+**Stop Hook Pattern (informational - shows message without blocking):**
 ```javascript
-if (shouldShowFeedback) {
-  // Output message to stderr (shown to Claude but not as "error")
-  process.stderr.write('[plugin-name] Informational message here\n');
+if (hasMessageForUser) {
+  // stopReason shows message to user without "Stop hook error" framing
+  console.log(JSON.stringify({ stopReason: "[plugin-name] Message here" }));
+} else {
+  console.log(JSON.stringify({}));
 }
-// Always allow stop with empty object on stdout
-console.log(JSON.stringify({}));
 ```
 
 **SessionStart Async Pattern:**

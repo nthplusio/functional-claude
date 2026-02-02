@@ -105,11 +105,13 @@ process.stdin.on('end', () => {
       reason += "- Component Patterns: Reusable TUI components\n";
       reason += "- Layout Discoveries: Flexbox tips and tricks";
 
-      // Output reminder to stderr (visible but not a blocking error)
-      console.error(`[opentui-dev] ${reason}`);
+      // Allow stop but show message to user via stopReason
+      console.log(JSON.stringify({
+        stopReason: `[opentui-dev] ${reason}`
+      }));
+      process.exit(0);
     }
 
-    // Always allow - learnings capture is just a reminder, not a block
     console.log(JSON.stringify({}));
     process.exit(0);
 

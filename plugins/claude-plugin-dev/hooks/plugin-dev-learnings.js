@@ -111,14 +111,13 @@ process.stdin.on('end', () => {
         context = " (plugin structure)";
       }
 
-      // Output feedback to stderr (shown to Claude but not as "error")
-      // Then allow stop with empty object on stdout
-      process.stderr.write(`[claude-plugin-dev] Session involved plugin development${context}. Consider capturing learnings to .cache/learnings.md\n`);
-      console.log(JSON.stringify({}));
+      // Allow stop but show message to user via stopReason
+      console.log(JSON.stringify({
+        stopReason: `[claude-plugin-dev] Session involved plugin development${context}. Consider capturing learnings to .cache/learnings.md`
+      }));
       process.exit(0);
     }
 
-    // Allow stop - no plugin development detected
     console.log(JSON.stringify({}));
     process.exit(0);
 

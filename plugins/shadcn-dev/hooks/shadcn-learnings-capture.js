@@ -98,11 +98,13 @@ process.stdin.on('end', () => {
       reason += "- Mistakes to Avoid: Issues encountered and solutions\n";
       reason += "- Theme Customizations: Useful CSS variable patterns";
 
-      // Output reminder to stderr (visible but not a blocking error)
-      console.error(`[shadcn-dev] ${reason}`);
+      // Allow stop but show message to user via stopReason
+      console.log(JSON.stringify({
+        stopReason: `[shadcn-dev] ${reason}`
+      }));
+      process.exit(0);
     }
 
-    // Always allow - learnings capture is just a reminder, not a block
     console.log(JSON.stringify({}));
     process.exit(0);
 
