@@ -1,7 +1,7 @@
 ---
 name: opentui-components
 description: This skill should be used when the user asks about OpenTUI components like "text", "box", "input", "select", "textarea", "code", "diff", "ascii-font", or needs help with specific UI elements in OpenTUI TUIs.
-version: 0.1.2
+version: 0.1.3
 ---
 
 # OpenTUI Components

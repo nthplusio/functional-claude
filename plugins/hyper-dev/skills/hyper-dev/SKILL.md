@@ -1,7 +1,7 @@
 ---
 name: hyper-dev
 description: This skill should be used when the user asks to "configure Hyper", "hyper config", "hyper.js", "customize Hyper terminal", "set up hyper", or mentions general Hyper configuration questions. For specific topics, focused skills may be more appropriate.
-version: 0.3.4
+version: 0.3.5
 ---
 
 # Hyper Development
@@ -72,11 +72,11 @@ For specific configuration topics, use these focused skills:
 
 | Topic | Skill | Trigger Phrases |
 |-------|-------|-----------------|
-| Keybindings | hyper-keybindings | "hyper keys", "keymap", "shortcuts" |
-| Visual Customization | hyper-visual | "opacity", "colors", "cursor", "theme" |
-| Plugin Development | hyper-plugins | "create plugin", "decorateConfig", "redux" |
-| Theme Creation | hyper-themes | "create theme", "color scheme" |
-| Plugin Discovery | hyper-ecosystem | "popular plugins", "find plugin", "recommendations" |
+| Keybindings | `/hyper-dev:hyper-keybindings` | "hyper keys", "keymap", "shortcuts" |
+| Visual Customization | `/hyper-dev:hyper-visual` | "opacity", "colors", "cursor", "theme" |
+| Plugin Development | `/hyper-dev:hyper-plugins` | "create plugin", "decorateConfig", "redux" |
+| Theme Creation | `/hyper-dev:hyper-themes` | "create theme", "color scheme" |
+| Plugin Discovery | `/hyper-dev:hyper-ecosystem` | "popular plugins", "find plugin", "recommendations" |
 
 ## Troubleshooting
 

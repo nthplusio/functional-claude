@@ -1,7 +1,7 @@
 ---
 name: wezterm-dev
 description: This skill should be used when the user asks to "configure WezTerm", "wezterm config", "customize terminal", "set up wezterm", "wezterm lua", or mentions general WezTerm configuration questions. For specific topics, focused skills may be more appropriate.
-version: 0.7.9
+version: 0.7.10
 ---
 
 # WezTerm Development
@@ -59,10 +59,10 @@ For specific configuration topics, use these focused skills:
 
 | Topic | Skill | Trigger Phrases |
 |-------|-------|-----------------|
-| Keybindings | wezterm-keybindings | "leader key", "tmux-style", "pane splitting" |
-| Visual Customization | wezterm-visual | "opacity", "blur", "cursor", "colors", "theme" |
-| Tab Bar | wezterm-tabs | "tab bar", "nerd font icons", "process icons" |
-| Agent Deck | wezterm-agent-deck | "agent deck", "claude monitoring", "agent status" |
+| Keybindings | `/wezterm-dev:wezterm-keybindings` | "leader key", "tmux-style", "pane splitting" |
+| Visual Customization | `/wezterm-dev:wezterm-visual` | "opacity", "blur", "cursor", "colors", "theme" |
+| Tab Bar | `/wezterm-dev:wezterm-tabs` | "tab bar", "nerd font icons", "process icons" |
+| Agent Deck | `/wezterm-dev:wezterm-agent-deck` | "agent deck", "claude monitoring", "agent status" |
 
 ## Troubleshooting
 

@@ -1,7 +1,7 @@
 ---
 name: shadcn-dev
 description: This skill should be used when the user asks to "set up shadcn", "configure shadcn", "shadcn project setup", "install shadcn", "shadcn init", "ui components for react", or mentions general shadcn/ui configuration questions. For specific topics like theming, forms, or data tables, focused skills may be more appropriate.
-version: 0.1.5
+version: 0.1.6
 ---
 
 # shadcn/ui Development
@@ -98,11 +98,11 @@ For specific topics, use these focused skills:
 
 | Topic | Skill | Trigger Phrases |
 |-------|-------|-----------------|
-| Component Usage | shadcn-components | "add button", "dialog component", "card usage" |
-| Theming | shadcn-theming | "dark mode", "custom colors", "css variables" |
-| Forms | shadcn-forms | "form validation", "react-hook-form", "zod" |
-| Data Tables | shadcn-data-tables | "data table", "tanstack table", "sortable" |
-| Tailwind v4 | tailwindv4 | "tailwind v4", "@theme", "css-first config" |
+| Component Usage | `/shadcn-dev:shadcn-components` | "add button", "dialog component", "card usage" |
+| Theming | `/shadcn-dev:shadcn-theming` | "dark mode", "custom colors", "css variables" |
+| Forms | `/shadcn-dev:shadcn-forms` | "form validation", "react-hook-form", "zod" |
+| Data Tables | `/shadcn-dev:shadcn-data-tables` | "data table", "tanstack table", "sortable" |
+| Tailwind v4 | `/shadcn-dev:tailwindv4` | "tailwind v4", "@theme", "css-first config" |
 
 ## Troubleshooting
 

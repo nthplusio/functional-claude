@@ -1,7 +1,7 @@
 ---
 name: opentui-dev
 description: This skill should be used when the user asks to "build a TUI", "create terminal UI", "OpenTUI", "opentui", "terminal interface", or needs guidance on TUI development with TypeScript/Bun. Covers Core imperative API, React reconciler, and Solid reconciler.
-version: 0.1.2
+version: 0.1.3
 ---
 
 # OpenTUI Development
@@ -45,42 +45,42 @@ Which framework?
 
 ```
 Display content?
-├─ Plain or styled text -> opentui-components skill
-├─ Container with borders -> opentui-components skill
-├─ Scrollable content -> opentui-components skill
-├─ ASCII art banner -> opentui-components skill
-├─ Code with syntax highlighting -> opentui-components skill
-└─ Diff viewer -> opentui-components skill
+├─ Plain or styled text -> /opentui-dev:opentui-components
+├─ Container with borders -> /opentui-dev:opentui-components
+├─ Scrollable content -> /opentui-dev:opentui-components
+├─ ASCII art banner -> /opentui-dev:opentui-components
+├─ Code with syntax highlighting -> /opentui-dev:opentui-components
+└─ Diff viewer -> /opentui-dev:opentui-components
 ```
 
 ### "I need user input"
 
 ```
 User input?
-├─ Single-line text field -> opentui-components skill (input)
-├─ Multi-line editor -> opentui-components skill (textarea)
-├─ Select from list -> opentui-components skill (select)
-├─ Tab selection -> opentui-components skill (tab-select)
-└─ Custom keyboard shortcuts -> opentui-keyboard skill
+├─ Single-line text field -> /opentui-dev:opentui-components (input)
+├─ Multi-line editor -> /opentui-dev:opentui-components (textarea)
+├─ Select from list -> /opentui-dev:opentui-components (select)
+├─ Tab selection -> /opentui-dev:opentui-components (tab-select)
+└─ Custom keyboard shortcuts -> /opentui-dev:opentui-keyboard
 ```
 
 ### "I need layout/positioning"
 
 ```
 Layout?
-├─ Flexbox layouts -> opentui-layout skill
-├─ Absolute positioning -> opentui-layout skill
-├─ Responsive to terminal -> opentui-layout skill
-└─ Complex nested layouts -> opentui-layout skill
+├─ Flexbox layouts -> /opentui-dev:opentui-layout
+├─ Absolute positioning -> /opentui-dev:opentui-layout
+├─ Responsive to terminal -> /opentui-dev:opentui-layout
+└─ Complex nested layouts -> /opentui-dev:opentui-layout
 ```
 
 ### "I need animations"
 
 ```
 Animations?
-├─ Timeline-based -> opentui-animation skill
-├─ Easing functions -> opentui-animation skill
-└─ Looping animations -> opentui-animation skill
+├─ Timeline-based -> /opentui-dev:opentui-animation
+├─ Easing functions -> /opentui-dev:opentui-animation
+└─ Looping animations -> /opentui-dev:opentui-animation
 ```
 
 ## Quick Start
@@ -124,10 +124,10 @@ bun install @opentui/react @opentui/core react
 
 | Topic | Skill | When to Use |
 |-------|-------|-------------|
-| Components | opentui-components | text, box, input, select, code, diff |
-| Layout | opentui-layout | flexbox, positioning, spacing |
-| Keyboard | opentui-keyboard | shortcuts, focus, input handling |
-| Animation | opentui-animation | timelines, easing, transitions |
+| Components | `/opentui-dev:opentui-components` | text, box, input, select, code, diff |
+| Layout | `/opentui-dev:opentui-layout` | flexbox, positioning, spacing |
+| Keyboard | `/opentui-dev:opentui-keyboard` | shortcuts, focus, input handling |
+| Animation | `/opentui-dev:opentui-animation` | timelines, easing, transitions |
 
 ## Reference Files
 

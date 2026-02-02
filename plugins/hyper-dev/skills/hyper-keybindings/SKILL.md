@@ -1,7 +1,7 @@
 ---
 name: hyper-keybindings
 description: This skill should be used when the user asks about "hyper keybindings", "hyper keys", "hyper shortcuts", "customize hyper keys", "hyper keymap", "pane splitting hyper", or mentions keyboard shortcuts and key customization in Hyper terminal.
-version: 0.3.4
+version: 0.3.5
 ---
 
 # Hyper Keybindings
