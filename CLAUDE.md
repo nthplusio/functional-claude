@@ -4,18 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is a Claude Code plugin marketplace repository (`nthplusio/functional-claude`) containing plugins for enhanced terminal and development workflows. The repository follows the Claude Code plugin marketplace structure.
+This is a Claude Code plugin marketplace repository (`nthplusio/functional-claude`) containing plugins for enhanced terminal and development workflows.
 
-**Security:** This is a public repository. A PreToolUse hook validates all file writes to prevent committing sensitive information (API keys, tokens, credentials, .env files, private URLs).
+**Security:** This is a public repository. Hooks validate that no sensitive information (API keys, tokens, credentials, .env files) is committed.
 
 ## Repository Memory
 
-**When working with marketplace structure, plugins, hooks, skills, or version management, always read `docs/memory.md` first.** This file contains accumulated knowledge about:
+**When working with marketplace structure, plugins, hooks, skills, or version management, always read `docs/memory.md` first.** This file contains:
 - Current plugin versions and synchronization requirements
-- Directory structure and file schemas
-- Hook patterns and environment variables
-- Skill structure and conventions
-- Development workflows and best practices
+- Hook patterns and output formats
+- Cache architecture standards
+- Complete plugin component tables
 
 ## Development Commands
 
@@ -32,80 +31,40 @@ claude --plugin-dir ./plugins/wezterm-dev
 
 ## Architecture
 
-### Multi-Skill Architecture
-
-Plugins use focused, composable skills and agents:
+Plugins use a multi-skill architecture with focused, composable components:
 
 ```
 plugins/<plugin-name>/
-├── .claude-plugin/
-│   └── plugin.json         # Plugin manifest
-├── hooks/
-│   └── hooks.json          # PreToolUse/Stop hooks
-├── skills/
-│   ├── <main-skill>/       # Overview skill (links to focused skills)
-│   ├── <focused-skill>/    # Topic-specific skill
-│   └── ...
-├── agents/
-│   └── <agent-name>.md     # Autonomous agent (flat file)
-└── .cache/                 # Gitignored runtime cache
+├── .claude-plugin/plugin.json    # Plugin manifest (name, version)
+├── hooks/hooks.json              # PreToolUse/Stop/SessionStart hooks
+├── skills/<skill-name>/SKILL.md  # Topic-specific skills
+├── agents/<agent-name>.md        # Autonomous agents
+├── commands/<cmd-name>.md        # User-invocable slash commands
+└── .cache/                       # Gitignored runtime cache
 ```
 
 ### Key Files
 
-- **`marketplace.json`**: Declares plugins with source paths and versions
-- **`plugin.json`**: Per-plugin metadata
-- **`SKILL.md`**: Skill definition with YAML frontmatter
+- **`.claude-plugin/marketplace.json`**: Root manifest listing all plugins with versions
+- **`plugins/<name>/.claude-plugin/plugin.json`**: Per-plugin manifest
+- **`SKILL.md`**: Skill definition with YAML frontmatter (name, description, version)
 - **`AGENT.md`**: Agent definition with tools list
-- **`hooks.json`**: Hook definitions for events
 
 ### Version Management
 
-Plugin versions must be kept in sync across:
+A PreToolUse hook (`.claude/hooks/check-version-bump.js`) validates version synchronization on git commits. Versions must match across:
 1. `plugins/<name>/.claude-plugin/plugin.json`
 2. `.claude-plugin/marketplace.json`
 3. All `SKILL.md` frontmatter within the plugin
+4. `docs/memory.md` plugin table
 
 ## Current Plugins
 
-### wezterm-dev (v0.7.0)
-
-WezTerm terminal configuration with multi-skill architecture:
-
-| Component | Type | Purpose |
-|-----------|------|---------|
-| wezterm-dev | skill | Overview, base configuration |
-| wezterm-keybindings | skill | Tmux-style keybindings, leader key |
-| wezterm-visual | skill | Opacity, blur, cursor, colors |
-| wezterm-tabs | skill | Tab bar with Nerd Font icons |
-| wezterm-agent-deck | skill | Agent Deck integration |
-| wezterm-troubleshoot | agent | Autonomous debugging |
-
-### hyper-dev (v0.2.0)
-
-Hyper terminal configuration and plugin development:
-
-| Component | Type | Purpose |
-|-----------|------|---------|
-| hyper-dev | skill | Overview, base configuration |
-| hyper-keybindings | skill | Keymap customization |
-| hyper-visual | skill | Opacity, colors, cursor |
-| hyper-plugins | skill | Plugin development |
-| hyper-themes | skill | Theme creation |
-| hyper-troubleshoot | agent | Autonomous debugging |
-
-## Root-Level Components
-
-### terminal-cache skill
-
-Shared cache management for terminal plugins:
-- Daily documentation refresh
-- Learnings capture
-
-### functional-claude skill
-
-Development guidance for this repository.
-
-### Security hook
-
-PreToolUse hook on Write/Edit that validates no sensitive data is committed.
+See `docs/memory.md` for current versions and component details. Plugins include:
+- **wezterm-dev**: WezTerm terminal configuration
+- **hyper-dev**: Hyper terminal configuration and plugin development
+- **prisma-dev**: Prisma ORM with schema analysis and migration safety
+- **shadcn-dev**: shadcn/ui and Tailwind CSS v4 workflows
+- **pre-commit**: Pre-push checks for typecheck/lint/build/test
+- **claude-plugin-dev**: Plugin development with guided workflows
+- **opentui-dev**: OpenTUI terminal interface development
