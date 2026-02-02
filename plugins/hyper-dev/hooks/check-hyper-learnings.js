@@ -105,13 +105,11 @@ process.stdin.on('end', () => {
       reason += "- Plugin Patterns: Reusable plugin techniques\n";
       reason += "- Ecosystem Discoveries: Useful plugins or integrations";
 
-      console.log(JSON.stringify({
-        decision: "block",
-        reason: reason
-      }));
-      process.exit(0);
+      // Output reminder to stderr (visible but not a blocking error)
+      console.error(`[hyper-dev] ${reason}`);
     }
 
+    // Always allow - learnings capture is just a reminder, not a block
     console.log(JSON.stringify({}));
     process.exit(0);
 
