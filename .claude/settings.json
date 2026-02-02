@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR\"/hooks/check-version-bump.js",
+            "command": "node .claude/hooks/check-version-bump.js",
             "timeout": 15
           }
         ]
