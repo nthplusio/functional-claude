@@ -40,15 +40,18 @@ process.stdin.on('data', chunk => {
 });
 
 process.stdin.on('end', () => {
-  // Debug: log to stderr to diagnose hook issues
-  console.error(`[hook] CWD: ${process.cwd()}`);
-  console.error(`[hook] Input: ${input.substring(0, 200)}`);
+  // Debug: write to file since stderr may not be visible
+  const debugLog = path.join(__dirname, 'debug.log');
+  const log = (msg) => fs.appendFileSync(debugLog, `${new Date().toISOString()} ${msg}\n`);
+
+  log(`CWD: ${process.cwd()}`);
+  log(`Input: ${input.substring(0, 300)}`);
 
   try {
     const data = JSON.parse(input || '{}');
     const command = data.tool_input?.command || '';
 
-    console.error(`[hook] Command: ${command.substring(0, 100)}`);
+    log(`Command: ${command.substring(0, 100)}`);
 
     // Only check git commit commands
     if (!command.match(/git\s+commit/)) {
