@@ -535,23 +535,41 @@ if (hasMessageForUser) {
 }
 ```
 
-**SessionStart Async Pattern:**
+**SessionStart Async Pattern (Detached Background Process):**
+
+For slow operations (fetching docs, calling Claude CLI), use a detached background script:
+
 ```javascript
-// Track async operations
-let refreshPromise = null;
-if (needsRefresh) {
-  refreshPromise = refreshCache().catch(() => {});
+// Main script: plugin-dev-session-start.js
+const { spawn } = require('child_process');
+
+// Fast synchronous work (context detection, cache checks)...
+
+if (docsNeedRefresh) {
+  // Spawn detached background process for slow work
+  const backgroundScript = path.join(__dirname, 'plugin-dev-cache-refresh.js');
+  const child = spawn(process.execPath, [backgroundScript, cacheDir, today, learningsPath], {
+    detached: true,
+    stdio: 'ignore',
+    windowsHide: true
+  });
+  child.unref(); // Allow parent to exit independently
 }
 
-// Output response immediately
+// Output immediately and exit - don't await anything
 console.log(JSON.stringify({ continue: true, systemMessage: "..." }));
-
-// Wait for async to complete before exiting
-if (refreshPromise) {
-  await refreshPromise;
-}
-// Let Node exit naturally - don't call process.exit(0)
 ```
+
+Background script (`plugin-dev-cache-refresh.js`) handles slow operations:
+- Receives args via CLI: `node plugin-dev-cache-refresh.js <cacheDir> <today> <learningsPath>`
+- Does all slow work (Claude CLI, HTTP fetches, file writes)
+- Runs completely detached from parent process
+- Parent exits immediately, background process continues
+
+**Benefits:**
+- Session starts instantly (no blocking on cache refresh)
+- Cache still refreshes reliably in background
+- If background fails, next session will retry
 
 ### Environment Variables in Hooks
 
