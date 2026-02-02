@@ -353,3 +353,4 @@ ${existingLearnings || `### Successful Patterns
 
   fs.writeFileSync(learningsPath, learningsContent);
 }
+// debug test
