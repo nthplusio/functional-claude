@@ -1,0 +1,6 @@
+# Hook debug logs
+.claude/hooks/debug.log
+
+# Cache directories (already gitignored per-plugin, but catch any stragglers)
+**/.cache/*
+!**/.cache/.gitkeep
