@@ -20,6 +20,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | pre-commit | 0.3.0 | Pre-push checks for typechecking, linting, building, and testing |
 | claude-plugin-dev | 0.3.1 | Plugin development with guided workflows and AI-assisted creation |
 | opentui-dev | 0.1.3 | OpenTUI terminal interface development with component design and layout |
+| dev-workflow | 0.1.0 | Development workflow validation and planning tools |
 
 ## Architecture Overview
 
@@ -280,6 +281,16 @@ Plugin development documentation with guided workflows and AI-assisted creation.
 | references/conventions.md | Patterns from anthropics/claude-plugins-official |
 | references/examples.md | Complete plugin examples |
 
+## dev-workflow Plugin (v0.1.0)
+
+Development workflow validation and planning tools.
+
+### Agents
+
+| Agent | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| dev-gutcheck | Pre-implementation plan validation | "gut check this plan", "validate this plan", "sanity check before implementing" |
+
 ## Root-Level Skills
 
 | Skill | Purpose |
@@ -375,20 +386,25 @@ functional-claude/
     │   │   ├── plugin-validator.md
     │   │   └── skill-reviewer.md
     │   └── .cache/
-    └── opentui-dev/
+    ├── opentui-dev/
+    │   ├── .claude-plugin/plugin.json
+    │   ├── hooks/hooks.json
+    │   ├── commands/
+    │   │   └── opentui-scaffold.md
+    │   ├── skills/
+    │   │   ├── opentui-dev/           # Main skill (overview)
+    │   │   │   └── references/
+    │   │   ├── opentui-components/
+    │   │   ├── opentui-layout/
+    │   │   ├── opentui-keyboard/
+    │   │   └── opentui-animation/
+    │   ├── agents/
+    │   │   └── opentui-troubleshoot.md
+    │   └── .cache/
+    └── dev-workflow/
         ├── .claude-plugin/plugin.json
-        ├── hooks/hooks.json
-        ├── commands/
-        │   └── opentui-scaffold.md
-        ├── skills/
-        │   ├── opentui-dev/           # Main skill (overview)
-        │   │   └── references/
-        │   ├── opentui-components/
-        │   ├── opentui-layout/
-        │   ├── opentui-keyboard/
-        │   └── opentui-animation/
         ├── agents/
-        │   └── opentui-troubleshoot.md
+        │   └── dev-gutcheck.md
         └── .cache/
 ```
 
