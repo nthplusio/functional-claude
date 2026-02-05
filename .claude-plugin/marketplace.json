@@ -51,7 +51,7 @@
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
       "description": "Development workflow validation and planning tools",
-      "version": "0.1.0"
+      "version": "0.2.0"
     }
   ]
 }

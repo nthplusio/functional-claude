@@ -20,7 +20,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | pre-commit | 0.3.0 | Pre-push checks for typechecking, linting, building, and testing |
 | claude-plugin-dev | 0.3.1 | Plugin development with guided workflows and AI-assisted creation |
 | opentui-dev | 0.1.3 | OpenTUI terminal interface development with component design and layout |
-| dev-workflow | 0.1.0 | Development workflow validation and planning tools |
+| dev-workflow | 0.2.0 | Development workflow validation and planning tools |
 
 ## Architecture Overview
 
@@ -281,15 +281,27 @@ Plugin development documentation with guided workflows and AI-assisted creation.
 | references/conventions.md | Patterns from anthropics/claude-plugins-official |
 | references/examples.md | Complete plugin examples |
 
-## dev-workflow Plugin (v0.1.0)
+## dev-workflow Plugin (v0.2.0)
 
 Development workflow validation and planning tools.
+
+### Skills
+
+| Skill | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| plan-validation | Checklist integrated into plan creation | "create a plan", "plan the implementation", "enter plan mode" |
 
 ### Agents
 
 | Agent | Purpose | Trigger Phrases |
 |-------|---------|-----------------|
-| dev-gutcheck | Pre-implementation plan validation | "gut check this plan", "validate this plan", "sanity check before implementing" |
+| dev-gutcheck | Thorough post-plan validation | "gut check this plan", "validate this plan", "sanity check before implementing" |
+
+### Hooks
+
+| Hook | Event | Purpose |
+|------|-------|---------|
+| exit-plan-check | PreToolUse (ExitPlanMode) | Suggests running gut-check before plan approval |
 
 ## Root-Level Skills
 
@@ -403,8 +415,14 @@ functional-claude/
     │   └── .cache/
     └── dev-workflow/
         ├── .claude-plugin/plugin.json
+        ├── skills/
+        │   └── plan-validation/
+        │       └── SKILL.md
         ├── agents/
         │   └── dev-gutcheck.md
+        ├── hooks/
+        │   ├── hooks.json
+        │   └── exit-plan-check.js
         └── .cache/
 ```
 
