@@ -1,0 +1,5 @@
+{
+  "name": "tabby-dev",
+  "version": "0.1.0",
+  "description": "Tabby terminal configuration, SSH connections, and plugin development for Claude Code workflows"
+}

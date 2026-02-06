@@ -52,6 +52,12 @@
       "source": "./plugins/dev-workflow",
       "description": "Development workflow validation and planning tools",
       "version": "0.2.0"
+    },
+    {
+      "name": "tabby-dev",
+      "source": "./plugins/tabby-dev",
+      "description": "Tabby terminal configuration, SSH connections, and plugin development for Claude Code workflows",
+      "version": "0.1.0"
     }
   ]
 }

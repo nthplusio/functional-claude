@@ -21,6 +21,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | claude-plugin-dev | 0.3.1 | Plugin development with guided workflows and AI-assisted creation |
 | opentui-dev | 0.1.3 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.0 | Development workflow validation and planning tools |
+| tabby-dev | 0.1.0 | Tabby terminal configuration, SSH connections, and plugin development |
 
 ## Architecture Overview
 
@@ -305,6 +306,50 @@ Development workflow validation and planning tools.
 |------|-------|---------|
 | exit-plan-check | PreToolUse (ExitPlanMode) | Suggests running gut-check before plan approval |
 
+## tabby-dev Plugin (v0.1.0)
+
+Tabby terminal configuration, SSH connections, and plugin development.
+
+### Skills
+
+| Skill | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| tabby-dev | Overview, base config | "configure tabby", "tabby config" |
+| tabby-visual | Themes, colors, fonts, appearance | "tabby theme", "colors", "cursor" |
+| tabby-keybindings | Hotkeys, shortcuts, multi-chord | "tabby hotkeys", "shortcuts" |
+| tabby-connections | SSH, serial, telnet profiles | "ssh profile", "serial connection" |
+| tabby-plugins | Plugin discovery and development | "tabby plugin", "install plugin" |
+
+### Agents
+
+| Agent | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| tabby-troubleshoot | Autonomous debugging | "tabby not working", "fix tabby", "debug tabby" |
+| tabby-cache-update | Silent cache refresh | Triggered by SessionStart hook when cache is stale |
+
+### Commands
+
+| Command | Purpose |
+|---------|---------|
+| /tabby-recon | Analyze Tabby configuration and recommend optimizations |
+| /tabby-dev | Overview of Tabby development guidance with optional [topic] argument |
+
+### Hooks
+
+| Hook | Event | Purpose |
+|------|-------|---------|
+| tabby-session-start | SessionStart | Detects Tabby version, config path, refreshes caches |
+| verify-tabby-backup | PreToolUse | Verifies backup before config edits |
+| check-tabby-learnings | Stop | Prompts for learnings capture |
+
+### Cache Files
+
+| File | Refresh | Purpose |
+|------|---------|---------|
+| tabby-config.json | Daily | Version, config path, connection counts |
+| sources.json | - | Documentation source URLs |
+| learnings.md | Weekly | Documentation and session learnings |
+
 ## Root-Level Skills
 
 | Skill | Purpose |
@@ -415,16 +460,32 @@ functional-claude/
     │   ├── agents/
     │   │   └── opentui-troubleshoot.md
     │   └── .cache/
-    └── dev-workflow/
+    ├── dev-workflow/
+    │   ├── .claude-plugin/plugin.json
+    │   ├── skills/
+    │   │   └── plan-validation/
+    │   │       └── SKILL.md
+    │   ├── agents/
+    │   │   └── dev-gutcheck.md
+    │   ├── hooks/
+    │   │   ├── hooks.json
+    │   │   └── exit-plan-check.js
+    │   └── .cache/
+    └── tabby-dev/
         ├── .claude-plugin/plugin.json
+        ├── hooks/hooks.json
+        ├── commands/
+        │   ├── tabby-recon.md
+        │   └── tabby-dev.md
         ├── skills/
-        │   └── plan-validation/
-        │       └── SKILL.md
+        │   ├── tabby-dev/             # Main skill (overview)
+        │   ├── tabby-visual/
+        │   ├── tabby-keybindings/
+        │   ├── tabby-connections/
+        │   └── tabby-plugins/
         ├── agents/
-        │   └── dev-gutcheck.md
-        ├── hooks/
-        │   ├── hooks.json
-        │   └── exit-plan-check.js
+        │   ├── tabby-troubleshoot.md
+        │   └── tabby-cache-update.md
         └── .cache/
 ```
 
