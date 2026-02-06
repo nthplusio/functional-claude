@@ -7,10 +7,24 @@
 // - tailwind.config.* (Tailwind configuration)
 //
 // Input: JSON with tool parameters on stdin (file_path in tool_input)
-// Output: JSON response - {"permissionDecision": "allow"} or {"permissionDecision": "deny", "reason": "..."}
+// Output: JSON PreToolUse response with hookSpecificOutput wrapper
 
 const fs = require('fs');
 const path = require('path');
+
+function respond(decision, reason = null) {
+  const response = {
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      permissionDecision: decision
+    }
+  };
+  if (reason) {
+    response.hookSpecificOutput.permissionDecisionReason = reason;
+  }
+  console.log(JSON.stringify(response));
+  process.exit(0);
+}
 
 // Read JSON input from stdin
 let input = '';
@@ -29,8 +43,7 @@ process.stdin.on('end', () => {
 
     // If no file_path found, allow (not a file operation we care about)
     if (!filePath) {
-      console.log(JSON.stringify({ permissionDecision: "allow" }));
-      process.exit(0);
+      respond("allow");
     }
 
     // Normalize path for comparison (handle Windows paths)
@@ -42,9 +55,7 @@ process.stdin.on('end', () => {
     const isTailwindConfig = /^tailwind\.config\.(js|ts|mjs|cjs)$/.test(fileName);
 
     if (!isComponentsJson && !isTailwindConfig) {
-      // Not a protected file, allow
-      console.log(JSON.stringify({ permissionDecision: "allow" }));
-      process.exit(0);
+      respond("allow");
     }
 
     // Get today's date in YYYY-MM-DD format
@@ -73,33 +84,19 @@ process.stdin.on('end', () => {
     }
 
     if (backupFound) {
-      // Backup exists, allow the edit
-      console.log(JSON.stringify({ permissionDecision: "allow" }));
-      process.exit(0);
+      respond("allow");
     } else {
-      // No backup found, block and provide instructions
       const fileType = isComponentsJson ? 'shadcn configuration' : 'Tailwind configuration';
-      const reason = `BLOCKED: No backup found for today (${today}).
-
-Before editing ${fileType}, create a backup:
-
-  cp "${actualPath}" "${actualPath}.bak.${today}"
-
-Then retry your edit.`;
-
-      console.log(JSON.stringify({ permissionDecision: "deny", reason: reason }));
-      process.exit(0);
+      respond("deny", `No backup found for today (${today}). Before editing ${fileType}, create a backup:\n\n  cp "${actualPath}" "${actualPath}.bak.${today}"\n\nThen retry your edit.`);
     }
 
   } catch (err) {
     // On any error, allow to avoid blocking unexpectedly
-    console.log(JSON.stringify({ permissionDecision: "allow" }));
-    process.exit(0);
+    respond("allow");
   }
 });
 
 // Handle stdin errors gracefully
 process.stdin.on('error', () => {
-  console.log(JSON.stringify({ permissionDecision: "allow" }));
-  process.exit(0);
+  respond("allow");
 });

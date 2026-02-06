@@ -16,7 +16,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | wezterm-dev | 0.7.10 | WezTerm terminal configuration and customization |
 | hyper-dev | 0.3.5 | Hyper terminal configuration and plugin development |
 | prisma-dev | 0.1.5 | Prisma ORM development with schema analysis and migration safety |
-| shadcn-dev | 0.1.6 | shadcn/ui and Tailwind CSS v4 development workflows |
+| shadcn-dev | 0.1.8 | shadcn/ui and Tailwind CSS v4 development workflows |
 | pre-commit | 0.3.0 | Pre-push checks for typechecking, linting, building, and testing |
 | claude-plugin-dev | 0.3.1 | Plugin development with guided workflows and AI-assisted creation |
 | opentui-dev | 0.1.3 | OpenTUI terminal interface development with component design and layout |
@@ -149,16 +149,18 @@ plugins/<plugin-name>/
 | shadcn-data-tables | TanStack Table integration | "data table", "sortable table", "column sorting" |
 | tailwindv4 | Tailwind CSS v4 features | "tailwind v4", "css-first config", "oklch colors" |
 
-### Agent
+### Agents
 
 | Agent | Purpose | Trigger Phrases |
 |-------|---------|-----------------|
+| shadcn-agent | Full-capability development agent for multi-step shadcn/ui work | "build a login page", "scaffold a dashboard", "create a data table with sorting" |
 | shadcn-troubleshoot | Autonomous debugging | "shadcn not working", "component not rendering", "hydration error" |
 
-### Command
+### Commands
 
 | Command | Purpose |
 |---------|---------|
+| /shadcn-dev | Overview of shadcn/ui development guidance, project status, and skill routing |
 | /shadcn-recon | Analyze project for shadcn/ui setup and recommend components |
 
 ### Hooks
