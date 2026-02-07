@@ -37,7 +37,7 @@ Quick reference for all skills across the functional-claude marketplace. Find th
 
 ## Development Workflows
 
-### prisma-dev (5 skills)
+### prisma-dev (5 skills, 3 hooks)
 
 | Skill | What It Does | Trigger Phrases |
 |-------|-------------|-----------------|
@@ -46,6 +46,13 @@ Quick reference for all skills across the functional-claude marketplace. Find th
 | prisma-migrations | Migration workflows and safety | "prisma migrate", "database migration", "migrate dev", "rollback migration" |
 | prisma-queries | Query patterns, CRUD operations | "prisma client", "findMany", "create", "prisma transactions", "nested writes" |
 | prisma-recon | Repository analysis, schema scanning | "analyze prisma", "schema recon", "what models exist", "check prisma config" |
+
+**Automatic hooks:**
+| Hook | Event | What It Does |
+|------|-------|-------------|
+| block-manual-migration | PreToolUse | Blocks manual .sql creation in migrations/, forces `prisma migrate dev` |
+| remind-migrate-after-schema-change | PostToolUse | Reminds to run `prisma migrate dev` after editing schema.prisma |
+| prisma-recon | SessionStart | Analyzes schema and caches findings for context-aware help |
 
 ### shadcn-dev (6 skills)
 
