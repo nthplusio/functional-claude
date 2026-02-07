@@ -1,7 +1,7 @@
 ---
 name: prisma-dev
 description: This skill should be used when the user asks to "configure prisma", "prisma config", "set up prisma", "prisma orm", "work with prisma", or mentions general Prisma ORM questions. For specific topics, focused skills may be more appropriate.
-version: 0.1.5
+version: 0.1.6
 ---
 
 # Prisma Development

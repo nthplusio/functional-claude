@@ -1,7 +1,7 @@
 ---
 name: prisma-schema
 description: This skill should be used when the user asks about "prisma model", "schema.prisma", "prisma relations", "@@index", "prisma attributes", "@id", "@unique", "prisma enum", "prisma types", or mentions schema design and model definitions in Prisma.
-version: 0.1.5
+version: 0.1.6
 ---
 
 # Prisma Schema

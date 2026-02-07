@@ -15,7 +15,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 |--------|---------|-------------|
 | wezterm-dev | 0.7.11 | WezTerm terminal configuration and customization |
 | hyper-dev | 0.3.6 | Hyper terminal configuration and plugin development |
-| prisma-dev | 0.1.5 | Prisma ORM development with schema analysis and migration safety |
+| prisma-dev | 0.1.6 | Prisma ORM development with schema analysis and migration safety |
 | shadcn-dev | 0.1.9 | shadcn/ui and Tailwind CSS v4 development workflows |
 | pre-commit | 0.3.0 | Pre-push checks for typechecking, linting, building, and testing |
 | claude-plugin-dev | 0.3.1 | Plugin development with guided workflows and AI-assisted creation |
@@ -136,6 +136,7 @@ plugins/<plugin-name>/
 | Hook | Event | Purpose |
 |------|-------|---------|
 | block-manual-migration | PreToolUse | Blocks manual .sql creation in migrations/ |
+| remind-migrate-after-schema-change | PostToolUse | Reminds to run prisma migrate dev after schema.prisma edits |
 | prisma-recon | SessionStart | Analyzes schema and caches findings |
 
 ## shadcn-dev Plugin (v0.1.6)
