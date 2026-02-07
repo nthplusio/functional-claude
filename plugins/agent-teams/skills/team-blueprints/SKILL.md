@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "team blueprint", "team template", or says "spawn a team for [development phase]".
 
   Provides 4 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, and Debugging & Investigation.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Agent Team Blueprints

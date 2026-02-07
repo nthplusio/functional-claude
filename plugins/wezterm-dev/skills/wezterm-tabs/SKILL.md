@@ -1,7 +1,7 @@
 ---
 name: wezterm-tabs
 description: This skill should be used when the user asks about "tab bar", "tab title", "nerd font icons", "process icons", "tab formatting", "powerline tabs", "retro tab bar", "tab colors", or mentions customizing WezTerm tabs with icons and status indicators.
-version: 0.7.10
+version: 0.7.11
 ---
 
 # WezTerm Tab Bar

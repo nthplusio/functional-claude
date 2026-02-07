@@ -13,16 +13,16 @@ This document contains accumulated knowledge about the functional-claude plugin 
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| wezterm-dev | 0.7.10 | WezTerm terminal configuration and customization |
-| hyper-dev | 0.3.5 | Hyper terminal configuration and plugin development |
+| wezterm-dev | 0.7.11 | WezTerm terminal configuration and customization |
+| hyper-dev | 0.3.6 | Hyper terminal configuration and plugin development |
 | prisma-dev | 0.1.5 | Prisma ORM development with schema analysis and migration safety |
-| shadcn-dev | 0.1.8 | shadcn/ui and Tailwind CSS v4 development workflows |
+| shadcn-dev | 0.1.9 | shadcn/ui and Tailwind CSS v4 development workflows |
 | pre-commit | 0.3.0 | Pre-push checks for typechecking, linting, building, and testing |
 | claude-plugin-dev | 0.3.1 | Plugin development with guided workflows and AI-assisted creation |
-| opentui-dev | 0.1.3 | OpenTUI terminal interface development with component design and layout |
-| dev-workflow | 0.2.0 | Development workflow validation and planning tools |
-| tabby-dev | 0.1.0 | Tabby terminal configuration, SSH connections, and plugin development |
-| agent-teams | 0.1.0 | Agent team blueprints and coordination patterns for application development phases |
+| opentui-dev | 0.1.4 | OpenTUI terminal interface development with component design and layout |
+| dev-workflow | 0.2.1 | Development workflow validation and planning tools |
+| tabby-dev | 0.1.1 | Tabby terminal configuration, SSH connections, and plugin development |
+| agent-teams | 0.1.1 | Agent team blueprints and coordination patterns for application development phases |
 
 ## Architecture Overview
 

@@ -1,7 +1,7 @@
 ---
 name: tabby-keybindings
 description: This skill should be used when the user asks about "tabby keybindings", "tabby hotkeys", "tabby shortcuts", "customize tabby keys", "tabby keymap", "multi-chord tabby", or mentions keyboard shortcuts and key customization in Tabby terminal.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Tabby Keybindings

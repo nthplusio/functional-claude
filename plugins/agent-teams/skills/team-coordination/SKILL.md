@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user needs guidance on managing an active agent team, coordinating tasks between teammates, handling team communication, or understanding team lifecycle. Use this skill when the user asks about "task management", "team communication", "delegate mode", "plan approval", "shutdown teammates", "team messaging", or says "how do I manage my team".
 
   Covers task management, messaging patterns, plan approval workflow, delegate mode, display modes, and graceful shutdown.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Team Coordination Patterns

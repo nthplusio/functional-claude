@@ -1,7 +1,7 @@
 ---
 name: tailwindv4
 description: This skill should be used when the user asks about "tailwind v4", "tailwindcss 4", "tailwind css v4", "@theme", "css-first config", "tailwind css variables", "oklch colors", "tailwind upgrade", "migrate to tailwind 4", or mentions Tailwind CSS v4 configuration, new syntax, or migration from v3.
-version: 0.1.8
+version: 0.1.9
 ---
 
 # Tailwind CSS v4

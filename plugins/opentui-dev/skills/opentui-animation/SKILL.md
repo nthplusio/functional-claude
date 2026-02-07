@@ -1,7 +1,7 @@
 ---
 name: opentui-animation
 description: This skill should be used when the user asks about OpenTUI animations, timelines, easing, transitions, or needs help creating animated effects in TUIs.
-version: 0.1.3
+version: 0.1.4
 ---
 
 # OpenTUI Animation System

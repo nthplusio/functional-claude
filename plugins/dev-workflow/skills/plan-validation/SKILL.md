@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user is creating an implementation plan, entering plan mode, or designing an approach for a feature. Use this skill when the user asks to "create a plan", "plan the implementation", "design an approach", "enter plan mode", or says "let's plan this out".
 
   This skill provides a validation checklist that should be incorporated INTO the plan as it's being written, ensuring plans are complete before they're even finished.
-version: 0.2.0
+version: 0.2.1
 ---
 
 # Plan Validation Checklist
