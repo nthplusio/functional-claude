@@ -3,13 +3,13 @@ name: team-blueprints
 description: |
   This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "team blueprint", "team template", or says "spawn a team for [development phase]".
 
-  Provides 4 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, and Debugging & Investigation.
-version: 0.1.1
+  Provides 5 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, and Frontend Design.
+version: 0.2.0
 ---
 
 # Agent Team Blueprints
 
-Pre-designed team configurations for the four core application development phases. Each blueprint defines the team composition, teammate roles, task structure, and the prompt to use.
+Pre-designed team configurations for five application development phases. Each blueprint defines the team composition, teammate roles, task structure, and the prompt to use.
 
 ## Blueprint 1: Research & Discovery Team
 
@@ -260,6 +260,79 @@ Tasks:
 
 ---
 
+## Blueprint 5: Frontend Design Team
+
+**When to use:** Designing and implementing a user interface where product requirements, visual design, technical implementation, and accessibility all need dedicated attention. Best for UI features that require more than just coding — where the *design process* matters as much as the output.
+
+**Why teams work here:** A single session conflates design decisions with implementation details. Four distinct perspectives — product scope, visual design, code architecture, and user advocacy — create productive tension that results in a more thoughtful, accessible UI. The two-pass review (visual fidelity + accessibility) catches issues that a single reviewer would miss.
+
+### Team Composition
+
+| Teammate | Role | Focus | Model |
+|----------|------|-------|-------|
+| **Product Owner** | Requirements & priorities | User stories, acceptance criteria, scope boundaries | Sonnet |
+| **Designer** | Visual & interaction design | Component specs, states, layout, design tokens, design system | Sonnet |
+| **Frontend Dev** | Technical implementation | Component architecture, state management, performance, patterns | Default |
+| **User Advocate** | UX & accessibility | WCAG compliance, keyboard nav, screen readers, edge cases | Sonnet |
+
+### Spawn Prompt
+
+```
+Create an agent team to design and implement [UI FEATURE]. Spawn 4 teammates:
+
+1. **Product Owner** — Define requirements and acceptance criteria. Write user stories
+   with clear "given/when/then" scenarios. Set scope boundaries — what's in v1 vs
+   future iterations. Prioritize features by user impact. Review all deliverables
+   against acceptance criteria before approving.
+
+2. **Designer** — Create component specifications and interaction designs. Define visual
+   hierarchy, layout structure, spacing, responsive breakpoints, and all interactive states
+   (default, hover, focus, active, disabled, loading, error, empty). Specify design tokens
+   and how the design maps to the project's styling approach. Reference existing components
+   to maintain design system consistency.
+
+3. **Frontend Dev** — Implement components based on Designer specs and Product Owner
+   requirements. Choose appropriate component architecture (composition, state management,
+   data flow). Follow existing codebase patterns. Focus on performance (memoization,
+   lazy loading, bundle impact). Write unit tests alongside implementation.
+
+4. **User Advocate** — Review all specs and implementations for accessibility and usability.
+   Verify WCAG 2.1 AA compliance: keyboard navigation, screen reader support, color contrast,
+   focus management, ARIA attributes. Check responsive behavior, touch targets, error recovery,
+   and edge cases (long text, empty states, slow connections).
+
+The Designer and User Advocate provide specifications and review but do not write
+implementation code. The Frontend Dev is the sole implementer. Product Owner gates
+the start (requirements) and end (acceptance) of the process.
+```
+
+### Task Structure
+
+```
+Tasks:
+1. [Product Owner] Define user stories and acceptance criteria
+2. [Product Owner] Define scope boundaries — v1 vs deferred
+3. [Designer] Audit existing components and design patterns for reuse (after task 1)
+4. [User Advocate] Define accessibility requirements and testing criteria (after task 1)
+5. [Designer] Create component specs: layout, states, responsive breakpoints (after tasks 2, 3)
+6. [User Advocate] Review design specs for accessibility compliance (after tasks 4, 5)
+7. [Frontend Dev] Implement components following design specs (after tasks 5, 6)
+8. [Frontend Dev] Implement interactive states and error handling (after task 7)
+9. [Designer] Visual review of implementation against specs (after task 8)
+10. [User Advocate] Accessibility review — keyboard, screen reader, contrast (after task 8)
+11. [Frontend Dev] Address feedback from Designer and User Advocate (after tasks 9, 10)
+12. [Product Owner] Final acceptance review against user stories (after task 11)
+```
+
+### Configuration Tips
+
+- Use delegate mode for the lead — the sequential dependency graph requires active coordination
+- 3 Sonnet teammates + 1 default-model Frontend Dev balances cost and implementation quality
+- The two-pass review (Designer + User Advocate) is the key mechanism — don't skip it
+- For simple UI changes, consider using the Feature Development team instead
+
+---
+
 ## Customizing Blueprints
 
 These blueprints are starting points. Adapt them by:
@@ -277,5 +350,6 @@ Is the task about understanding something?     → Research & Discovery
 Is the task about building something new?      → Feature Development
 Is the task about reviewing existing work?     → Code Review & QA
 Is the task about fixing something broken?     → Debugging & Investigation
+Is the task about designing a user interface?  → Frontend Design
 Is it a mix?                                   → Use team-architect agent for custom design
 ```

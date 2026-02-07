@@ -62,8 +62,8 @@
     {
       "name": "agent-teams",
       "source": "./plugins/agent-teams",
-      "description": "Agent team blueprints and coordination patterns for parallel development. Pre-designed teams for research, feature development, code review, and debugging with multi-agent collaboration",
-      "version": "0.1.1"
+      "description": "Agent team blueprints and coordination patterns for parallel development. Pre-designed teams for research, feature development, code review, debugging, and frontend design with multi-agent collaboration",
+      "version": "0.2.0"
     }
   ]
 }

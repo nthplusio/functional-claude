@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user asks about Claude Code agent teams, wants to understand team-based development workflows, or needs guidance on when and how to use agent teams. Use this skill when the user asks to "create a team", "use agent teams", "coordinate agents", "parallel development", "team workflow", or says "how do agent teams work".
 
   This skill provides an overview of agent teams, when to use them vs subagents, and routes to focused skills for team blueprints and coordination patterns.
-version: 0.1.1
+version: 0.2.0
 ---
 
 # Agent Teams for Application Development
@@ -21,6 +21,7 @@ Agent teams are most effective when parallel exploration adds real value:
 | **Feature Development** | Teammates each own a separate module without stepping on each other |
 | **Code Review & QA** | Reviewers apply different lenses (security, performance, tests) in parallel |
 | **Debugging** | Teammates test competing hypotheses and challenge each other's findings |
+| **Frontend Design** | Product, design, development, and accessibility perspectives in creative tension |
 | **Cross-Layer Coordination** | Frontend, backend, and test changes each owned by a different teammate |
 
 ### Agent Teams vs Subagents
@@ -63,7 +64,7 @@ Claude creates the team, spawns teammates, assigns tasks, and coordinates work b
 
 | Skill | Purpose | Example Triggers |
 |-------|---------|-----------------|
-| **team-blueprints** | Pre-designed team configurations for 4 development phases | "research team", "feature team", "review team", "debug team" |
+| **team-blueprints** | Pre-designed team configurations for 5 development phases | "research team", "feature team", "review team", "debug team", "design team" |
 | **team-coordination** | Task management, messaging, plan approval, shutdown | "manage tasks", "team communication", "delegate mode" |
 
 ## Available Commands
@@ -75,6 +76,7 @@ Claude creates the team, spawns teammates, assigns tasks, and coordinates work b
 | `/spawn-feature-team` | Spawn a feature development team |
 | `/spawn-review-team` | Spawn a code review & QA team |
 | `/spawn-debug-team` | Spawn a debugging & investigation team |
+| `/spawn-design-team` | Spawn a frontend design team |
 
 ## Team Architecture
 
