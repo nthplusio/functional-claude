@@ -22,6 +22,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | opentui-dev | 0.1.3 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.0 | Development workflow validation and planning tools |
 | tabby-dev | 0.1.0 | Tabby terminal configuration, SSH connections, and plugin development |
+| agent-teams | 0.1.0 | Agent team blueprints and coordination patterns for application development phases |
 
 ## Architecture Overview
 
@@ -350,6 +351,40 @@ Tabby terminal configuration, SSH connections, and plugin development.
 | sources.json | - | Documentation source URLs |
 | learnings.md | Weekly | Documentation and session learnings |
 
+## agent-teams Plugin (v0.1.0)
+
+Agent team blueprints and coordination patterns for application development phases.
+
+### Skills
+
+| Skill | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| agent-teams | Overview, concepts, when to use | "agent teams", "create a team", "coordinate agents" |
+| team-blueprints | Pre-designed team configs for 4 dev phases | "research team", "feature team", "review team", "debug team" |
+| team-coordination | Task management, messaging, lifecycle | "manage tasks", "team communication", "delegate mode" |
+
+### Agents
+
+| Agent | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| team-architect | Custom team design for non-standard use cases | "design a team", "custom team", "what team do I need" |
+
+### Commands
+
+| Command | Purpose |
+|---------|---------|
+| /agent-teams | Plugin overview with available commands and quickstart |
+| /spawn-research-team | Spawn research & discovery team (Explorer, Analyst, Critic) |
+| /spawn-feature-team | Spawn feature development team (Frontend, Backend, Tester) |
+| /spawn-review-team | Spawn code review team (Security, Performance, Quality) |
+| /spawn-debug-team | Spawn debugging team with competing hypothesis investigators |
+
+### Reference Files
+
+| File | Purpose |
+|------|---------|
+| references/agent-teams-reference.md | Complete API reference, tools, architecture, best practices |
+
 ## Root-Level Skills
 
 | Skill | Purpose |
@@ -471,21 +506,38 @@ functional-claude/
     │   │   ├── hooks.json
     │   │   └── exit-plan-check.js
     │   └── .cache/
-    └── tabby-dev/
+    ├── tabby-dev/
+    │   ├── .claude-plugin/plugin.json
+    │   ├── hooks/hooks.json
+    │   ├── commands/
+    │   │   ├── tabby-recon.md
+    │   │   └── tabby-dev.md
+    │   ├── skills/
+    │   │   ├── tabby-dev/             # Main skill (overview)
+    │   │   ├── tabby-visual/
+    │   │   ├── tabby-keybindings/
+    │   │   ├── tabby-connections/
+    │   │   └── tabby-plugins/
+    │   ├── agents/
+    │   │   ├── tabby-troubleshoot.md
+    │   │   └── tabby-cache-update.md
+    │   └── .cache/
+    └── agent-teams/
         ├── .claude-plugin/plugin.json
         ├── hooks/hooks.json
         ├── commands/
-        │   ├── tabby-recon.md
-        │   └── tabby-dev.md
+        │   ├── agent-teams.md
+        │   ├── spawn-research-team.md
+        │   ├── spawn-feature-team.md
+        │   ├── spawn-review-team.md
+        │   └── spawn-debug-team.md
         ├── skills/
-        │   ├── tabby-dev/             # Main skill (overview)
-        │   ├── tabby-visual/
-        │   ├── tabby-keybindings/
-        │   ├── tabby-connections/
-        │   └── tabby-plugins/
+        │   ├── agent-teams/           # Main skill (overview)
+        │   │   └── references/
+        │   ├── team-blueprints/
+        │   └── team-coordination/
         ├── agents/
-        │   ├── tabby-troubleshoot.md
-        │   └── tabby-cache-update.md
+        │   └── team-architect.md
         └── .cache/
 ```
 

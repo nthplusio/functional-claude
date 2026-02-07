@@ -58,6 +58,12 @@
       "source": "./plugins/tabby-dev",
       "description": "Tabby terminal configuration, SSH connections, and plugin development for Claude Code workflows",
       "version": "0.1.0"
+    },
+    {
+      "name": "agent-teams",
+      "source": "./plugins/agent-teams",
+      "description": "Agent team blueprints and coordination patterns for application development phases",
+      "version": "0.1.0"
     }
   ]
 }
