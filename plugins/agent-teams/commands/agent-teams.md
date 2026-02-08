@@ -20,12 +20,13 @@ If `$ARGUMENTS` specifies a topic, focus on that area:
 | Argument | Action |
 |----------|--------|
 | `setup` | Guide through enabling agent teams in settings.json |
-| `blueprints` | Show all 5 team blueprints with use cases — use team-blueprints skill |
+| `blueprints` | Show all 6 team blueprints with use cases — use team-blueprints skill |
 | `research` | Detail the Research & Discovery team blueprint |
 | `feature` | Detail the Feature Development team blueprint |
 | `review` | Detail the Code Review & QA team blueprint |
 | `debug` | Detail the Debugging & Investigation team blueprint |
 | `design` | Detail the Frontend Design team blueprint |
+| `planning` | Detail the Planning & Roadmapping team blueprint |
 | `coordination` | Team management and communication — use team-coordination skill |
 | `reference` | Show API reference — read the reference document |
 
@@ -34,12 +35,13 @@ If `$ARGUMENTS` specifies a topic, focus on that area:
 If no arguments provided, present:
 
 1. **Status** — Whether agent teams are enabled
-2. **Available Commands** — List the 6 slash commands:
+2. **Available Commands** — List the 7 slash commands:
    - `/spawn-research-team <topic>` — Parallel research with Explorer, Analyst, Critic
    - `/spawn-feature-team <feature>` — Feature development with Frontend, Backend, Tester
    - `/spawn-review-team <target>` — Code review with Security, Performance, Quality reviewers
    - `/spawn-debug-team <bug>` — Bug investigation with competing hypothesis investigators
    - `/spawn-design-team <UI feature>` — Frontend design with Product Owner, Designer, Dev, User Advocate
+   - `/spawn-planning-team <business plan>` — Planning & roadmapping with Strategist, Prioritizer, Outcomes Analyst, Stakeholder Advocate
    - `/agent-teams [topic]` — This overview command
 3. **Available Skills** — List the 3 focused skills:
    - `agent-teams` — Overview and concepts

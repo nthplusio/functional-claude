@@ -1,15 +1,15 @@
 ---
 name: team-blueprints
 description: |
-  This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "team blueprint", "team template", or says "spawn a team for [development phase]".
+  This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "design team", "planning team", "roadmap team", "team blueprint", "team template", or says "spawn a team for [development phase]".
 
-  Provides 5 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, and Frontend Design.
-version: 0.2.0
+  Provides 6 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, Frontend Design, and Planning & Roadmapping.
+version: 0.3.0
 ---
 
 # Agent Team Blueprints
 
-Pre-designed team configurations for five application development phases. Each blueprint defines the team composition, teammate roles, task structure, and the prompt to use.
+Pre-designed team configurations for six application development phases. Each blueprint defines the team composition, teammate roles, task structure, and the prompt to use.
 
 ## Blueprint 1: Research & Discovery Team
 
@@ -333,6 +333,78 @@ Tasks:
 
 ---
 
+## Blueprint 6: Planning & Roadmapping Team
+
+**When to use:** Working through a business plan, product vision, or feature set to determine the correct order of implementation. Best when you need to define WHAT to build and WHY before handing off to implementation teams.
+
+**Why teams work here:** A single session conflates strategic thinking with tactical details. Four distinct perspectives — business strategy, dependency analysis, measurable outcomes, and stakeholder advocacy — create a structured funnel from broad vision to actionable phase briefs that implementation teams can directly consume.
+
+### Team Composition
+
+| Teammate | Role | Focus | Model |
+|----------|------|-------|-------|
+| **Strategist** | Business alignment & vision | Business objectives, value propositions, strategic sequencing | Sonnet |
+| **Prioritizer** | Dependency analysis & sequencing | Implementation order, dependency graphs, risk-ordered scheduling | Sonnet |
+| **Outcomes Analyst** | Success criteria & acceptance | Measurable outcomes, acceptance criteria, KPIs, definition of done | Sonnet |
+| **Stakeholder Advocate** | User & business perspective | User impact, business constraints, feasibility checks | Sonnet |
+
+### Spawn Prompt
+
+```
+Create an agent team to plan and sequence the implementation of [BUSINESS PLAN / FEATURE SET].
+Spawn 4 teammates:
+
+1. **Strategist** — Analyze the business plan and define strategic objectives. Identify core
+   value propositions, business differentiators, and strategic goals. Determine which
+   capabilities are foundational vs incremental. Frame each implementation phase in terms
+   of business value delivered, not just features shipped.
+
+2. **Prioritizer** — Map feature dependencies and technical prerequisites. Build a dependency
+   graph showing which features require others to exist first. Identify technical foundations
+   that must be laid early (auth, data models, core APIs). Sequence phases by dependency
+   order, risk level, and value delivery. Flag circular dependencies and propose how to
+   break them.
+
+3. **Outcomes Analyst** — Define measurable success criteria and acceptance conditions for
+   each phase. Write specific, testable definitions of done. Identify KPIs that prove each
+   phase delivered its intended value. Create acceptance criteria that implementation teams
+   can directly verify. Ensure outcomes are measurable, not aspirational.
+
+4. **Stakeholder Advocate** — Represent user needs and business constraints. Identify which
+   user segments benefit from each phase. Flag business constraints (budget, timeline,
+   regulatory, team capacity) that affect sequencing. Challenge assumptions about user
+   value — push back when phases don't clearly serve users.
+
+Each phase brief in the final roadmap should be directly usable as input to
+/spawn-feature-team or /spawn-design-team. Include: phase goal, features included,
+dependencies on prior phases, success criteria, and business rationale.
+```
+
+### Task Structure
+
+```
+Tasks:
+1. [Strategist] Analyze business plan and define strategic objectives
+2. [Stakeholder Advocate] Identify user needs, business constraints, and external dependencies
+3. [Prioritizer] Map feature dependencies and technical prerequisites (after task 1)
+4. [Strategist] Define implementation phases with business rationale (after tasks 1, 2)
+5. [Prioritizer] Sequence phases by dependency order and risk (after tasks 3, 4)
+6. [Outcomes Analyst] Define success criteria and acceptance conditions per phase (after task 4)
+7. [Stakeholder Advocate] Feasibility review — challenge assumptions and flag risks (after tasks 5, 6)
+8. [Outcomes Analyst] Refine outcomes based on feasibility feedback (after task 7)
+9. [All] Cross-review: validate plan coherence across all perspectives
+10. [Lead] Compile roadmap document with phase briefs for implementation teams
+```
+
+### Configuration Tips
+
+- Use `--model sonnet` for all teammates — planning is analysis and writing, not code generation
+- Enable delegate mode for the lead — the final roadmap is a synthesis of all perspectives
+- The funnel-shaped task structure (broad → narrow) is the key mechanism — early tasks explore, later tasks refine
+- Phase briefs should be specific enough to hand off directly to `/spawn-feature-team` or `/spawn-design-team`
+
+---
+
 ## Customizing Blueprints
 
 These blueprints are starting points. Adapt them by:
@@ -351,5 +423,6 @@ Is the task about building something new?      → Feature Development
 Is the task about reviewing existing work?     → Code Review & QA
 Is the task about fixing something broken?     → Debugging & Investigation
 Is the task about designing a user interface?  → Frontend Design
+Is the task about sequencing what to build?    → Planning & Roadmapping
 Is it a mix?                                   → Use team-architect agent for custom design
 ```

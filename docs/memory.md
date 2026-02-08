@@ -22,7 +22,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | opentui-dev | 0.1.4 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
 | tabby-dev | 0.1.1 | Tabby terminal configuration, SSH connections, and plugin development |
-| agent-teams | 0.2.0 | Agent team blueprints and coordination patterns for application development phases |
+| agent-teams | 0.3.0 | Agent team blueprints and coordination patterns for application development phases |
 
 ## Architecture Overview
 
@@ -352,7 +352,7 @@ Tabby terminal configuration, SSH connections, and plugin development.
 | sources.json | - | Documentation source URLs |
 | learnings.md | Weekly | Documentation and session learnings |
 
-## agent-teams Plugin (v0.2.0)
+## agent-teams Plugin (v0.3.0)
 
 Agent team blueprints and coordination patterns for application development phases.
 
@@ -361,7 +361,7 @@ Agent team blueprints and coordination patterns for application development phas
 | Skill | Purpose | Trigger Phrases |
 |-------|---------|-----------------|
 | agent-teams | Overview, concepts, when to use | "agent teams", "create a team", "coordinate agents" |
-| team-blueprints | Pre-designed team configs for 5 dev phases | "research team", "feature team", "review team", "debug team", "design team" |
+| team-blueprints | Pre-designed team configs for 6 dev phases | "research team", "feature team", "review team", "debug team", "design team", "planning team" |
 | team-coordination | Task management, messaging, lifecycle | "manage tasks", "team communication", "delegate mode" |
 
 ### Agents
@@ -380,6 +380,7 @@ Agent team blueprints and coordination patterns for application development phas
 | /spawn-review-team | Spawn code review team (Security, Performance, Quality) |
 | /spawn-debug-team | Spawn debugging team with competing hypothesis investigators |
 | /spawn-design-team | Spawn frontend design team with Product Owner, Designer, Dev, User Advocate |
+| /spawn-planning-team | Spawn planning & roadmapping team with Strategist, Prioritizer, Outcomes Analyst, Stakeholder Advocate |
 
 ### Reference Files
 
@@ -533,7 +534,8 @@ functional-claude/
         │   ├── spawn-feature-team.md
         │   ├── spawn-review-team.md
         │   ├── spawn-debug-team.md
-        │   └── spawn-design-team.md
+        │   ├── spawn-design-team.md
+        │   └── spawn-planning-team.md
         ├── skills/
         │   ├── agent-teams/           # Main skill (overview)
         │   │   └── references/
