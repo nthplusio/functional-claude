@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user asks about Claude Code agent teams, wants to understand team-based development workflows, or needs guidance on when and how to use agent teams. Use this skill when the user asks to "create a team", "use agent teams", "coordinate agents", "parallel development", "team workflow", or says "how do agent teams work".
 
   This skill provides an overview of agent teams, when to use them vs subagents, and routes to focused skills for team blueprints and coordination patterns.
-version: 0.3.0
+version: 0.4.0
 ---
 
 # Agent Teams for Application Development
@@ -23,6 +23,7 @@ Agent teams are most effective when parallel exploration adds real value:
 | **Debugging** | Teammates test competing hypotheses and challenge each other's findings |
 | **Frontend Design** | Product, design, development, and accessibility perspectives in creative tension |
 | **Planning & Roadmapping** | Strategic, dependency, outcomes, and stakeholder perspectives funnel into actionable phase briefs |
+| **Productivity Systems** | Sequential persona pipeline discovers, designs, reviews, refines, and compounds workflow improvements |
 | **Cross-Layer Coordination** | Frontend, backend, and test changes each owned by a different teammate |
 
 ### Agent Teams vs Subagents
@@ -65,8 +66,9 @@ Claude creates the team, spawns teammates, assigns tasks, and coordinates work b
 
 | Skill | Purpose | Example Triggers |
 |-------|---------|-----------------|
-| **team-blueprints** | Pre-designed team configurations for 6 development phases | "research team", "feature team", "review team", "debug team", "design team", "planning team" |
+| **team-blueprints** | Pre-designed team configurations for 7 development phases | "research team", "feature team", "review team", "debug team", "design team", "planning team", "productivity team" |
 | **team-coordination** | Task management, messaging, plan approval, shutdown | "manage tasks", "team communication", "delegate mode" |
+| **team-personas** | Reusable behavioral profiles with deep methodology and scoring | "personas", "behavioral profiles", "productivity loop", "auditor persona" |
 
 ## Available Commands
 
@@ -79,6 +81,7 @@ Claude creates the team, spawns teammates, assigns tasks, and coordinates work b
 | `/spawn-debug-team` | Spawn a debugging & investigation team |
 | `/spawn-design-team` | Spawn a frontend design team |
 | `/spawn-planning-team` | Spawn a planning & roadmapping team |
+| `/spawn-productivity-team` | Spawn a productivity systems team with 5-persona loop |
 
 ## Team Architecture
 

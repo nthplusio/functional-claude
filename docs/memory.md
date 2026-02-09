@@ -22,7 +22,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | opentui-dev | 0.1.4 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
 | tabby-dev | 0.1.1 | Tabby terminal configuration, SSH connections, and plugin development |
-| agent-teams | 0.3.0 | Agent team blueprints and coordination patterns for application development phases |
+| agent-teams | 0.4.0 | Agent team blueprints, coordination patterns, and reusable personas for application development phases |
 
 ## Architecture Overview
 
@@ -352,23 +352,24 @@ Tabby terminal configuration, SSH connections, and plugin development.
 | sources.json | - | Documentation source URLs |
 | learnings.md | Weekly | Documentation and session learnings |
 
-## agent-teams Plugin (v0.3.0)
+## agent-teams Plugin (v0.4.0)
 
-Agent team blueprints and coordination patterns for application development phases.
+Agent team blueprints, coordination patterns, and reusable personas for application development phases.
 
 ### Skills
 
 | Skill | Purpose | Trigger Phrases |
 |-------|---------|-----------------|
 | agent-teams | Overview, concepts, when to use | "agent teams", "create a team", "coordinate agents" |
-| team-blueprints | Pre-designed team configs for 6 dev phases | "research team", "feature team", "review team", "debug team", "design team", "planning team" |
+| team-blueprints | Pre-designed team configs for 7 dev phases | "research team", "feature team", "review team", "debug team", "design team", "planning team", "productivity team" |
 | team-coordination | Task management, messaging, lifecycle | "manage tasks", "team communication", "delegate mode" |
+| team-personas | Reusable behavioral profiles with deep methodology | "personas", "behavioral profiles", "productivity loop", "auditor persona" |
 
 ### Agents
 
 | Agent | Purpose | Trigger Phrases |
 |-------|---------|-----------------|
-| team-architect | Custom team design for non-standard use cases | "design a team", "custom team", "what team do I need" |
+| team-architect | Custom team design with persona support | "design a team", "custom team", "what team do I need" |
 
 ### Commands
 
@@ -381,12 +382,18 @@ Agent team blueprints and coordination patterns for application development phas
 | /spawn-debug-team | Spawn debugging team with competing hypothesis investigators |
 | /spawn-design-team | Spawn frontend design team with Product Owner, Designer, Dev, User Advocate |
 | /spawn-planning-team | Spawn planning & roadmapping team with Strategist, Prioritizer, Outcomes Analyst, Stakeholder Advocate |
+| /spawn-productivity-team | Spawn productivity systems team with 5-persona loop (Auditor, Architect, Analyst, Refiner, Compounder) |
 
 ### Reference Files
 
 | File | Purpose |
 |------|---------|
 | references/agent-teams-reference.md | Complete API reference, tools, architecture, best practices |
+| references/auditor.md | Auditor persona: Productivity Systems Analyst |
+| references/architect.md | Architect persona: Solution Architect |
+| references/analyst.md | Analyst persona: Senior Engineering Analyst |
+| references/refiner.md | Refiner persona: Convergence Loop Specialist |
+| references/compounder.md | Compounder persona: Systems Review Partner |
 
 ## Root-Level Skills
 
@@ -535,12 +542,21 @@ functional-claude/
         │   ├── spawn-review-team.md
         │   ├── spawn-debug-team.md
         │   ├── spawn-design-team.md
-        │   └── spawn-planning-team.md
+        │   ├── spawn-planning-team.md
+        │   └── spawn-productivity-team.md
         ├── skills/
         │   ├── agent-teams/           # Main skill (overview)
         │   │   └── references/
         │   ├── team-blueprints/
-        │   └── team-coordination/
+        │   ├── team-coordination/
+        │   └── team-personas/
+        │       ├── SKILL.md
+        │       └── references/
+        │           ├── auditor.md
+        │           ├── architect.md
+        │           ├── analyst.md
+        │           ├── refiner.md
+        │           └── compounder.md
         ├── agents/
         │   └── team-architect.md
         └── .cache/

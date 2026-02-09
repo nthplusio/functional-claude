@@ -1,7 +1,7 @@
 ---
 name: team-architect
 description: |
-  AI-assisted agent team designer that helps users create custom team configurations based on their specific project needs. Use this agent when the user asks to "design a team", "create a custom team", "help me plan a team", "what team do I need", or when the pre-built blueprints don't fit their use case.
+  AI-assisted agent team designer that helps users create custom team configurations based on their specific project needs. Can apply deep behavioral personas to teammates for structured methodology, scoring criteria, and interaction patterns. Use this agent when the user asks to "design a team", "create a custom team", "help me plan a team", "what team do I need", or when the pre-built blueprints don't fit their use case.
 
   <example>
   Context: User wants a team for a task that doesn't match existing blueprints
@@ -66,6 +66,27 @@ ${CLAUDE_PLUGIN_ROOT}/skills/team-blueprints/SKILL.md
 ```
 
 If a blueprint fits with minor modifications, adapt it rather than designing from scratch.
+
+### Step 3.5: Check Available Personas
+
+Read the team personas skill to see if any personas would enhance the team design:
+```
+${CLAUDE_PLUGIN_ROOT}/skills/team-personas/SKILL.md
+```
+
+Personas are deep behavioral profiles that add structured methodology, scoring criteria, and interaction patterns to teammates. Consider applying a persona when a teammate needs:
+- **Consistent methodology** — Named phases with specific steps (e.g., the Analyst persona's 4-pass review)
+- **Scoring criteria** — Quantitative evaluation dimensions (e.g., the Refiner persona's convergence scoring)
+- **Interaction patterns** — When to pause, check in, hand off (e.g., the Auditor persona's discovery-before-scoring flow)
+
+Available personas: Auditor, Architect, Analyst, Refiner, Compounder. Each can be applied individually to any teammate — they don't have to be used as a complete set.
+
+To apply a persona, include in the teammate's spawn description:
+```
+Read the [Persona Name] persona definition at:
+${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/[name].md
+Follow the methodology phases, scoring criteria, and behavioral instructions defined in the persona.
+```
 
 ### Step 4: Design the Team
 

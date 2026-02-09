@@ -3,13 +3,13 @@ name: team-blueprints
 description: |
   This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "design team", "planning team", "roadmap team", "team blueprint", "team template", or says "spawn a team for [development phase]".
 
-  Provides 6 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, Frontend Design, and Planning & Roadmapping.
-version: 0.3.0
+  Provides 7 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, Frontend Design, Planning & Roadmapping, and Productivity Systems.
+version: 0.4.0
 ---
 
 # Agent Team Blueprints
 
-Pre-designed team configurations for six application development phases. Each blueprint defines the team composition, teammate roles, task structure, and the prompt to use.
+Pre-designed team configurations for seven application development phases. Each blueprint defines the team composition, teammate roles, task structure, and the prompt to use.
 
 ## Blueprint 1: Research & Discovery Team
 
@@ -405,6 +405,122 @@ Tasks:
 
 ---
 
+## Blueprint 7: Productivity Systems Team
+
+**When to use:** Optimizing workflows, processes, or systems where you need to discover bottlenecks, design solutions, review quality, iteratively refine, and track improvements over time. Best when the *process of improvement* matters as much as any single output — when you want compounding gains across cycles.
+
+**Why teams work here:** A single session can identify problems or propose solutions, but lacks the structured methodology to systematically score, prioritize, design with tradeoffs, review through multiple lenses, iterate to convergence, and track patterns across cycles. Five distinct personas — each with deep methodology, scoring criteria, and defined input/output contracts — form a pipeline where improvements compound because each cycle builds on accumulated knowledge.
+
+### Team Composition
+
+| Teammate | Role | Focus | Model |
+|----------|------|-------|-------|
+| **Auditor** | Productivity Systems Analyst | Bottleneck discovery, cost scoring, prioritized planning | Sonnet |
+| **Architect** | Solution Architect | Problem restatement, approach mapping, phased blueprints | Sonnet |
+| **Analyst** | Senior Engineering Analyst | Multi-pass review: architecture, quality, reliability, performance | Sonnet |
+| **Refiner** | Convergence Loop Specialist | Iterative improvement until quality bar met | Default |
+| **Compounder** | Systems Review Partner | Progress tracking, friction logging, pattern recognition | Sonnet |
+
+### Spawn Prompt
+
+```
+Create an agent team called "productivity-[project-slug]" to optimize [WORKFLOW / PROCESS].
+
+Spawn 5 teammates:
+
+1. **Auditor** — Productivity Systems Analyst who discovers bottlenecks and quantifies their cost.
+   Read the Auditor persona definition at:
+   ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/auditor.md
+   Follow the methodology phases (Discovery → Scoring → 4-Week Plan), scoring criteria,
+   and behavioral instructions defined in the persona.
+   Your inputs come from the user's description of [WORKFLOW / PROCESS].
+   Your outputs feed into the Architect.
+   Use Sonnet model.
+
+2. **Architect** — Solution Architect who transforms prioritized problems into implementable blueprints.
+   Read the Architect persona definition at:
+   ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/architect.md
+   Follow the methodology phases (Problem Definition → Approach Map → Blueprint → Dependencies),
+   scoring criteria, and behavioral instructions defined in the persona.
+   Your inputs come from the Auditor's scored task inventory and 4-week plan.
+   Your outputs feed into the Analyst.
+   Use Sonnet model.
+
+3. **Analyst** — Senior Engineering Analyst who evaluates solutions through multiple quality lenses.
+   Read the Analyst persona definition at:
+   ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/analyst.md
+   Follow the methodology phases (Architecture → Code Quality → Reliability → Performance),
+   scoring criteria, and behavioral instructions defined in the persona.
+   Your inputs come from the Architect's phased blueprint and approach decisions.
+   Your outputs feed into the Refiner.
+   Use Sonnet model.
+
+4. **Refiner** — Convergence Loop Specialist who iteratively improves implementations until quality bar is met.
+   Read the Refiner persona definition at:
+   ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/refiner.md
+   Follow the methodology phases (Generate → Score → Diagnose → Rewrite → Re-score),
+   scoring criteria, and behavioral instructions defined in the persona.
+   Your inputs come from the Analyst's multi-pass review and prioritized findings.
+   Your outputs feed into the Compounder.
+   Use default model (iterative refinement benefits from strongest reasoning).
+
+5. **Compounder** — Systems Review Partner who closes the loop and identifies patterns for the next cycle.
+   Read the Compounder persona definition at:
+   ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/compounder.md
+   Follow the methodology phases (Progress Check → Friction Log → Next Target → Pattern Recognition),
+   scoring criteria, and behavioral instructions defined in the persona.
+   Your inputs come from the Refiner's refined implementation and convergence report.
+   Your outputs feed into the next cycle's Auditor.
+   Use Sonnet model.
+
+Enable delegate mode — focus on coordination, synthesis, and the final report.
+
+Create these tasks:
+1. [Auditor] Discover bottlenecks — ask targeted questions about the current [WORKFLOW / PROCESS]
+2. [Auditor] Score all identified tasks on Time Cost, Energy Drain, and Feasibility (blocked by task 1)
+3. [Auditor] Produce prioritized 4-week improvement plan with Automation Scores (blocked by task 2)
+4. [Architect] Restate the top problems from the Auditor's plan and ask clarifying questions (blocked by task 3)
+5. [Architect] Map 2-3 approaches per problem, ranked by simplicity with tradeoffs (blocked by task 4)
+6. [Architect] Create phased blueprint with rollback points and dependency map (blocked by task 5)
+7. [Analyst] Pass 1-2: Architecture and Code Quality review of the blueprint (blocked by task 6)
+8. [Analyst] Pass 3-4: Reliability and Performance review with tradeoff matrix (blocked by task 7)
+9. [Refiner] Generate initial implementation addressing Critical findings (blocked by task 8)
+10. [Refiner] Run convergence loop — score, diagnose, rewrite until quality bar met (blocked by task 9)
+11. [Compounder] Review all outputs — progress check, friction log, patterns, next target (blocked by task 10)
+12. [Lead] Synthesize final report with cumulative impact summary and next-cycle recommendations
+
+Important: This team is intentionally sequential — each persona's output feeds the next.
+The loop is the mechanism: improvements compound because each cycle builds on accumulated knowledge.
+```
+
+### Task Structure
+
+```
+Tasks:
+1. [Auditor] Discover bottlenecks via targeted questions
+2. [Auditor] Score tasks on Time Cost, Energy Drain, Feasibility (blocked by 1)
+3. [Auditor] Produce prioritized 4-week plan with Automation Scores (blocked by 2)
+4. [Architect] Restate problems, ask clarifying questions (blocked by 3)
+5. [Architect] Map 2-3 approaches ranked by simplicity (blocked by 4)
+6. [Architect] Create phased blueprint with rollback points (blocked by 5)
+7. [Analyst] Architecture + Code Quality review (blocked by 6)
+8. [Analyst] Reliability + Performance review with tradeoffs (blocked by 7)
+9. [Refiner] Generate initial implementation (blocked by 8)
+10. [Refiner] Convergence loop until quality bar met (blocked by 9)
+11. [Compounder] Review outputs, identify patterns, update inventory (blocked by 10)
+12. [Lead] Synthesize final report with next-cycle recommendations
+```
+
+### Configuration Tips
+
+- The task chain is intentionally sequential — the loop is how improvements compound
+- 4 Sonnet teammates + 1 default-model Refiner balances cost and quality for iterative work
+- Enable delegate mode for the lead — the final report is a synthesis of the full pipeline
+- When the Compounder finishes, run the team again with accumulated insights for the next improvement cycle
+- For parallelism, extract individual personas into other team configurations using the team-personas skill
+
+---
+
 ## Customizing Blueprints
 
 These blueprints are starting points. Adapt them by:
@@ -424,5 +540,6 @@ Is the task about reviewing existing work?     → Code Review & QA
 Is the task about fixing something broken?     → Debugging & Investigation
 Is the task about designing a user interface?  → Frontend Design
 Is the task about sequencing what to build?    → Planning & Roadmapping
+Is the task about optimizing workflows?        → Productivity Systems
 Is it a mix?                                   → Use team-architect agent for custom design
 ```
