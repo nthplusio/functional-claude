@@ -3,8 +3,8 @@ name: team-personas
 description: |
   This skill should be used when the user asks about personas for agent teams, wants to understand how to apply deep behavioral profiles to teammates, or needs guidance on the productivity loop. Use this skill when the user asks about "personas", "behavioral profiles", "productivity loop", "auditor persona", "architect persona", "analyst persona", "refiner persona", "compounder persona", or says "what personas are available" or "how do personas work".
 
-  Provides 5 reusable persona definitions that add deep methodology, scoring criteria, and interaction patterns to agent team teammates.
-version: 0.4.0
+  Provides 8 reusable persona definitions that add deep methodology, scoring criteria, and interaction patterns to agent team teammates.
+version: 0.5.0
 ---
 
 # Team Personas
@@ -60,6 +60,9 @@ The 5 personas form a continuous improvement cycle where each persona's output f
 | **Analyst** | Senior Engineering Analyst | Architecture → Code Quality → Reliability → Performance | Multi-pass review with tradeoff matrices, pauses after each pass | 4 |
 | **Refiner** | Convergence Loop Specialist | Generate → Score → Diagnose → Rewrite → Re-score | Stops at convergence (all criteria >= 8/10) or diminishing returns (delta < 0.5) | 5 |
 | **Compounder** | Systems Review Partner | Progress Check → Friction Log → Next Target → Pattern Recognition | Maintains running inventory, tracks cumulative impact, feeds back to Auditor | 4 |
+| **Facilitator** | Session Facilitator | Setup → Brainwriting Coordination → Collect & Cluster → Convergence | Manages divergence/convergence phases, enforces ideation rules, never contributes own ideas | 4 |
+| **Visionary** | Divergent Thinker | Brainwriting → Building | Generates ambitious unconstrained ideas, cross-domain connections, quantity over quality | 2 |
+| **Realist** | Practical Thinker | Brainwriting → Building | Grounds ideas in feasibility, offers stepping stones, bridges inspiration and execution | 2 |
 
 ## Using Personas
 
@@ -115,7 +118,7 @@ defined in the persona. Your inputs come from [source] and your outputs
 feed into [destination].
 ```
 
-Replace `[name]` with the lowercase persona name: `auditor`, `architect`, `analyst`, `refiner`, or `compounder`.
+Replace `[name]` with the lowercase persona name: `auditor`, `architect`, `analyst`, `refiner`, `compounder`, `facilitator`, `visionary`, or `realist`.
 
 ### Persona Reference Files
 
@@ -128,5 +131,8 @@ Each persona is defined in a standalone reference file designed to be read direc
 | Analyst | `${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/analyst.md` |
 | Refiner | `${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/refiner.md` |
 | Compounder | `${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/compounder.md` |
+| Facilitator | `${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/facilitator.md` |
+| Visionary | `${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/visionary.md` |
+| Realist | `${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/realist.md` |
 
 Each file is written in second-person ("You are...") so it can be directly injected into a teammate's behavioral context. Files include methodology phases, scoring criteria, behavioral instructions, input/output contracts, and dev workflow examples.

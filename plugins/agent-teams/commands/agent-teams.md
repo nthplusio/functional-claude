@@ -20,7 +20,7 @@ If `$ARGUMENTS` specifies a topic, focus on that area:
 | Argument | Action |
 |----------|--------|
 | `setup` | Guide through enabling agent teams in settings.json |
-| `blueprints` | Show all 7 team blueprints with use cases — use team-blueprints skill |
+| `blueprints` | Show all 8 team blueprints with use cases — use team-blueprints skill |
 | `research` | Detail the Research & Discovery team blueprint |
 | `feature` | Detail the Feature Development team blueprint |
 | `review` | Detail the Code Review & QA team blueprint |
@@ -29,6 +29,7 @@ If `$ARGUMENTS` specifies a topic, focus on that area:
 | `planning` | Detail the Planning & Roadmapping team blueprint |
 | `personas` | Show available personas and the productivity loop — use team-personas skill |
 | `productivity` | Detail the Productivity Systems team blueprint |
+| `brainstorming` | Detail the Brainstorming & Ideation team blueprint |
 | `coordination` | Team management and communication — use team-coordination skill |
 | `reference` | Show API reference — read the reference document |
 
@@ -37,7 +38,7 @@ If `$ARGUMENTS` specifies a topic, focus on that area:
 If no arguments provided, present:
 
 1. **Status** — Whether agent teams are enabled
-2. **Available Commands** — List the 8 slash commands:
+2. **Available Commands** — List the 9 slash commands:
    - `/spawn-research-team <topic>` — Parallel research with Explorer, Analyst, Critic
    - `/spawn-feature-team <feature>` — Feature development with Frontend, Backend, Tester
    - `/spawn-review-team <target>` — Code review with Security, Performance, Quality reviewers
@@ -45,6 +46,7 @@ If no arguments provided, present:
    - `/spawn-design-team <UI feature>` — Frontend design with Product Owner, Designer, Dev, User Advocate
    - `/spawn-planning-team <business plan>` — Planning & roadmapping with Strategist, Prioritizer, Outcomes Analyst, Stakeholder Advocate
    - `/spawn-productivity-team <workflow>` — Productivity systems with Auditor, Architect, Analyst, Refiner, Compounder
+   - `/spawn-brainstorming-team <topic>` — Brainstorming with Facilitator, Visionary, Realist + optional User Voice, Domain Expert
    - `/agent-teams [topic]` — This overview command
 3. **Available Skills** — List the 4 focused skills:
    - `agent-teams` — Overview and concepts

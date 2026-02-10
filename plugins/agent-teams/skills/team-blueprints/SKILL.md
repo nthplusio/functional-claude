@@ -3,13 +3,13 @@ name: team-blueprints
 description: |
   This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "design team", "planning team", "roadmap team", "team blueprint", "team template", or says "spawn a team for [development phase]".
 
-  Provides 7 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, Frontend Design, Planning & Roadmapping, and Productivity Systems.
-version: 0.4.0
+  Provides 8 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, Frontend Design, Planning & Roadmapping, Productivity Systems, and Brainstorming & Ideation.
+version: 0.5.0
 ---
 
 # Agent Team Blueprints
 
-Pre-designed team configurations for seven application development phases. Each blueprint defines the team composition, teammate roles, task structure, and the prompt to use.
+Pre-designed team configurations for eight application development phases. Each blueprint defines the team composition, teammate roles, task structure, and the prompt to use.
 
 ## Blueprint 1: Research & Discovery Team
 
@@ -521,6 +521,91 @@ Tasks:
 
 ---
 
+## Blueprint 8: Brainstorming & Ideation Team
+
+**When to use:** Generating creative ideas for a problem, feature, strategy, or process where you need diverse perspectives and structured evaluation. Best when the problem space is open-ended and you want to explore possibilities before committing to a direction.
+
+**Why teams work here:** A single session anchors on its first idea and iterates from there. Structured brainstorming with independent brainwriting prevents anchoring bias — each teammate generates ideas without seeing others' work, producing genuinely diverse options. The user feedback gate keeps the human as the "decider," and the building phase adds implementation substance to winning ideas.
+
+### Team Composition
+
+| Teammate | Role | Focus | Model |
+|----------|------|-------|-------|
+| **Facilitator** | Session management | Phase transitions, ideation rules, clustering, convergence | Sonnet |
+| **Visionary** | Divergent thinking | Ambitious ideas, cross-domain connections, quantity over quality | Sonnet |
+| **Realist** | Practical thinking | Feasible ideas, implementation details, stepping stones | Sonnet |
+| **User Voice** (optional) | User perspective | Ideas grounded in user needs, adoption, and experience | Sonnet |
+| **Domain Expert** (optional) | Domain expertise | Specialized ideas a generalist would miss | Sonnet |
+
+### Spawn Prompt
+
+```
+Create an agent team called "brainstorm-[topic-slug]" to brainstorm [TOPIC].
+
+Spawn [3-5] teammates:
+
+1. **Facilitator** — Session Facilitator who manages the divergence/convergence cycle.
+   Read the Facilitator persona at:
+   ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/facilitator.md
+   Follow the methodology phases and behavioral instructions. You manage phase transitions
+   and enforce ideation rules. You do NOT generate ideas yourself.
+
+2. **Visionary** — Divergent Thinker who generates ambitious, unconstrained ideas.
+   Read the Visionary persona at:
+   ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/visionary.md
+   Follow the methodology phases and behavioral instructions.
+   Your lens: [CATEGORY-SPECIFIC — e.g., emerging tech, user delight, workflow transformation].
+
+3. **Realist** — Practical Thinker who grounds ideas in feasibility.
+   Read the Realist persona at:
+   ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/realist.md
+   Follow the methodology phases and behavioral instructions.
+   Your lens: [CATEGORY-SPECIFIC — e.g., implementation feasibility, scope constraints, adoption friction].
+
+## Brainstorming Context
+[Interview results compiled as shared context for all teammates]
+
+Tasks:
+1. [Facilitator] Define parameters, communicate rules of engagement
+2. [Visionary] Brainwriting: 8-10 ideas independently (blocked by 1)
+3. [Realist] Brainwriting: 8-10 ideas independently (blocked by 1)
+4. [Facilitator] Collect, deduplicate, cluster ideas, present to lead (blocked by 2-3)
+5. [Lead] USER FEEDBACK GATE — present clusters, ask user to prioritize/decline (blocked by 4)
+6. [Visionary] Build on prioritized ideas — combine, enhance, amplify (blocked by 5)
+7. [Realist] Add implementation details, stepping stones, effort estimates (blocked by 5)
+8. [Facilitator] Convergence — evaluate refined ideas against success criteria (blocked by 6-7)
+9. [Lead] Synthesize final output with ranked recommendations (blocked by 8)
+```
+
+### Task Structure
+
+```
+Tasks:
+1. [Facilitator] Define brainstorming parameters and rules of engagement
+2. [Visionary] Brainwriting: Generate 8-10 ideas independently (blocked by 1)
+3. [Realist] Brainwriting: Generate 8-10 ideas independently (blocked by 1)
+4. [User Voice*] Brainwriting: Generate 8-10 ideas from user perspective (blocked by 1)
+5. [Domain Expert*] Brainwriting: Generate 8-10 ideas from domain expertise (blocked by 1)
+6. [Facilitator] Collect and cluster all ideas, present to lead (blocked by 2-5)
+7. [Lead] USER FEEDBACK GATE — present clusters, user prioritizes/declines (blocked by 6)
+8. [Visionary] Build on prioritized ideas — combine, enhance, amplify (blocked by 7)
+9. [Realist] Add implementation details, stepping stones, effort (blocked by 7)
+10. [Facilitator] Convergence — evaluate refined ideas, rank by viability (blocked by 8-9)
+11. [Lead] Synthesize final brainstorm output with ranked recommendations (blocked by 10)
+```
+
+*Tasks 4-5 only if optional teammates are included.
+
+### Configuration Tips
+
+- The spawn command runs a **discovery interview** before creating the team — this ensures rich shared context
+- 4 brainstorming categories (Tech / Product / Process / Ops) shape the Visionary and Realist lenses
+- The user feedback gate is the key mechanism — it prevents the team from converging on ideas the user doesn't care about
+- Independent brainwriting prevents anchoring bias — teammates don't see each other's ideas until the Facilitator collects them
+- 3 core teammates keeps cost low; add User Voice and/or Domain Expert for richer sessions
+
+---
+
 ## Customizing Blueprints
 
 These blueprints are starting points. Adapt them by:
@@ -541,5 +626,6 @@ Is the task about fixing something broken?     → Debugging & Investigation
 Is the task about designing a user interface?  → Frontend Design
 Is the task about sequencing what to build?    → Planning & Roadmapping
 Is the task about optimizing workflows?        → Productivity Systems
+Is the task about generating creative ideas?   → Brainstorming & Ideation
 Is it a mix?                                   → Use team-architect agent for custom design
 ```
