@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "design team", "planning team", "roadmap team", "team blueprint", "team template", or says "spawn a team for [development phase]".
 
   Provides 8 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, Frontend Design, Planning & Roadmapping, Productivity Systems, and Brainstorming & Ideation.
-version: 0.8.0
+version: 0.9.0
 ---
 
 # Agent Team Blueprints
@@ -719,6 +719,37 @@ Mid-execution checkpoint where the lead presents findings to the user for priori
 **Blueprints using this pattern:** Planning (after initial phases), Research (after initial findings), Design (after specs + accessibility review), Feature (after API contract), Productivity (after Auditor's scored plan), Brainstorming (after idea clustering), Debug (root cause confirmation)
 
 **When to use:** Any team where significant effort could go in the wrong direction without user input. See the "User Feedback Gate" section in the team-coordination skill for detailed implementation guidance.
+
+### Artifact Output Pattern
+
+Team deliverables are written to disk as git-tracked markdown files in `docs/teams/{team-name}/`, ensuring outputs persist after sessions and can be consumed by downstream pipeline teams.
+
+**Two-tier system:**
+- **Primary deliverable** — One main output file per team (e.g., `roadmap.md`, `evaluation-report.md`)
+- **Task outputs** — Per-task analysis files in a `tasks/` subdirectory
+
+**Artifact mapping by team type:**
+
+| Team Type | Dir Pattern | Primary Deliverable |
+|-----------|------------|-------------------|
+| Planning (Roadmap) | `plan-roadmap-{slug}` | `roadmap.md` |
+| Planning (Spec) | `plan-spec-{slug}` | `spec.md` |
+| Planning (ADR) | `plan-adr-{slug}` | `adr.md` |
+| Planning (Migration) | `plan-migration-{slug}` | `migration-plan.md` |
+| Planning (Business Case) | `plan-bizcase-{slug}` | `business-case.md` |
+| Planning (GTM) | `plan-gtm-{slug}` | `gtm-plan.md` |
+| Planning (OKR) | `plan-okr-{slug}` | `okr-tree.md` |
+| Research (Eval) | `research-eval-{slug}` | `evaluation-report.md` |
+| Research (Landscape) | `research-landscape-{slug}` | `landscape-report.md` |
+| Research (Risk) | `research-risk-{slug}` | `risk-assessment.md` |
+| Feature | `feature-{slug}` | `implementation-summary.md` |
+| Design | `design-{slug}` | `component-spec.md` / `page-spec.md` / `redesign-spec.md` |
+| Review | `review-{slug}` | `review-report.md` |
+| Debug | `debug-{slug}` | `root-cause-analysis.md` |
+| Productivity | `productivity-{slug}` | `productivity-report.md` |
+| Brainstorming | `brainstorm-{slug}` | `brainstorm-output.md` |
+
+Each team's lead compiles the primary deliverable with YAML frontmatter, writes task outputs, creates a team README, and updates the root index at `docs/teams/README.md`. See the "Artifact Output Protocol" section in the team-coordination skill for full frontmatter schemas and guidelines.
 
 ## Customizing Blueprints
 

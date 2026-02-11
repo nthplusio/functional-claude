@@ -171,6 +171,7 @@ Create these tasks:
 11. [User Advocate] Accessibility review of implementation — keyboard, screen reader, contrast (blocked by task 9)
 12. [Frontend Dev] Address feedback from Designer and User Advocate reviews (blocked by tasks 10, 11)
 13. [Product Owner] Final acceptance review against user stories (blocked by task 12)
+14. [Lead] Compile design artifacts — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact (mode-specific: `component-spec.md`, `page-spec.md`, or `redesign-spec.md`) with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md` (blocked by task 13)
 
 Important: The Designer and User Advocate provide specifications and review but do not
 write implementation code. The Frontend Dev is the sole implementer to avoid conflicts.
@@ -192,6 +193,7 @@ implementation is the costliest phase.
 - **Redesign:** Before/after analysis + implementation + test suite + migration notes
 
 All outputs feed into `/spawn-review-team` for design review, or `/spawn-feature-team` when backend work is needed.
+**Artifact files:** `docs/teams/[TEAM-NAME]/[mode-specific].md` (primary), `tasks/` (task outputs)
 
 ## Output
 
@@ -205,5 +207,6 @@ After spawning, inform the user:
 - Delegate mode keeps the lead focused on coordination
 - 3 teammates use Sonnet for cost efficiency; Frontend Dev uses the default model for implementation quality
 - The output feeds into `/spawn-review-team` for code review
+- **Artifact files** are written to `docs/teams/[TEAM-NAME]/` — the primary deliverable, task outputs in `tasks/`, team README, and root index update at `docs/teams/README.md`
 - Use Shift+Up/Down to interact with individual teammates
 - Use Ctrl+T to monitor the shared task list

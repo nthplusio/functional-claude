@@ -129,7 +129,7 @@ Create these tasks:
 7. [Tester] Write unit tests for backend services (blocked by task 5)
 8. [Tester] Write unit tests for frontend components (blocked by task 6)
 9. [Tester] Write integration tests for full flow (blocked by tasks 7, 8)
-10. [Lead] Compile implementation summary — what was built, API contract, test coverage, and any deviations from plan
+10. [Lead] Compile implementation summary — what was built, API contract, test coverage, and any deviations from plan. Write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `implementation-summary.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 
 Important: Each teammate should only modify files in their designated directories
 to avoid conflicts. Frontend and Backend must agree on API contracts before implementation.
@@ -145,6 +145,7 @@ foundation everything else builds on.
 ```
 
 **Output format:** Implemented feature + API contract document + test report → feeds into `/spawn-review-team`
+**Artifact files:** `docs/teams/[TEAM-NAME]/implementation-summary.md` (primary), `tasks/` (task outputs)
 
 ## Output
 
@@ -158,5 +159,6 @@ After spawning, inform the user:
 - Delegate mode keeps the lead focused on coordination
 - Task dependencies ensure proper ordering (contract → approval → implementation → tests)
 - The implementation summary feeds into `/spawn-review-team` for code review
+- **Artifact files** are written to `docs/teams/[TEAM-NAME]/` — the primary deliverable, task outputs in `tasks/`, team README, and root index update at `docs/teams/README.md`
 - Use Shift+Up/Down to interact with individual teammates
 - Use Ctrl+T to monitor the shared task list

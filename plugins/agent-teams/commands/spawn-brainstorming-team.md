@@ -185,7 +185,7 @@ Create these tasks:
 8. [Visionary] Build on prioritized ideas — combine, enhance, amplify, extend (blocked by task 7)
 9. [Realist] Add implementation details, stepping stones, effort estimates, risk assessment (blocked by task 7)
 10. [Facilitator] Drive convergence — evaluate refined ideas against success criteria, rank by viability (blocked by tasks 8-9)
-11. [Lead] Synthesize final brainstorm output with ranked recommendations, trade-offs, and next steps (blocked by task 10)
+11. [Lead] Synthesize final brainstorm output with ranked recommendations, trade-offs, and next steps (blocked by task 10) — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `brainstorm-output.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 
 Important: The brainwriting tasks (2-5) MUST be independent — no teammate should see others' ideas
 until the Facilitator collects them. This prevents anchoring bias.
@@ -204,6 +204,8 @@ The user feedback gate (task 7) is mandatory — the human decides which ideas t
 - **Idea clusters** — Themed groupings showing how ideas relate
 - **Recommended next steps** — For each top idea, which downstream command to run: `/spawn-planning-team` (for strategic ideas needing roadmapping), `/spawn-research-team` (for ideas needing feasibility research), `/spawn-design-team` (for UI/UX concepts), or `/spawn-feature-team` (for straightforward implementations)
 
+**Artifact files:** `docs/teams/[TEAM-NAME]/brainstorm-output.md` (primary), `tasks/` (task outputs)
+
 ## Output
 
 After spawning, inform the user:
@@ -215,5 +217,6 @@ After spawning, inform the user:
 - **Phase 5 (Convergence):** The Facilitator drives structured evaluation and the lead synthesizes the final output
 - The Facilitator enforces brainstorming rules — no premature evaluation during ideation
 - The final output includes recommended downstream commands for each top idea
+- **Artifact files** are written to `docs/teams/[TEAM-NAME]/` — the primary deliverable, task outputs in `tasks/`, team README, and root index update at `docs/teams/README.md`
 - Use Shift+Up/Down to interact with teammates or provide additional context
 - Use Ctrl+T to monitor the shared task list

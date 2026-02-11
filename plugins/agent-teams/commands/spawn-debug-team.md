@@ -86,7 +86,7 @@ Create these tasks:
 5. [All] Share findings and challenge each other's theories
 6. [Lead] Identify root cause from surviving theory
 7. [Lead] ROOT CAUSE CONFIRMATION — Present the identified root cause and supporting evidence to user. Ask user to: confirm the root cause makes sense, provide additional context, and approve before proposing a fix (blocked by task 6)
-8. [Lead] Propose fix based on confirmed root cause (blocked by task 7)
+8. [Lead] Propose fix based on confirmed root cause (blocked by task 7) — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `root-cause-analysis.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 
 Have investigators actively debate. When one finds evidence, others should try to
 disprove it. The theory that survives scrutiny is most likely correct.
@@ -101,6 +101,7 @@ Require plan approval before implementing any fix.
 ```
 
 **Output format:** Root cause analysis + hypothesis investigation results + fix proposal → feeds into `/spawn-feature-team` (implement the fix), `/spawn-review-team` (review the fix)
+**Artifact files:** `docs/teams/[TEAM-NAME]/root-cause-analysis.md` (primary), `tasks/` (task outputs)
 
 ## Output
 
@@ -111,4 +112,5 @@ After spawning, inform the user:
 - **Root cause confirmation:** Before proposing a fix, the lead will present the root cause and evidence for your approval
 - The lead requires plan approval before implementing a fix
 - The fix proposal feeds into `/spawn-feature-team` for implementation or `/spawn-review-team` for review
+- **Artifact files** are written to `docs/teams/[TEAM-NAME]/` — the primary deliverable, task outputs in `tasks/`, team README, and root index update at `docs/teams/README.md`
 - Use Shift+Up/Down to give investigators additional context or redirect them

@@ -263,7 +263,7 @@ Create these tasks:
 8. [Stakeholder Advocate] Feasibility review — challenge assumptions and flag risks (blocked by tasks 6, 7)
 9. [Outcomes Analyst] Refine outcomes based on feasibility feedback (blocked by task 8)
 10. [All] Cross-review: validate plan coherence across strategic, dependency, outcomes, and stakeholder perspectives
-11. [Lead] Compile roadmap document with phase briefs for implementation teams
+11. [Lead] Compile roadmap document with phase briefs for implementation teams — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `roadmap.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 
 Important: Each phase brief in the final roadmap should be directly usable as input to
 /spawn-feature-team or /spawn-design-team. Include: phase goal, features included,
@@ -278,6 +278,7 @@ dependencies on prior phases, success criteria, and business rationale.
 ```
 
 **Output format:** Roadmap document with phase briefs → feeds into `/spawn-feature-team`, `/spawn-design-team`
+**Artifact files:** `docs/teams/[TEAM-NAME]/roadmap.md` (primary), `tasks/` (task outputs)
 
 ---
 
@@ -364,7 +365,7 @@ Create these tasks:
 8. [Risk Analyst] Propose mitigations for accepted risks — design alternatives where needed (blocked by task 5)
 9. [DX Advocate] Write implementation guide with examples and developer notes (blocked by tasks 6, 7)
 10. [All] Cross-review: validate spec coherence across architecture, API, risk, and DX perspectives
-11. [Lead] Compile technical specification document
+11. [Lead] Compile technical specification document — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `spec.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 
 Important: The final spec should be detailed enough for implementation teams to build from
 without further clarification. Include: system design, API contracts, data models, error
@@ -379,6 +380,7 @@ handling, security considerations, and implementation guidance. Feeds into /spaw
 ```
 
 **Output format:** Technical specification document → feeds into `/spawn-feature-team`
+**Artifact files:** `docs/teams/[TEAM-NAME]/spec.md` (primary), `tasks/` (task outputs)
 
 ---
 
@@ -463,7 +465,7 @@ Create these tasks:
 8. [Solution Architect] Draft recommendation with full rationale, addressing Critic's challenges (blocked by task 7)
 9. [All] Cross-review: validate ADR coherence — does the recommendation survive all perspectives?
 10. [Critic] Final challenge — last chance to raise concerns before the decision is recorded
-11. [Lead] Compile Architecture Decision Record (ADR) document
+11. [Lead] Compile Architecture Decision Record (ADR) document — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `adr.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 
 Important: The final ADR should follow the standard format: Title, Status, Context, Decision,
 Consequences. Include the comparison matrix, rejected options with reasons, and implementation
@@ -478,6 +480,7 @@ guidance. The ADR should be a durable reference for future teams.
 ```
 
 **Output format:** Architecture Decision Record (ADR) → feeds into implementation teams
+**Artifact files:** `docs/teams/[TEAM-NAME]/adr.md` (primary), `tasks/` (task outputs)
 
 ---
 
@@ -563,7 +566,7 @@ Create these tasks:
 9. [All] Cross-review: validate migration plan coherence — does each phase have clear entry/exit criteria and rollback?
 10. [Risk Mitigator] Final risk assessment — pre-mortem on the full plan (blocked by task 9)
 11. [Stakeholder Advocate] Finalize stakeholder communication timeline (blocked by task 9)
-12. [Lead] Compile migration plan document with phase details, risk matrix, and communication plan
+12. [Lead] Compile migration plan document with phase details, risk matrix, and communication plan — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `migration-plan.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 
 Important: The final migration plan should include: current/target state analysis, migration
 approach, phased execution plan with rollback points, risk matrix with mitigations, go/no-go
@@ -578,6 +581,7 @@ criteria, and stakeholder communication plan.
 ```
 
 **Output format:** Migration plan with phases, risk matrix, rollback procedures → feeds into implementation teams
+**Artifact files:** `docs/teams/[TEAM-NAME]/migration-plan.md` (primary), `tasks/` (task outputs)
 
 ---
 
@@ -664,7 +668,7 @@ Create these tasks:
 8. [Market Analyst] Provide supporting evidence — case studies, benchmarks, customer signals (blocked by task 4)
 9. [All] Cross-review: validate business case coherence — do the numbers, strategy, and risks tell a consistent story?
 10. [Risk Analyst] Sensitivity analysis — which assumptions, if wrong, break the case? (blocked by task 9)
-11. [Lead] Compile business case document with executive summary, financials, and recommendation
+11. [Lead] Compile business case document with executive summary, financials, and recommendation — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `business-case.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 
 Important: The final business case should include: executive summary, strategic context,
 market analysis, financial model with scenarios, risk assessment, and clear recommendation.
@@ -679,6 +683,7 @@ Feeds into Product Roadmap mode for execution planning.
 ```
 
 **Output format:** Business case decision document → feeds into Product Roadmap mode
+**Artifact files:** `docs/teams/[TEAM-NAME]/business-case.md` (primary), `tasks/` (task outputs)
 
 ---
 
@@ -763,7 +768,7 @@ Create these tasks:
 8. [Launch Coordinator] Create launch timeline with phases, milestones, and readiness criteria (blocked by tasks 5, 6, 7)
 9. [All] Cross-review: validate GTM plan coherence — do positioning, channels, and launch plan align?
 10. [Launch Coordinator] Define post-launch measurement plan and iteration triggers (blocked by task 9)
-11. [Lead] Compile GTM plan with positioning, channel strategy, launch timeline, and success metrics
+11. [Lead] Compile GTM plan with positioning, channel strategy, launch timeline, and success metrics — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `gtm-plan.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 
 Important: The final GTM plan should include: positioning framework, customer personas,
 channel strategy with tactics, launch timeline, readiness criteria, and measurement plan.
@@ -778,6 +783,7 @@ Feeds into Product Roadmap mode for execution alignment.
 ```
 
 **Output format:** GTM plan with positioning, channels, launch timeline → feeds into Product Roadmap mode
+**Artifact files:** `docs/teams/[TEAM-NAME]/gtm-plan.md` (primary), `tasks/` (task outputs)
 
 ---
 
@@ -864,7 +870,7 @@ Create these tasks:
 8. [Stakeholder Advocate] Review OKRs for ownership clarity, acceptance, and inter-team tensions (blocked by task 7)
 9. [All] Cross-review: validate OKR tree coherence — do objectives, key results, and ownership form a clear picture?
 10. [Metrics Designer] Finalize measurement plan — data sources, tracking cadence, review schedule (blocked by task 9)
-11. [Lead] Compile OKR document with objectives, key results, ownership, and measurement plan
+11. [Lead] Compile OKR document with objectives, key results, ownership, and measurement plan — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `okr-tree.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 
 Important: The final OKR document should include: objective tree, key results with baselines
 and targets, ownership map, measurement plan, and alignment notes. Feeds into Product Roadmap
@@ -879,6 +885,7 @@ and/or Technical Spec modes for execution planning.
 ```
 
 **Output format:** OKR tree with objectives, key results, and measurement plan → feeds into Product Roadmap, Technical Spec modes
+**Artifact files:** `docs/teams/[TEAM-NAME]/okr-tree.md` (primary), `tasks/` (task outputs)
 
 ---
 
@@ -893,5 +900,6 @@ After spawning, inform the user:
 - **Phase 5 (Synthesis):** Lead compiles the final [OUTPUT FORMAT] document
 - All teammates use Sonnet — planning is analysis and writing, not code generation
 - The final deliverable feeds into [DOWNSTREAM COMMANDS] for execution
+- **Artifact files** are written to `docs/teams/[TEAM-NAME]/` — the primary deliverable, task outputs in `tasks/`, team README, and root index update at `docs/teams/README.md`
 - Use Shift+Up/Down to interact with individual teammates
 - Use Ctrl+T to monitor the shared task list

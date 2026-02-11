@@ -185,7 +185,7 @@ Create these tasks:
 7. [Critic] Challenge the leading option — stress test assumptions and probe edge cases (blocked by task 6)
 8. [All] Cross-review: validate findings across explorer, analyst, and critic perspectives
 9. [Analyst] Final recommendation with confidence levels and caveats (blocked by task 8)
-10. [Lead] Compile technology evaluation report with comparison matrix, recommendation, and migration guidance
+10. [Lead] Compile technology evaluation report with comparison matrix, recommendation, and migration guidance — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `evaluation-report.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 11. [Lead] Produce actionable next steps — what downstream team commands to run with which inputs
 
 Important: The final evaluation report should include: candidate profiles, comparison matrix,
@@ -202,6 +202,7 @@ should be directly usable as input to /spawn-planning-team (for roadmapping adop
 ```
 
 **Output format:** Technology evaluation report with comparison matrix and recommendation → feeds into `/spawn-planning-team`, `/spawn-feature-team`
+**Artifact files:** `docs/teams/[TEAM-NAME]/evaluation-report.md` (primary), `tasks/` (task outputs)
 
 ---
 
@@ -278,7 +279,7 @@ Create these tasks:
 7. [Analyst] Strategic analysis of prioritized categories — adoption, sustainability, trajectory (blocked by task 4)
 8. [All] Cross-review: validate landscape map completeness and accuracy
 9. [Analyst] Final landscape assessment with recommendations for further investigation (blocked by task 8)
-10. [Lead] Compile landscape survey report with map, trend analysis, and recommended next steps
+10. [Lead] Compile landscape survey report with map, trend analysis, and recommended next steps — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `landscape-report.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 11. [Lead] Identify which areas warrant deeper investigation via /spawn-research-team (Technology Evaluation mode)
 
 Important: The final landscape map should be structured so that specific categories can be
@@ -294,6 +295,7 @@ option profiles, trend analysis, gap analysis, and recommended next steps.
 ```
 
 **Output format:** Landscape survey report with taxonomy and trend analysis → feeds into `/spawn-research-team` (Technology Evaluation), `/spawn-planning-team`
+**Artifact files:** `docs/teams/[TEAM-NAME]/landscape-report.md` (primary), `tasks/` (task outputs)
 
 ---
 
@@ -371,7 +373,7 @@ Create these tasks:
 7. [Risk Analyst] Reassess residual risk after proposed mitigations (blocked by tasks 5, 6)
 8. [All] Cross-review: validate risk register completeness and mitigation feasibility
 9. [Mitigator] Final mitigation plan with implementation priorities and monitoring (blocked by task 8)
-10. [Lead] Compile risk assessment report with risk register, mitigation plan, and monitoring recommendations
+10. [Lead] Compile risk assessment report with risk register, mitigation plan, and monitoring recommendations — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `risk-assessment.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 11. [Lead] Identify actions that should be addressed via /spawn-feature-team or /spawn-debug-team
 
 Important: The final risk register should include: categorized risks with scores, mitigation
@@ -388,6 +390,7 @@ implementation teams.
 ```
 
 **Output format:** Risk assessment report with risk register and mitigation plan → feeds into `/spawn-planning-team`, `/spawn-feature-team`, `/spawn-debug-team`
+**Artifact files:** `docs/teams/[TEAM-NAME]/risk-assessment.md` (primary), `tasks/` (task outputs)
 
 ---
 
@@ -402,5 +405,6 @@ After spawning, inform the user:
 - **Phase 5 (Synthesis):** Lead compiles the final [OUTPUT FORMAT] report
 - All teammates use Sonnet — research is analysis and writing, not code generation
 - The final deliverable feeds into [DOWNSTREAM COMMANDS] for next steps
+- **Artifact files** are written to `docs/teams/[TEAM-NAME]/` — the primary deliverable, task outputs in `tasks/`, team README, and root index update at `docs/teams/README.md`
 - Use Shift+Up/Down to interact with individual teammates
 - Use Ctrl+T to monitor the shared task list

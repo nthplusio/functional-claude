@@ -147,7 +147,7 @@ Create these tasks:
 10. [Refiner] Generate initial implementation addressing Critical findings (blocked by task 9)
 11. [Refiner] Run convergence loop — score, diagnose, rewrite until quality bar met (blocked by task 10)
 12. [Compounder] Review all outputs — progress check, friction log, patterns, next target (blocked by task 11)
-13. [Lead] Synthesize final report with cumulative impact summary and next-cycle recommendations
+13. [Lead] Synthesize final report with cumulative impact summary and next-cycle recommendations — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `productivity-report.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 
 Important: This team is intentionally sequential — each persona's output feeds the next.
 The loop is the mechanism: improvements compound because each cycle builds on accumulated knowledge.
@@ -172,6 +172,7 @@ further development.
 - **Compounder:** Cycle report with friction log, patterns, and next target
 
 Final synthesis feeds into the next productivity cycle or into `/spawn-feature-team` for implementing automation.
+**Artifact files:** `docs/teams/[TEAM-NAME]/productivity-report.md` (primary), `tasks/` (task outputs)
 
 ## Output
 
@@ -186,5 +187,6 @@ After spawning, inform the user:
 - 4 teammates use Sonnet (analysis and writing); the Refiner uses the default model (iterative refinement benefits from strongest reasoning)
 - When the Compounder finishes, you can run the team again with accumulated insights for the next improvement cycle
 - Implementation outputs can be fed into `/spawn-feature-team` for development
+- **Artifact files** are written to `docs/teams/[TEAM-NAME]/` — the primary deliverable, task outputs in `tasks/`, team README, and root index update at `docs/teams/README.md`
 - Use Shift+Up/Down to interact with individual teammates
 - Use Ctrl+T to monitor the shared task list

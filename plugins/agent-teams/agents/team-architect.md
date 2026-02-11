@@ -98,6 +98,8 @@ Based on the task complexity, consider whether the team design should include th
 
 **Cross-Team Pipeline** — Consider how the team's output feeds into downstream teams. Structure the output format so it can be directly consumed by the next team command (e.g., a planning team produces phase briefs that feed into `/spawn-feature-team`). Document the pipeline in the spawn prompt output section.
 
+**Artifact Output** — All teams should write their deliverables to `docs/teams/{team-name}/` as git-tracked markdown with YAML frontmatter. Include artifact writing instructions in the lead's final compilation task. See the "Artifact Output Protocol" section in the team-coordination skill for the full specification and the artifact mapping table in the team-blueprints skill.
+
 ### Step 4: Design the Team
 
 For each teammate, define:
@@ -158,9 +160,11 @@ Create these tasks:
 N. [Lead] USER FEEDBACK GATE — Present findings to user, ask for direction (blocked by upstream tasks)
 N+1. [Owner] Detailed work based on user direction (blocked by task N)
 ...
+N+X. [Lead] Compile final deliverables — write to docs/teams/[TEAM-NAME]/: primary artifact as [filename].md with frontmatter, task outputs to tasks/, team README, and update root index at docs/teams/README.md
 
 [Coordination instructions: file boundaries, communication patterns, synthesis]
 [Output format: what the team produces and which downstream commands it feeds into]
+[Artifact files: docs/teams/[TEAM-NAME]/[filename].md (primary), tasks/ (task outputs)]
 ```
 
 ### Step 7: Review with User

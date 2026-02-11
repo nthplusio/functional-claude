@@ -130,7 +130,7 @@ Create these tasks:
 5. [Quality] Verify adherence to project patterns and conventions
 6. [Quality] Assess test coverage and identify gaps
 7. [All] Cross-reference findings across review domains
-8. [Lead] Compile unified review report with prioritized action items
+8. [Lead] Compile unified review report with prioritized action items — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `review-report.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 
 Each reviewer should produce a structured report. Have them share reports so they
 can cross-reference findings (e.g., a performance issue might also be a security
@@ -146,6 +146,7 @@ Wait for all reviewers to complete before compiling the unified report.
 ```
 
 **Output format:** Unified review report + per-reviewer reports + action items checklist → feeds into `/spawn-debug-team` (for investigating issues found), `/spawn-feature-team` (for rework)
+**Artifact files:** `docs/teams/[TEAM-NAME]/review-report.md` (primary), `tasks/` (task outputs)
 
 ## Output
 
@@ -156,4 +157,5 @@ After spawning, inform the user:
 - The lead will compile a unified review report when all reviewers finish
 - No user feedback gate — reviews are single-pass; the cross-reference task serves as internal validation
 - The review report feeds into `/spawn-debug-team` for investigating issues or `/spawn-feature-team` for rework
+- **Artifact files** are written to `docs/teams/[TEAM-NAME]/` — the primary deliverable, task outputs in `tasks/`, team README, and root index update at `docs/teams/README.md`
 - Use Shift+Up/Down to message specific reviewers with additional context
