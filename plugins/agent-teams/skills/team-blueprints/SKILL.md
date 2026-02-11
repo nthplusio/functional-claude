@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "design team", "planning team", "roadmap team", "team blueprint", "team template", or says "spawn a team for [development phase]".
 
   Provides 8 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, Frontend Design, Planning & Roadmapping, Productivity Systems, and Brainstorming & Ideation.
-version: 0.6.0
+version: 0.7.0
 ---
 
 # Agent Team Blueprints
@@ -338,75 +338,94 @@ Tasks:
 
 ---
 
-## Blueprint 6: Planning & Roadmapping Team
+## Blueprint 6: Adaptive Planning Team (7 Modes)
 
-**When to use:** Working through a business plan, product vision, or feature set to determine the correct order of implementation. Best when you need to define WHAT to build and WHY before handing off to implementation teams.
+**When to use:** Any planning task — from sequencing features to writing specs, making architecture decisions, planning migrations, building business cases, designing GTM plans, or setting OKRs. The command runs a discovery interview and spawns a mode-specific team.
 
-**Why teams work here:** A single session conflates strategic thinking with tactical details. Four distinct perspectives — business strategy, dependency analysis, measurable outcomes, and stakeholder advocacy — create a structured funnel from broad vision to actionable phase briefs that implementation teams can directly consume.
+**Why teams work here:** Different planning needs require fundamentally different team compositions and outputs. A roadmap needs strategists and prioritizers; a spec needs architects and API designers; a business case needs market and financial analysts. The adaptive mode system matches the team to the planning problem, while the shared interview → feedback gate → synthesis pipeline ensures consistent quality across all modes.
 
-### Team Composition
+### Planning Modes
 
-| Teammate | Role | Focus | Model |
-|----------|------|-------|-------|
-| **Strategist** | Business alignment & vision | Business objectives, value propositions, strategic sequencing | Sonnet |
-| **Prioritizer** | Dependency analysis & sequencing | Implementation order, dependency graphs, risk-ordered scheduling | Sonnet |
-| **Outcomes Analyst** | Success criteria & acceptance | Measurable outcomes, acceptance criteria, KPIs, definition of done | Sonnet |
-| **Stakeholder Advocate** | User & business perspective | User impact, business constraints, feasibility checks | Sonnet |
+| # | Mode | Category | Team Composition | Output |
+|---|------|----------|-----------------|--------|
+| 1 | **Product Roadmap** | Technical | Strategist, Prioritizer, Outcomes Analyst, Stakeholder Advocate | Phase briefs → `/spawn-feature-team` |
+| 2 | **Technical Spec** | Technical | Architect, API Designer, Risk Analyst, DX Advocate | Spec document → `/spawn-feature-team` |
+| 3 | **Architecture Decision** | Technical | Solution Architect, Explorer, Trade-off Analyst, Critic | ADR → implementation teams |
+| 4 | **Migration Strategy** | Technical | State Analyst, Migration Planner, Risk Mitigator, Stakeholder Advocate | Migration plan |
+| 5 | **Business Case** | Business | Market Analyst, Financial Analyst, Strategist, Risk Analyst | Decision document → Product Roadmap |
+| 6 | **Go-to-Market** | Business | Positioning Strategist, Channel Planner, Customer Advocate, Launch Coordinator | GTM plan → Product Roadmap |
+| 7 | **OKR / Goals** | Business | Strategic Planner, Metrics Designer, Alignment Reviewer, Stakeholder Advocate | OKR tree → Roadmap / Spec |
 
-### Spawn Prompt
+**Pipeline:** Business Case / GTM / OKR → Product Roadmap → Technical Spec → `/spawn-feature-team`
+
+### Representative Spawn Prompt (Product Roadmap)
+
+The command runs a 5-step process (mode selection → discovery interview → optional teammates → project analysis → spawn). Below is the Product Roadmap spawn prompt as a representative example. All 7 modes follow this same pattern with mode-specific team composition and tasks.
 
 ```
-Create an agent team to plan and sequence the implementation of [BUSINESS PLAN / FEATURE SET].
-Spawn 4 teammates:
+Create an agent team called "plan-roadmap-[project-slug]" to create a product roadmap for [OBJECTIVE].
+Spawn [4-6] teammates:
 
-1. **Strategist** — Analyze the business plan and define strategic objectives. Identify core
-   value propositions, business differentiators, and strategic goals. Determine which
-   capabilities are foundational vs incremental. Frame each implementation phase in terms
-   of business value delivered, not just features shipped.
+1. **Strategist** — Analyze the product vision and define strategic objectives. Identify core
+   value propositions, business differentiators, and strategic goals. Determine which capabilities
+   are foundational vs incremental. Frame each implementation phase in terms of business value
+   delivered, not just features shipped.
 
 2. **Prioritizer** — Map feature dependencies and technical prerequisites. Build a dependency
    graph showing which features require others to exist first. Identify technical foundations
-   that must be laid early (auth, data models, core APIs). Sequence phases by dependency
-   order, risk level, and value delivery. Flag circular dependencies and propose how to
-   break them.
+   that must be laid early (auth, data models, core APIs). Sequence phases by dependency order,
+   risk level, and value delivery. Flag circular dependencies and propose how to break them.
 
-3. **Outcomes Analyst** — Define measurable success criteria and acceptance conditions for
-   each phase. Write specific, testable definitions of done. Identify KPIs that prove each
-   phase delivered its intended value. Create acceptance criteria that implementation teams
-   can directly verify. Ensure outcomes are measurable, not aspirational.
+3. **Outcomes Analyst** — Define measurable success criteria and acceptance conditions for each
+   phase. Write specific, testable definitions of done. Identify KPIs that prove each phase
+   delivered its intended value. Create acceptance criteria that implementation teams can
+   directly verify. Ensure outcomes are measurable, not aspirational.
 
 4. **Stakeholder Advocate** — Represent user needs and business constraints. Identify which
-   user segments benefit from each phase. Flag business constraints (budget, timeline,
-   regulatory, team capacity) that affect sequencing. Challenge assumptions about user
-   value — push back when phases don't clearly serve users.
+   user segments benefit from each phase. Flag business constraints (budget, timeline, regulatory,
+   team capacity) that affect sequencing. Challenge assumptions about user value — push back
+   when phases don't clearly serve users. Conduct feasibility checks on proposed timelines.
 
-Each phase brief in the final roadmap should be directly usable as input to
-/spawn-feature-team or /spawn-design-team. Include: phase goal, features included,
-dependencies on prior phases, success criteria, and business rationale.
-```
+## Planning Context
+[Compiled interview results — objective, current state, constraints, stakeholders, success definition, additional context, project analysis]
 
-### Task Structure
-
-```
 Tasks:
-1. [Strategist] Analyze business plan and define strategic objectives
-2. [Stakeholder Advocate] Identify user needs, business constraints, and external dependencies
-3. [Prioritizer] Map feature dependencies and technical prerequisites (after task 1)
-4. [Strategist] Define implementation phases with business rationale (after tasks 1, 2)
-5. [Prioritizer] Sequence phases by dependency order and risk (after tasks 3, 4)
-6. [Outcomes Analyst] Define success criteria and acceptance conditions per phase (after task 4)
-7. [Stakeholder Advocate] Feasibility review — challenge assumptions and flag risks (after tasks 5, 6)
-8. [Outcomes Analyst] Refine outcomes based on feasibility feedback (after task 7)
-9. [All] Cross-review: validate plan coherence across all perspectives
-10. [Lead] Compile roadmap document with phase briefs for implementation teams
+1. [Strategist] Analyze product vision and define strategic objectives
+2. [Stakeholder Advocate] Identify user needs, business constraints, and dependencies
+3. [Prioritizer] Map feature dependencies and technical prerequisites (blocked by 1)
+4. [Strategist] Define implementation phases with business rationale (blocked by 1, 2)
+5. [Lead] USER FEEDBACK GATE — Present initial phases, ask user to confirm/adjust (blocked by 3, 4)
+6. [Prioritizer] Sequence phases by dependency order and risk (blocked by 5)
+7. [Outcomes Analyst] Define success criteria per phase (blocked by 5)
+8. [Stakeholder Advocate] Feasibility review — challenge assumptions (blocked by 6, 7)
+9. [Outcomes Analyst] Refine outcomes based on feedback (blocked by 8)
+10. [All] Cross-review: validate plan coherence
+11. [Lead] Compile roadmap document with phase briefs
+
+Each phase brief should be directly usable as input to /spawn-feature-team or /spawn-design-team.
+```
+
+### Task Structure (All Modes)
+
+All 7 modes follow the same 5-phase task flow:
+
+```
+Phase 1 — Initial Analysis (tasks 1-3/4):  Parallel exploration from each teammate's perspective
+Phase 2 — USER FEEDBACK GATE (task 4/5):   Lead presents findings, user chooses direction
+Phase 3 — Detailed Planning (tasks 5/6-8): Refined work based on user's direction
+Phase 4 — Cross-Review (task 9/10):        All teammates validate coherence
+Phase 5 — Synthesis (task 10/11/12):       Lead compiles final output document
 ```
 
 ### Configuration Tips
 
-- Use `--model sonnet` for all teammates — planning is analysis and writing, not code generation
-- Enable delegate mode for the lead — the final roadmap is a synthesis of all perspectives
-- The funnel-shaped task structure (broad → narrow) is the key mechanism — early tasks explore, later tasks refine
-- Phase briefs should be specific enough to hand off directly to `/spawn-feature-team` or `/spawn-design-team`
+- The spawn command runs a **discovery interview** before creating the team — 5 core questions + 2-5 mode-specific extended questions
+- Mode is auto-inferred from keywords when obvious, confirmed rather than asked
+- **Optional teammates** add depth: Security Reviewer and DevOps Advisor for technical modes; Data Analyst and Customer Voice for business modes
+- The **user feedback gate** is the key mechanism — it prevents the team from investing effort in directions the user doesn't want
+- All teammates use Sonnet — planning is analysis and writing, not code generation
+- Enable delegate mode for the lead — the final output is a synthesis of all perspectives
+- Business mode outputs feed into technical modes: Business Case → Product Roadmap → Technical Spec → `/spawn-feature-team`
 - Include the Task Blocking Protocol in the spawn prompt (see "Task Blocking Protocol" section below)
 
 ---

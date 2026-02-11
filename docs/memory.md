@@ -22,7 +22,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | opentui-dev | 0.1.4 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
 | tabby-dev | 0.1.1 | Tabby terminal configuration, SSH connections, and plugin development |
-| agent-teams | 0.6.0 | Agent team blueprints, coordination patterns, and reusable personas for application development phases |
+| agent-teams | 0.7.0 | Agent team blueprints, coordination patterns, and reusable personas for application development phases with adaptive planning (7 modes) |
 
 ## Architecture Overview
 
@@ -352,7 +352,7 @@ Tabby terminal configuration, SSH connections, and plugin development.
 | sources.json | - | Documentation source URLs |
 | learnings.md | Weekly | Documentation and session learnings |
 
-## agent-teams Plugin (v0.6.0)
+## agent-teams Plugin (v0.7.0)
 
 Agent team blueprints, coordination patterns, and reusable personas for application development phases.
 
@@ -381,7 +381,7 @@ Agent team blueprints, coordination patterns, and reusable personas for applicat
 | /spawn-review-team | Spawn code review team (Security, Performance, Quality) |
 | /spawn-debug-team | Spawn debugging team with competing hypothesis investigators |
 | /spawn-design-team | Spawn frontend design team with Product Owner, Designer, Dev, User Advocate |
-| /spawn-planning-team | Spawn planning & roadmapping team with Strategist, Prioritizer, Outcomes Analyst, Stakeholder Advocate |
+| /spawn-planning-team | Spawn adaptive planning team with 7 modes (Product Roadmap, Technical Spec, Architecture Decision, Migration Strategy, Business Case, Go-to-Market, OKR/Goals) |
 | /spawn-productivity-team | Spawn productivity systems team with 5-persona loop (Auditor, Architect, Analyst, Refiner, Compounder) |
 | /spawn-brainstorming-team | Spawn brainstorming & ideation team with Facilitator, Visionary, Realist + optional User Voice, Domain Expert |
 

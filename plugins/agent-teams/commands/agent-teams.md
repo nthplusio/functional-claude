@@ -26,7 +26,7 @@ If `$ARGUMENTS` specifies a topic, focus on that area:
 | `review` | Detail the Code Review & QA team blueprint |
 | `debug` | Detail the Debugging & Investigation team blueprint |
 | `design` | Detail the Frontend Design team blueprint |
-| `planning` | Detail the Planning & Roadmapping team blueprint |
+| `planning` | Detail the Adaptive Planning team blueprint (7 modes) |
 | `personas` | Show available personas and the productivity loop — use team-personas skill |
 | `productivity` | Detail the Productivity Systems team blueprint |
 | `brainstorming` | Detail the Brainstorming & Ideation team blueprint |
@@ -44,7 +44,7 @@ If no arguments provided, present:
    - `/spawn-review-team <target>` — Code review with Security, Performance, Quality reviewers
    - `/spawn-debug-team <bug>` — Bug investigation with competing hypothesis investigators
    - `/spawn-design-team <UI feature>` — Frontend design with Product Owner, Designer, Dev, User Advocate
-   - `/spawn-planning-team <business plan>` — Planning & roadmapping with Strategist, Prioritizer, Outcomes Analyst, Stakeholder Advocate
+   - `/spawn-planning-team <what to plan>` — Adaptive planning with 7 modes (Product Roadmap, Technical Spec, Architecture Decision, Migration Strategy, Business Case, Go-to-Market, OKR/Goals)
    - `/spawn-productivity-team <workflow>` — Productivity systems with Auditor, Architect, Analyst, Refiner, Compounder
    - `/spawn-brainstorming-team <topic>` — Brainstorming with Facilitator, Visionary, Realist + optional User Voice, Domain Expert
    - `/agent-teams [topic]` — This overview command
