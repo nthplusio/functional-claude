@@ -69,6 +69,13 @@ Each reviewer should produce a structured report. Have them share reports so the
 can cross-reference findings (e.g., a performance issue might also be a security
 concern). Focus only on changed/target code, not pre-existing issues.
 Wait for all reviewers to complete before compiling the unified report.
+
+**Task Blocking Protocol -- ALL teammates MUST follow:**
+- Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
+- NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
+- If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+- After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
+- When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
 ```
 
 ## Output

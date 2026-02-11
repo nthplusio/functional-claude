@@ -238,6 +238,18 @@ Task 1 (no deps) ──→ Task 2 (blocked by 1) ──→ Task 4 (blocked by 2,
 
 Dependencies resolve automatically when blocking tasks complete.
 
+### Blocked Task Protocol
+
+Teammates must respect task blocking — starting a blocked task early leads to wasted work because upstream deliverables may change requirements. Include this protocol in every spawn prompt:
+
+| Step | Action | Rationale |
+|------|--------|-----------|
+| 1. Check before starting | Call `TaskList` and verify `blockedBy` is empty | Prevents starting work that depends on unfinished upstream tasks |
+| 2. Never start blocked tasks | Wait even if you think you know the approach | Upstream outputs may change interfaces, requirements, or approach |
+| 3. Wait when blocked | Message the lead and go idle | Avoids inventing unrelated work or speculating on blocked task requirements |
+| 4. Check after completing | Call `TaskList` to find newly unblocked tasks | Keeps momentum — tasks may have unblocked while you were working |
+| 5. Read upstream outputs | Review deliverables from blocking tasks before starting | Ensures you have the context and decisions from upstream work |
+
 ### Recommended Task Count
 
 5-6 tasks per teammate keeps everyone productive and lets the lead reassign if someone gets stuck.
@@ -298,3 +310,4 @@ Agent teams use significantly more tokens than a single session:
 6. **Delegate mode:** Use when lead keeps implementing instead of coordinating
 7. **Dependencies:** Define blocking relationships to enforce task ordering
 8. **Communication:** Default to direct messages; broadcast only for critical issues
+9. **Blocking protocol:** Include the Task Blocking Protocol in every spawn prompt so teammates respect dependencies

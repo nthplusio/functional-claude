@@ -86,6 +86,13 @@ Create these tasks:
 Important: The Designer and User Advocate provide specifications and review but do not
 write implementation code. The Frontend Dev is the sole implementer to avoid conflicts.
 Product Owner gates the start (requirements) and end (acceptance) of the process.
+
+**Task Blocking Protocol -- ALL teammates MUST follow:**
+- Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
+- NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
+- If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+- After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
+- When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
 ```
 
 ## Output

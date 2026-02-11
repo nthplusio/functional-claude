@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "design team", "planning team", "roadmap team", "team blueprint", "team template", or says "spawn a team for [development phase]".
 
   Provides 8 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, Frontend Design, Planning & Roadmapping, Productivity Systems, and Brainstorming & Ideation.
-version: 0.5.0
+version: 0.6.0
 ---
 
 # Agent Team Blueprints
@@ -62,6 +62,7 @@ Tasks:
 - Use `--model sonnet` for teammates to reduce cost (research is read-heavy)
 - Require plan approval for the Explorer to validate research scope before deep-diving
 - Tell the lead to wait for all teammates before synthesizing
+- Include the Task Blocking Protocol in the spawn prompt (see "Task Blocking Protocol" section below)
 
 ---
 
@@ -128,6 +129,7 @@ Tasks:
 - Define clear file ownership boundaries to avoid merge conflicts
 - Have the Architect (or lead) define interface contracts before parallel work begins
 - 5-6 tasks per teammate keeps everyone productive
+- Include the Task Blocking Protocol in the spawn prompt (see "Task Blocking Protocol" section below)
 
 ---
 
@@ -193,6 +195,7 @@ Tasks:
 - Each reviewer should use `git diff` to see exactly what changed
 - Tell reviewers to focus only on changed code (not pre-existing issues)
 - Consider adding a UX Reviewer for frontend-heavy PRs
+- Include the Task Blocking Protocol in the spawn prompt (see "Task Blocking Protocol" section below)
 
 ---
 
@@ -257,6 +260,7 @@ Tasks:
 - Encourage cross-team debate — the adversarial structure is the key mechanism
 - The Historian teammate adds value for bugs in codebases with long history
 - Consider requiring plan approval before implementing the fix
+- Include the Task Blocking Protocol in the spawn prompt (see "Task Blocking Protocol" section below)
 
 ---
 
@@ -330,6 +334,7 @@ Tasks:
 - 3 Sonnet teammates + 1 default-model Frontend Dev balances cost and implementation quality
 - The two-pass review (Designer + User Advocate) is the key mechanism — don't skip it
 - For simple UI changes, consider using the Feature Development team instead
+- Include the Task Blocking Protocol in the spawn prompt — this blueprint's deep dependency chain makes it critical (see "Task Blocking Protocol" section below)
 
 ---
 
@@ -402,6 +407,7 @@ Tasks:
 - Enable delegate mode for the lead — the final roadmap is a synthesis of all perspectives
 - The funnel-shaped task structure (broad → narrow) is the key mechanism — early tasks explore, later tasks refine
 - Phase briefs should be specific enough to hand off directly to `/spawn-feature-team` or `/spawn-design-team`
+- Include the Task Blocking Protocol in the spawn prompt (see "Task Blocking Protocol" section below)
 
 ---
 
@@ -518,6 +524,7 @@ Tasks:
 - Enable delegate mode for the lead — the final report is a synthesis of the full pipeline
 - When the Compounder finishes, run the team again with accumulated insights for the next improvement cycle
 - For parallelism, extract individual personas into other team configurations using the team-personas skill
+- Include the Task Blocking Protocol in the spawn prompt — this blueprint's fully sequential chain makes it essential (see "Task Blocking Protocol" section below)
 
 ---
 
@@ -603,8 +610,26 @@ Tasks:
 - The user feedback gate is the key mechanism — it prevents the team from converging on ideas the user doesn't care about
 - Independent brainwriting prevents anchoring bias — teammates don't see each other's ideas until the Facilitator collects them
 - 3 core teammates keeps cost low; add User Voice and/or Domain Expert for richer sessions
+- Include the Task Blocking Protocol in the spawn prompt — brainwriting phases must complete before collection (see "Task Blocking Protocol" section below)
 
 ---
+
+## Task Blocking Protocol
+
+Every spawn prompt should include the standard Task Blocking Protocol block to ensure teammates respect task dependencies. Without this, teammates may start blocked tasks early, skip reading upstream deliverables, or invent unrelated work while waiting.
+
+**Include this block in the spawn prompt for each teammate:**
+
+```
+**Task Blocking Protocol -- ALL teammates MUST follow:**
+- Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
+- NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
+- If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+- After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
+- When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
+```
+
+This is especially important for blueprints with deep dependency chains (Frontend Design, Productivity Systems, Brainstorming) where later tasks depend on specific outputs from earlier ones.
 
 ## Customizing Blueprints
 

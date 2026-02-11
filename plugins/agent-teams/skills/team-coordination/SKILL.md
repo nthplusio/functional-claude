@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user needs guidance on managing an active agent team, coordinating tasks between teammates, handling team communication, or understanding team lifecycle. Use this skill when the user asks about "task management", "team communication", "delegate mode", "plan approval", "shutdown teammates", "team messaging", or says "how do I manage my team".
 
   Covers task management, messaging patterns, plan approval workflow, delegate mode, display modes, and graceful shutdown.
-version: 0.5.0
+version: 0.6.0
 ---
 
 # Team Coordination Patterns
@@ -62,6 +62,31 @@ Task 4: Integration tests (blocked by Tasks 2 and 3)
 ```
 
 When Task 1 completes, Tasks 2 and 3 both become available. When both 2 and 3 complete, Task 4 unblocks.
+
+### Blocked Task Behavior
+
+Teammates **must** respect task blocking — starting a blocked task early leads to wasted work because upstream tasks may produce outputs that change requirements, interfaces, or approach.
+
+Every teammate should follow this protocol:
+
+1. **Check before starting:** Call `TaskList` and verify the task's `blockedBy` list is empty before beginning work
+2. **Never start blocked tasks:** Even if you think you know what to do — upstream tasks may change your requirements
+3. **Wait when blocked:** If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+4. **Check after completing:** Immediately call `TaskList` after completing a task to find newly unblocked tasks to claim
+5. **Read upstream outputs:** When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it — they contain context you need
+
+#### Including in Spawn Prompts
+
+Since teammates don't inherit the lead's conversation or read skill files, the blocking protocol must be embedded directly in every spawn prompt. Include this standard block in the prompt text for each teammate:
+
+```
+**Task Blocking Protocol -- ALL teammates MUST follow:**
+- Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
+- NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
+- If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+- After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
+- When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
+```
 
 ## Communication Patterns
 
@@ -253,3 +278,4 @@ Example: Require test coverage before a task can be marked complete.
 | Running unattended too long | Wasted effort on wrong approaches | Check in periodically and steer |
 | Broadcasting every message | Expensive and noisy | Default to direct messages |
 | No task dependencies | Tasks done in wrong order | Define blocking relationships |
+| Starting blocked tasks early | Wasted effort, stale assumptions | Include Task Blocking Protocol in spawn prompts |

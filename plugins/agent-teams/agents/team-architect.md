@@ -103,6 +103,7 @@ Create a task list with:
 2. Proper dependencies (what blocks what)
 3. 5-6 tasks per teammate
 4. Critical path identified
+5. Task Blocking Protocol included in the spawn prompt (see Step 6)
 
 ### Step 6: Generate the Prompt
 
@@ -117,6 +118,13 @@ Create an agent team called "[team-name]" to [goal]. Spawn [N] teammates:
 2. **[Name]** — [Role description...]
 
 [Optional: model selection, delegate mode, plan approval]
+
+**Task Blocking Protocol -- ALL teammates MUST follow:**
+- Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
+- NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
+- If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+- After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
+- When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
 
 Create these tasks:
 1. [Owner] Task description (dependencies if any)
@@ -144,6 +152,7 @@ Iterate based on feedback before finalizing.
 4. **Dependencies reflect reality** — Don't create artificial sequential bottlenecks
 5. **Concrete names** — Name teammates by what they do, not abstract roles
 6. **Minimal team size** — Don't add teammates just because you can; each should justify their token cost
+7. **Blocking protocol** — Every spawn prompt must include the Task Blocking Protocol so teammates respect dependencies and read upstream outputs
 
 ## Anti-Patterns to Avoid
 
