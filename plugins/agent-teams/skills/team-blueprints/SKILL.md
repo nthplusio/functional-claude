@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "design team", "planning team", "roadmap team", "team blueprint", "team template", or says "spawn a team for [development phase]".
 
   Provides 8 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, Frontend Design, Planning & Roadmapping, Productivity Systems, and Brainstorming & Ideation.
-version: 0.7.0
+version: 0.8.0
 ---
 
 # Agent Team Blueprints
@@ -17,51 +17,54 @@ Pre-designed team configurations for eight application development phases. Each 
 
 **Why teams work here:** Research benefits enormously from parallel exploration. A single session gravitates toward one perspective; multiple teammates explore different facets simultaneously and share findings.
 
-### Team Composition
+**Advanced features:** 3 adaptive modes (Technology Evaluation, Landscape Survey, Risk Assessment), discovery interview (5 core + 2 extended questions per mode), user feedback gate after initial findings, optional teammates (Domain Expert, Implementer), pipeline context for chaining with planning and feature teams.
 
-| Teammate | Role | Focus |
-|----------|------|-------|
-| **Explorer** | Technical research | APIs, libraries, performance characteristics, compatibility |
-| **Analyst** | Requirements & trade-offs | User needs, constraints, cost-benefit analysis |
-| **Critic** | Devil's advocate | Risks, limitations, hidden costs, alternative approaches |
+### Research Modes
 
-### Spawn Prompt
+| # | Mode | Team Composition | Output |
+|---|------|-----------------|--------|
+| 1 | **Technology Evaluation** | Explorer, Analyst, Critic | Evaluation report + comparison matrix → `/spawn-planning-team`, `/spawn-feature-team` |
+| 2 | **Landscape Survey** | Explorer, Mapper, Analyst | Landscape map + trend analysis → `/spawn-research-team` (Eval mode), `/spawn-planning-team` |
+| 3 | **Risk Assessment** | Risk Analyst, System Analyst, Mitigator | Risk register + mitigation plan → `/spawn-planning-team`, `/spawn-feature-team` |
 
-```
-Create an agent team to research [TOPIC/TECHNOLOGY/APPROACH]. Spawn 3 teammates:
-
-1. **Explorer** — Investigate the technical landscape: available APIs, libraries,
-   performance characteristics, and compatibility with our stack. Focus on concrete
-   capabilities and limitations. Read our codebase to understand integration points.
-
-2. **Analyst** — Evaluate from a requirements perspective: what are our actual needs,
-   what constraints do we have, and how do different options compare on cost, complexity,
-   and maintainability? Review existing code patterns to understand what fits.
-
-3. **Critic** — Play devil's advocate: what could go wrong with each approach? What are
-   the hidden costs, scaling concerns, and vendor lock-in risks? Challenge the other
-   teammates' findings and probe for weaknesses.
-
-Have them share findings with each other and debate trade-offs. Synthesize their
-conclusions into a recommendation with clear rationale.
-```
-
-### Task Structure
+### Representative Spawn Prompt (Technology Evaluation)
 
 ```
+Create an agent team called "research-eval-[topic-slug]" to evaluate [TOPIC].
+Spawn [3-5] teammates:
+
+1. **Explorer** — Investigate each candidate technology in depth: capabilities, API design,
+   performance characteristics, maturity, community health, and ecosystem.
+
+2. **Analyst** — Build a structured comparison matrix across all candidates. Evaluate each
+   option against the defined criteria. Quantify where possible.
+
+3. **Critic** — Challenge every option and every assumption. For each candidate, identify
+   failure modes, scaling limits, vendor lock-in risks, and worst-case scenarios.
+
+## Research Context
+[Compiled interview results — research objective, current understanding, constraints, evaluation criteria, candidate options, project analysis]
+
 Tasks:
-1. [Explorer] Survey available options for [topic] (document at least 3 approaches)
-2. [Analyst] Define evaluation criteria based on project requirements
-3. [Critic] Identify risks and failure modes for each approach
-4. [All] Cross-review: teammates challenge each other's findings
-5. [Lead] Synthesize into recommendation document
+1. [Explorer] Research each candidate option in depth
+2. [Analyst] Define evaluation criteria and build comparison framework
+3. [Critic] Identify risks and hidden costs for each option (blocked by 1)
+4. [Lead] USER FEEDBACK GATE — present initial profiles, ask user to eliminate options and adjust criteria (blocked by 2, 3)
+5. [Explorer] Deep-dive on remaining options (blocked by 4)
+6. [Analyst] Finalize comparison matrix (blocked by 4, 5)
+7. [Critic] Challenge the leading option (blocked by 6)
+8. [All] Cross-review findings
+9. [Analyst] Final recommendation (blocked by 8)
+10. [Lead] Compile evaluation report
 ```
 
 ### Configuration Tips
 
-- Use `--model sonnet` for teammates to reduce cost (research is read-heavy)
-- Require plan approval for the Explorer to validate research scope before deep-diving
-- Tell the lead to wait for all teammates before synthesizing
+- The spawn command runs a **discovery interview** (5 core + 2 mode-specific questions) before spawning
+- Mode is auto-inferred from keywords when obvious, confirmed rather than asked
+- **Optional teammates** add depth: Domain Expert for specialized domains, Implementer for feasibility checking
+- The **user feedback gate** after initial findings prevents deep-diving in directions the user doesn't care about
+- Use Sonnet for all teammates (research is read-heavy)
 - Include the Task Blocking Protocol in the spawn prompt (see "Task Blocking Protocol" section below)
 
 ---
@@ -72,6 +75,8 @@ Tasks:
 
 **Why teams work here:** Feature development benefits from teammates each owning a distinct piece. Cross-layer changes (UI + API + database) are naturally parallelizable when each teammate owns their layer.
 
+**Advanced features:** Discovery interview (5 questions on scope, context, constraints, criteria, quality priority), user feedback gate after API contract definition, optional teammates (DevOps, Documentation), pipeline context for chaining with planning, design, research, and review teams.
+
 ### Team Composition
 
 | Teammate | Role | Focus |
@@ -79,56 +84,44 @@ Tasks:
 | **Frontend** | UI/UX implementation | Components, pages, state management, styling |
 | **Backend** | API & business logic | Endpoints, services, data access, validation |
 | **Tester** | Test coverage & integration | Unit tests, integration tests, edge cases |
-| **Architect** (optional) | Design & coordination | Interface contracts, data flow, review |
+| **DevOps** (optional) | Infrastructure | Database migrations, CI/CD, environment config |
+| **Documentation** (optional) | Docs | User-facing docs, API docs, changelog |
 
-### Spawn Prompt
+**Pipeline:** Feeds from `/spawn-planning-team`, `/spawn-design-team`, `/spawn-research-team` → feeds into `/spawn-review-team`
 
-```
-Create an agent team to implement [FEATURE NAME]. The feature needs:
-[BRIEF DESCRIPTION OF WHAT THE FEATURE DOES]
-
-Spawn teammates:
-
-1. **Frontend** — Implement the UI layer: components, pages, and state management.
-   Work in [src/components/, src/pages/, etc.]. Follow existing component patterns.
-   Coordinate with Backend on API contracts before implementing data fetching.
-
-2. **Backend** — Implement the API layer: endpoints, services, and data access.
-   Work in [src/api/, src/services/, etc.]. Define the API contract first and share
-   it with Frontend before they start data fetching. Follow existing route patterns.
-
-3. **Tester** — Write comprehensive tests for both layers. Start with unit tests
-   for individual components and services, then integration tests for the full flow.
-   Work in [tests/, __tests__/, etc.]. Wait for Frontend and Backend to define
-   interfaces before writing integration tests.
-
-Have Frontend and Backend agree on API contracts early. Tester should write tests
-as implementations stabilize. Use require plan approval for the Architect if included.
-
-Important: Each teammate should only modify files in their designated directories
-to avoid conflicts.
-```
-
-### Task Structure
+### Representative Spawn Prompt
 
 ```
+Create an agent team called "feature-[feature-slug]" to implement [FEATURE].
+Spawn [3-5] teammates:
+
+1. **Frontend** — Implement the UI layer. Work in [FRONTEND_DIRS].
+2. **Backend** — Implement the API layer. Work in [BACKEND_DIRS].
+3. **Tester** — Write comprehensive tests. Work in [TEST_DIRS].
+
+## Feature Context
+[Compiled interview results — feature scope, existing context, tech constraints, acceptance criteria, quality priority, project analysis]
+
 Tasks:
-1. [Architect] Define API contracts and data flow (blocks 2, 3)
-2. [Backend] Implement API endpoints and services
-3. [Frontend] Implement UI components and pages
-4. [Backend] Add input validation and error handling
-5. [Frontend] Implement data fetching and error states
-6. [Tester] Write unit tests for backend services (after task 2)
-7. [Tester] Write unit tests for frontend components (after task 3)
-8. [Tester] Write integration tests for full flow (after tasks 4, 5)
+1. [Lead] Define API contracts and data flow
+2. [Lead] USER FEEDBACK GATE — present API contract to user for approval (blocked by 1)
+3. [Backend] Implement API endpoints and services (blocked by 2)
+4. [Frontend] Implement UI components and pages (blocked by 2)
+5. [Backend] Add input validation and error handling (blocked by 3)
+6. [Frontend] Implement data fetching and error states (blocked by 3, 4)
+7. [Tester] Write unit tests for backend (blocked by 5)
+8. [Tester] Write unit tests for frontend (blocked by 6)
+9. [Tester] Write integration tests (blocked by 7, 8)
+10. [Lead] Compile implementation summary
 ```
 
 ### Configuration Tips
 
+- The spawn command runs a **discovery interview** (5 questions) before spawning
+- The **user feedback gate** after API contract is the key mechanism — changing contracts after implementation is expensive
 - Use delegate mode for the lead — keep it focused on coordination
+- **Optional teammates** add depth: DevOps for infrastructure-heavy features, Documentation for public-facing features
 - Define clear file ownership boundaries to avoid merge conflicts
-- Have the Architect (or lead) define interface contracts before parallel work begins
-- 5-6 tasks per teammate keeps everyone productive
 - Include the Task Blocking Protocol in the spawn prompt (see "Task Blocking Protocol" section below)
 
 ---
@@ -139,6 +132,16 @@ Tasks:
 
 **Why teams work here:** A single reviewer gravitates toward one type of issue. Splitting review criteria into independent domains means security, performance, and test coverage all get thorough attention simultaneously.
 
+**Advanced features:** 3 adaptive modes (Security-focused, Performance-focused, Balanced), brief interview (3 questions on review focus, change context, known risks), optional teammates (Accessibility Reviewer, Architecture Reviewer), pipeline context for chaining with feature, design, and debug teams.
+
+### Review Modes
+
+| # | Mode | When to Use | Effect |
+|---|------|-------------|--------|
+| 1 | **Security-focused** | Auth changes, data handling, external integrations, user input | Security Reviewer leads; gets extra tasks for threat modeling |
+| 2 | **Performance-focused** | Database changes, high-traffic paths, large data processing | Performance Reviewer leads; gets extra tasks for profiling |
+| 3 | **Balanced** (default) | General code changes, feature implementations, refactors | All reviewers equal; standard task distribution |
+
 ### Team Composition
 
 | Teammate | Role | Focus |
@@ -146,13 +149,16 @@ Tasks:
 | **Security Reviewer** | Security & vulnerability analysis | Auth, injection, data exposure, OWASP top 10 |
 | **Performance Reviewer** | Performance & scalability | N+1 queries, memory leaks, caching, algorithmic complexity |
 | **Quality Reviewer** | Code quality & maintainability | Patterns, naming, error handling, test coverage |
-| **UX Reviewer** (optional) | User experience impact | Accessibility, responsive design, error states, loading states |
+| **Accessibility Reviewer** (optional) | WCAG compliance | Keyboard navigation, screen readers, ARIA, color contrast |
+| **Architecture Reviewer** (optional) | Structural quality | Design patterns, dependency direction, module boundaries |
 
-### Spawn Prompt
+**Pipeline:** Feeds from `/spawn-feature-team`, `/spawn-design-team` → feeds into `/spawn-debug-team` (investigate issues), `/spawn-feature-team` (rework)
+
+### Representative Spawn Prompt
 
 ```
-Create an agent team to review [PR #NUMBER / the changes in BRANCH / the MODULE].
-Spawn reviewers with distinct focus areas:
+Create an agent team called "review-[target-slug]" to review [TARGET].
+Spawn [3-5] reviewers:
 
 1. **Security Reviewer** — Focus exclusively on security implications: authentication
    and authorization checks, input validation, SQL/XSS/command injection risks,
@@ -169,15 +175,9 @@ Spawn reviewers with distinct focus areas:
    gaps, documentation needs, and separation of concerns. Check that existing tests
    still pass and new code has adequate coverage.
 
-Each reviewer should produce a structured report with findings categorized by
-severity. Have them share reports with each other so they can cross-reference
-(e.g., a performance issue might also be a security concern). Synthesize into
-a unified review.
-```
+## Review Context
+[Compiled interview results — review focus, change context/intent, known risk areas]
 
-### Task Structure
-
-```
 Tasks:
 1. [Security] Audit authentication and authorization paths
 2. [Security] Check for injection vulnerabilities and data exposure
@@ -185,16 +185,18 @@ Tasks:
 4. [Performance] Review algorithmic complexity and caching opportunities
 5. [Quality] Verify adherence to project patterns and conventions
 6. [Quality] Assess test coverage and identify gaps
-7. [All] Cross-reference findings across domains
-8. [Lead] Compile unified review report with prioritized actions
+7. [All] Cross-reference findings across review domains
+8. [Lead] Compile unified review report with prioritized action items
 ```
 
 ### Configuration Tips
 
-- Use `--model sonnet` for cost-effective review
-- Each reviewer should use `git diff` to see exactly what changed
-- Tell reviewers to focus only on changed code (not pre-existing issues)
-- Consider adding a UX Reviewer for frontend-heavy PRs
+- The spawn command runs a **brief interview** (3 questions) before spawning — review focus, change context, known risk areas
+- Mode is auto-inferred from keywords when obvious, confirmed rather than asked
+- **Optional teammates** add depth: Accessibility Reviewer for frontend PRs, Architecture Reviewer for large structural PRs
+- No user feedback gate — reviews are single-pass; the cross-reference task serves as internal validation
+- Use Sonnet for all reviewers (review is read-heavy analysis)
+- The review report feeds into `/spawn-debug-team` for investigating issues or `/spawn-feature-team` for rework
 - Include the Task Blocking Protocol in the spawn prompt (see "Task Blocking Protocol" section below)
 
 ---
@@ -205,61 +207,61 @@ Tasks:
 
 **Why teams work here:** Sequential investigation suffers from anchoring — once one theory is explored, subsequent investigation is biased toward it. Multiple independent investigators actively trying to disprove each other's theories means the surviving theory is much more likely to be the actual root cause.
 
+**Advanced features:** Pre-spawn hypothesis confirmation gate (validates investigator direction before spawning), root cause confirmation task (validates findings before proposing fix), pipeline context for chaining with review and feature teams.
+
 ### Team Composition
 
 | Teammate | Role | Focus |
 |----------|------|-------|
-| **Hypothesis A** | First theory investigator | Most likely cause based on symptoms |
-| **Hypothesis B** | Second theory investigator | Alternative cause based on recent changes |
-| **Hypothesis C** | Contrarian investigator | Unlikely but possible cause, challenges other theories |
-| **Historian** (optional) | Change archaeology | Git blame, recent commits, deployment history |
+| **[Hypothesis-A-Name]** | First theory investigator | Most likely cause based on symptoms |
+| **[Hypothesis-B-Name]** | Second theory investigator | Alternative cause based on recent changes |
+| **[Hypothesis-C-Name]** | Contrarian investigator | Less obvious cause, challenges other theories |
 
-### Spawn Prompt
+**Pipeline:** Feeds from `/spawn-review-team` (issues found during review), `/spawn-feature-team` (bugs introduced during implementation) → feeds into `/spawn-feature-team` (implement fix), `/spawn-review-team` (review fix)
 
-```
-Create an agent team to investigate this bug: [DESCRIBE THE BUG/SYMPTOMS].
-
-Spawn 3-4 investigator teammates, each pursuing a different hypothesis:
-
-1. **Hypothesis A: [THEORY 1]** — Investigate whether [most likely cause].
-   Look at [relevant files/modules]. Try to reproduce the issue through this path.
-   If you find evidence supporting OR contradicting this theory, share it with
-   the other investigators immediately.
-
-2. **Hypothesis B: [THEORY 2]** — Investigate whether [alternative cause].
-   Check [relevant files/modules]. Look for recent changes that could have
-   introduced this behavior. Share findings with other investigators.
-
-3. **Hypothesis C: [THEORY 3]** — Investigate whether [less obvious cause].
-   Look at [edge cases, external dependencies, configuration]. Your job is also
-   to challenge the other investigators' conclusions — if they find something,
-   try to disprove it.
-
-Have investigators actively debate their findings. When one investigator finds
-evidence, others should try to disprove it. The theory that survives scrutiny
-is most likely correct. Update a shared findings document as investigation proceeds.
-```
-
-### Task Structure
+### Representative Spawn Prompt
 
 ```
+Create an agent team called "debug-[bug-slug]" to investigate: [BUG DESCRIPTION].
+
+Spawn 3 investigator teammates, each pursuing a different hypothesis:
+
+1. **[Hypothesis-A-Name]** — Investigate whether [CONCRETE THEORY 1 based on symptoms].
+   Look at [RELEVANT FILES/MODULES]. Try to reproduce the issue through this code path.
+   If you find evidence supporting OR contradicting this theory, share it with the other
+   investigators immediately.
+
+2. **[Hypothesis-B-Name]** — Investigate whether [CONCRETE THEORY 2 based on recent changes].
+   Check [RELEVANT FILES/MODULES]. Look for recent changes that could have introduced this
+   behavior. Share findings with other investigators.
+
+3. **[Hypothesis-C-Name]** — Investigate whether [CONCRETE THEORY 3 - less obvious cause].
+   Look at [EDGE CASES, EXTERNAL DEPS, CONFIG]. Your job is also to challenge the other
+   investigators' conclusions — if they find something, try to disprove it.
+
 Tasks:
 1. [All] Read error logs and reproduce the issue
-2. [Hypothesis A] Investigate [theory 1] — trace code path
-3. [Hypothesis B] Investigate [theory 2] — check recent changes
-4. [Hypothesis C] Investigate [theory 3] — examine edge cases
+2. [[Hypothesis-A]] Trace code path for [theory 1]
+3. [[Hypothesis-B]] Check recent changes related to [theory 2]
+4. [[Hypothesis-C]] Examine edge cases for [theory 3]
 5. [All] Share findings and challenge each other's theories
 6. [Lead] Identify root cause from surviving theory
-7. [Lead/Winner] Propose and implement fix
-8. [All] Verify fix resolves the issue
+7. [Lead] ROOT CAUSE CONFIRMATION — Present root cause and evidence to user for approval (blocked by 6)
+8. [Lead] Propose fix based on confirmed root cause (blocked by 7)
+
+Have investigators actively debate. When one finds evidence, others should try to
+disprove it. The theory that survives scrutiny is most likely correct.
+Require plan approval before implementing any fix.
 ```
 
 ### Configuration Tips
 
-- Name hypotheses concretely (e.g., "race-condition", "null-pointer", "config-drift") not abstractly
-- Encourage cross-team debate — the adversarial structure is the key mechanism
-- The Historian teammate adds value for bugs in codebases with long history
-- Consider requiring plan approval before implementing the fix
+- The spawn command runs a **hypothesis confirmation gate** before spawning — the lead formulates 3 hypotheses and presents them to the user for confirmation/adjustment
+- Name hypotheses concretely (e.g., "race-condition", "null-reference", "config-drift") — not abstractly
+- The adversarial structure is the key mechanism — investigators actively challenge each other
+- **Root cause confirmation** (task 7) prevents premature fix proposals — the user validates findings before any fix is designed
+- If the bug description is vague, the command asks 1-2 clarifying questions before formulating hypotheses
+- The fix proposal feeds into `/spawn-feature-team` for implementation or `/spawn-review-team` for review
 - Include the Task Blocking Protocol in the spawn prompt (see "Task Blocking Protocol" section below)
 
 ---
@@ -270,6 +272,16 @@ Tasks:
 
 **Why teams work here:** A single session conflates design decisions with implementation details. Four distinct perspectives — product scope, visual design, code architecture, and user advocacy — create productive tension that results in a more thoughtful, accessible UI. The two-pass review (visual fidelity + accessibility) catches issues that a single reviewer would miss.
 
+**Advanced features:** 3 adaptive modes (New Component, Page/Flow, Redesign), discovery interview (5 core + 2 extended questions per mode), user feedback gate before implementation begins, pipeline context for chaining with planning, brainstorming, review, and feature teams.
+
+### Design Modes
+
+| # | Mode | When to Use |
+|---|------|-------------|
+| 1 | **New Component** | Creating a new reusable component — design system additions, shared UI elements |
+| 2 | **Page / Flow** | Designing a full page or multi-step flow — onboarding, checkout, dashboards |
+| 3 | **Redesign** | Improving or reworking existing UI — modernization, UX improvements, accessibility fixes |
+
 ### Team Composition
 
 | Teammate | Role | Focus | Model |
@@ -279,60 +291,61 @@ Tasks:
 | **Frontend Dev** | Technical implementation | Component architecture, state management, performance, patterns | Default |
 | **User Advocate** | UX & accessibility | WCAG compliance, keyboard nav, screen readers, edge cases | Sonnet |
 
-### Spawn Prompt
+**Pipeline:** Feeds from `/spawn-planning-team` (UI requirements from phase briefs), `/spawn-brainstorming-team` (UI concept ideas) → feeds into `/spawn-review-team` (design review), `/spawn-feature-team` (backend work)
+
+### Representative Spawn Prompt
 
 ```
-Create an agent team to design and implement [UI FEATURE]. Spawn 4 teammates:
+Create an agent team called "design-[feature-slug]" to design and implement [UI FEATURE].
+Spawn 4 teammates:
 
-1. **Product Owner** — Define requirements and acceptance criteria. Write user stories
-   with clear "given/when/then" scenarios. Set scope boundaries — what's in v1 vs
-   future iterations. Prioritize features by user impact. Review all deliverables
-   against acceptance criteria before approving.
+1. **Product Owner** — Define requirements and acceptance criteria for this UI feature.
+   Write user stories with clear "given/when/then" scenarios. Set scope boundaries —
+   what's in v1 vs future iterations. Prioritize features by user impact.
+   Use Sonnet model.
 
 2. **Designer** — Create component specifications and interaction designs. Define visual
    hierarchy, layout structure, spacing, responsive breakpoints, and all interactive states
    (default, hover, focus, active, disabled, loading, error, empty). Specify design tokens
-   and how the design maps to the project's styling approach. Reference existing components
-   to maintain design system consistency.
+   and how the design maps to [STYLING_APPROACH].
+   Use Sonnet model.
 
 3. **Frontend Dev** — Implement components based on Designer specs and Product Owner
-   requirements. Choose appropriate component architecture (composition, state management,
-   data flow). Follow existing codebase patterns. Focus on performance (memoization,
-   lazy loading, bundle impact). Write unit tests alongside implementation.
+   requirements. Work in [COMPONENT_DIRS]. Follow existing patterns in the codebase.
+   Focus on performance. Write unit tests alongside implementation.
 
 4. **User Advocate** — Review all specs and implementations for accessibility and usability.
    Verify WCAG 2.1 AA compliance: keyboard navigation, screen reader support, color contrast,
-   focus management, ARIA attributes. Check responsive behavior, touch targets, error recovery,
-   and edge cases (long text, empty states, slow connections).
+   focus management, ARIA attributes. Check responsive behavior, touch targets, error recovery.
+   Use Sonnet model.
 
-The Designer and User Advocate provide specifications and review but do not write
-implementation code. The Frontend Dev is the sole implementer. Product Owner gates
-the start (requirements) and end (acceptance) of the process.
-```
+## Design Context
+[Compiled interview results — feature description, target users, design references, design system, quality bar, mode-specific answers, project analysis]
 
-### Task Structure
-
-```
 Tasks:
 1. [Product Owner] Define user stories and acceptance criteria
 2. [Product Owner] Define scope boundaries — v1 vs deferred
-3. [Designer] Audit existing components and design patterns for reuse (after task 1)
-4. [User Advocate] Define accessibility requirements and testing criteria (after task 1)
-5. [Designer] Create component specs: layout, states, responsive breakpoints (after tasks 2, 3)
-6. [User Advocate] Review design specs for accessibility compliance (after tasks 4, 5)
-7. [Frontend Dev] Implement components following design specs (after tasks 5, 6)
-8. [Frontend Dev] Implement interactive states and error handling (after task 7)
-9. [Designer] Visual review of implementation against specs (after task 8)
-10. [User Advocate] Accessibility review — keyboard, screen reader, contrast (after task 8)
-11. [Frontend Dev] Address feedback from Designer and User Advocate (after tasks 9, 10)
-12. [Product Owner] Final acceptance review against user stories (after task 11)
+3. [Designer] Audit existing components and design patterns for reuse (blocked by 1)
+4. [User Advocate] Define accessibility requirements and testing criteria (blocked by 1)
+5. [Designer] Create component specs: layout, states, responsive breakpoints (blocked by 2, 3)
+6. [User Advocate] Review design specs for accessibility compliance (blocked by 4, 5)
+7. [Lead] USER FEEDBACK GATE — present design specs + accessibility review to user (blocked by 6)
+8. [Frontend Dev] Implement components following design specs (blocked by 7)
+9. [Frontend Dev] Implement interactive states and error handling (blocked by 8)
+10. [Designer] Visual review of implementation against specs (blocked by 9)
+11. [User Advocate] Accessibility review — keyboard, screen reader, contrast (blocked by 9)
+12. [Frontend Dev] Address feedback from Designer and User Advocate (blocked by 10, 11)
+13. [Product Owner] Final acceptance review against user stories (blocked by 12)
 ```
 
 ### Configuration Tips
 
-- Use delegate mode for the lead — the sequential dependency graph requires active coordination
+- The spawn command runs a **discovery interview** (5 core + 2 mode-specific questions) before spawning
+- Mode is auto-inferred from keywords when obvious, confirmed rather than asked
+- The **user feedback gate** after specs + accessibility review prevents expensive rework — implementation is the costliest phase
 - 3 Sonnet teammates + 1 default-model Frontend Dev balances cost and implementation quality
 - The two-pass review (Designer + User Advocate) is the key mechanism — don't skip it
+- **Mode-specific outputs:** component spec + implementation (New Component), page spec + flow documentation (Page/Flow), before/after analysis + migration notes (Redesign)
 - For simple UI changes, consider using the Feature Development team instead
 - Include the Task Blocking Protocol in the spawn prompt — this blueprint's deep dependency chain makes it critical (see "Task Blocking Protocol" section below)
 
@@ -436,6 +449,8 @@ Phase 5 — Synthesis (task 10/11/12):       Lead compiles final output document
 
 **Why teams work here:** A single session can identify problems or propose solutions, but lacks the structured methodology to systematically score, prioritize, design with tradeoffs, review through multiple lenses, iterate to convergence, and track patterns across cycles. Five distinct personas — each with deep methodology, scoring criteria, and defined input/output contracts — form a pipeline where improvements compound because each cycle builds on accumulated knowledge.
 
+**Advanced features:** Pre-spawn interview (4 questions on target workflow, pain points, current tools, success metric), user feedback gate after Auditor's scored improvement plan, pipeline context for chaining with feature teams, per-phase output contracts.
+
 ### Team Composition
 
 | Teammate | Role | Focus | Model |
@@ -446,7 +461,9 @@ Phase 5 — Synthesis (task 10/11/12):       Lead compiles final output document
 | **Refiner** | Convergence Loop Specialist | Iterative improvement until quality bar met | Default |
 | **Compounder** | Systems Review Partner | Progress tracking, friction logging, pattern recognition | Sonnet |
 
-### Spawn Prompt
+**Pipeline:** Feeds into `/spawn-feature-team` (implement automation solutions); Compounder output feeds the next productivity cycle
+
+### Representative Spawn Prompt
 
 ```
 Create an agent team called "productivity-[project-slug]" to optimize [WORKFLOW / PROCESS].
@@ -456,17 +473,14 @@ Spawn 5 teammates:
 1. **Auditor** — Productivity Systems Analyst who discovers bottlenecks and quantifies their cost.
    Read the Auditor persona definition at:
    ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/auditor.md
-   Follow the methodology phases (Discovery → Scoring → 4-Week Plan), scoring criteria,
-   and behavioral instructions defined in the persona.
-   Your inputs come from the user's description of [WORKFLOW / PROCESS].
+   Your inputs come from the Productivity Context section below — the user has already
+   described their workflow, pain points, current tools, and success metrics.
    Your outputs feed into the Architect.
    Use Sonnet model.
 
 2. **Architect** — Solution Architect who transforms prioritized problems into implementable blueprints.
    Read the Architect persona definition at:
    ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/architect.md
-   Follow the methodology phases (Problem Definition → Approach Map → Blueprint → Dependencies),
-   scoring criteria, and behavioral instructions defined in the persona.
    Your inputs come from the Auditor's scored task inventory and 4-week plan.
    Your outputs feed into the Analyst.
    Use Sonnet model.
@@ -474,75 +488,56 @@ Spawn 5 teammates:
 3. **Analyst** — Senior Engineering Analyst who evaluates solutions through multiple quality lenses.
    Read the Analyst persona definition at:
    ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/analyst.md
-   Follow the methodology phases (Architecture → Code Quality → Reliability → Performance),
-   scoring criteria, and behavioral instructions defined in the persona.
    Your inputs come from the Architect's phased blueprint and approach decisions.
    Your outputs feed into the Refiner.
    Use Sonnet model.
 
-4. **Refiner** — Convergence Loop Specialist who iteratively improves implementations until quality bar is met.
+4. **Refiner** — Convergence Loop Specialist who iteratively improves implementations.
    Read the Refiner persona definition at:
    ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/refiner.md
-   Follow the methodology phases (Generate → Score → Diagnose → Rewrite → Re-score),
-   scoring criteria, and behavioral instructions defined in the persona.
    Your inputs come from the Analyst's multi-pass review and prioritized findings.
    Your outputs feed into the Compounder.
    Use default model (iterative refinement benefits from strongest reasoning).
 
-5. **Compounder** — Systems Review Partner who closes the loop and identifies patterns for the next cycle.
+5. **Compounder** — Systems Review Partner who closes the loop and identifies patterns.
    Read the Compounder persona definition at:
    ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/compounder.md
-   Follow the methodology phases (Progress Check → Friction Log → Next Target → Pattern Recognition),
-   scoring criteria, and behavioral instructions defined in the persona.
    Your inputs come from the Refiner's refined implementation and convergence report.
    Your outputs feed into the next cycle's Auditor.
    Use Sonnet model.
 
-Enable delegate mode — focus on coordination, synthesis, and the final report.
+## Productivity Context
+[Compiled interview results — target workflow, pain points, current tools, success metric, project analysis]
 
-Create these tasks:
-1. [Auditor] Discover bottlenecks — ask targeted questions about the current [WORKFLOW / PROCESS]
-2. [Auditor] Score all identified tasks on Time Cost, Energy Drain, and Feasibility (blocked by task 1)
-3. [Auditor] Produce prioritized 4-week improvement plan with Automation Scores (blocked by task 2)
-4. [Architect] Restate the top problems from the Auditor's plan and ask clarifying questions (blocked by task 3)
-5. [Architect] Map 2-3 approaches per problem, ranked by simplicity with tradeoffs (blocked by task 4)
-6. [Architect] Create phased blueprint with rollback points and dependency map (blocked by task 5)
-7. [Analyst] Pass 1-2: Architecture and Code Quality review of the blueprint (blocked by task 6)
-8. [Analyst] Pass 3-4: Reliability and Performance review with tradeoff matrix (blocked by task 7)
-9. [Refiner] Generate initial implementation addressing Critical findings (blocked by task 8)
-10. [Refiner] Run convergence loop — score, diagnose, rewrite until quality bar met (blocked by task 9)
-11. [Compounder] Review all outputs — progress check, friction log, patterns, next target (blocked by task 10)
-12. [Lead] Synthesize final report with cumulative impact summary and next-cycle recommendations
+Tasks:
+1. [Auditor] Discover bottlenecks — analyze the workflow described in Productivity Context
+2. [Auditor] Score all identified tasks on Time Cost, Energy Drain, and Feasibility (blocked by 1)
+3. [Auditor] Produce prioritized 4-week improvement plan with Automation Scores (blocked by 2)
+4. [Lead] USER FEEDBACK GATE — present scored plan to user for approval (blocked by 3)
+5. [Architect] Restate top problems from the approved plan (blocked by 4)
+6. [Architect] Map 2-3 approaches per problem, ranked by simplicity (blocked by 5)
+7. [Architect] Create phased blueprint with rollback points and dependency map (blocked by 6)
+8. [Analyst] Pass 1-2: Architecture and Code Quality review (blocked by 7)
+9. [Analyst] Pass 3-4: Reliability and Performance review with tradeoff matrix (blocked by 8)
+10. [Refiner] Generate initial implementation addressing Critical findings (blocked by 9)
+11. [Refiner] Run convergence loop until quality bar met (blocked by 10)
+12. [Compounder] Review all outputs — progress check, friction log, patterns, next target (blocked by 11)
+13. [Lead] Synthesize final report with cumulative impact summary and next-cycle recommendations
 
 Important: This team is intentionally sequential — each persona's output feeds the next.
-The loop is the mechanism: improvements compound because each cycle builds on accumulated knowledge.
-```
-
-### Task Structure
-
-```
-Tasks:
-1. [Auditor] Discover bottlenecks via targeted questions
-2. [Auditor] Score tasks on Time Cost, Energy Drain, Feasibility (blocked by 1)
-3. [Auditor] Produce prioritized 4-week plan with Automation Scores (blocked by 2)
-4. [Architect] Restate problems, ask clarifying questions (blocked by 3)
-5. [Architect] Map 2-3 approaches ranked by simplicity (blocked by 4)
-6. [Architect] Create phased blueprint with rollback points (blocked by 5)
-7. [Analyst] Architecture + Code Quality review (blocked by 6)
-8. [Analyst] Reliability + Performance review with tradeoffs (blocked by 7)
-9. [Refiner] Generate initial implementation (blocked by 8)
-10. [Refiner] Convergence loop until quality bar met (blocked by 9)
-11. [Compounder] Review outputs, identify patterns, update inventory (blocked by 10)
-12. [Lead] Synthesize final report with next-cycle recommendations
+The user feedback gate ensures the Architect designs solutions for the right bottlenecks.
 ```
 
 ### Configuration Tips
 
+- The spawn command runs a **pre-spawn interview** (4 questions) before spawning — target workflow, pain points, current tools, success metric
+- The **user feedback gate** after the Auditor's scored plan ensures the Architect designs solutions for the right bottlenecks
 - The task chain is intentionally sequential — the loop is how improvements compound
 - 4 Sonnet teammates + 1 default-model Refiner balances cost and quality for iterative work
 - Enable delegate mode for the lead — the final report is a synthesis of the full pipeline
+- **Per-phase deliverables:** scored bottleneck inventory (Auditor), phased blueprint (Architect), multi-pass review report (Analyst), refined implementation with convergence report (Refiner), cycle report with friction log and patterns (Compounder)
 - When the Compounder finishes, run the team again with accumulated insights for the next improvement cycle
-- For parallelism, extract individual personas into other team configurations using the team-personas skill
+- Implementation outputs feed into `/spawn-feature-team` for development
 - Include the Task Blocking Protocol in the spawn prompt — this blueprint's fully sequential chain makes it essential (see "Task Blocking Protocol" section below)
 
 ---
@@ -552,6 +547,8 @@ Tasks:
 **When to use:** Generating creative ideas for a problem, feature, strategy, or process where you need diverse perspectives and structured evaluation. Best when the problem space is open-ended and you want to explore possibilities before committing to a direction.
 
 **Why teams work here:** A single session anchors on its first idea and iterates from there. Structured brainstorming with independent brainwriting prevents anchoring bias — each teammate generates ideas without seeing others' work, producing genuinely diverse options. The user feedback gate keeps the human as the "decider," and the building phase adds implementation substance to winning ideas.
+
+**Advanced features:** Discovery interview (5 core + 2-5 extended questions), 4 brainstorming categories with auto-inference keywords (Tech, Product, Process, Ops), user feedback gate after idea clustering, optional teammates (User Voice, Domain Expert), pipeline context for chaining with planning, research, design, and feature teams.
 
 ### Team Composition
 
@@ -563,71 +560,53 @@ Tasks:
 | **User Voice** (optional) | User perspective | Ideas grounded in user needs, adoption, and experience | Sonnet |
 | **Domain Expert** (optional) | Domain expertise | Specialized ideas a generalist would miss | Sonnet |
 
-### Spawn Prompt
+**Pipeline:** Feeds into `/spawn-planning-team` (turn ideas into roadmap items), `/spawn-research-team` (investigate feasibility), `/spawn-design-team` (design UI concepts), `/spawn-feature-team` (implement straightforward ideas)
+
+### Representative Spawn Prompt
 
 ```
-Create an agent team called "brainstorm-[topic-slug]" to brainstorm [TOPIC].
+Create an agent team called "brainstorm-[topic-slug]" to brainstorm: [TOPIC].
 
 Spawn [3-5] teammates:
 
 1. **Facilitator** — Session Facilitator who manages the divergence/convergence cycle.
    Read the Facilitator persona at:
    ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/facilitator.md
-   Follow the methodology phases and behavioral instructions. You manage phase transitions
-   and enforce ideation rules. You do NOT generate ideas yourself.
+   You manage phase transitions and enforce ideation rules. You do NOT generate ideas yourself.
 
 2. **Visionary** — Divergent Thinker who generates ambitious, unconstrained ideas.
    Read the Visionary persona at:
    ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/visionary.md
-   Follow the methodology phases and behavioral instructions.
-   Your lens: [CATEGORY-SPECIFIC — e.g., emerging tech, user delight, workflow transformation].
+   Your lens for this session: [CATEGORY-SPECIFIC VISIONARY LENS].
 
 3. **Realist** — Practical Thinker who grounds ideas in feasibility.
    Read the Realist persona at:
    ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/realist.md
-   Follow the methodology phases and behavioral instructions.
-   Your lens: [CATEGORY-SPECIFIC — e.g., implementation feasibility, scope constraints, adoption friction].
+   Your lens for this session: [CATEGORY-SPECIFIC REALIST LENS].
 
 ## Brainstorming Context
-[Interview results compiled as shared context for all teammates]
+[Compiled interview results — problem definition, success criteria, constraints, prior attempts, scope boundaries, additional context]
 
 Tasks:
-1. [Facilitator] Define parameters, communicate rules of engagement
-2. [Visionary] Brainwriting: 8-10 ideas independently (blocked by 1)
-3. [Realist] Brainwriting: 8-10 ideas independently (blocked by 1)
-4. [Facilitator] Collect, deduplicate, cluster ideas, present to lead (blocked by 2-3)
+1. [Facilitator] Define brainstorming parameters, communicate rules of engagement
+2. [Visionary] Brainwriting: Generate 8-10 ideas independently (blocked by 1)
+3. [Realist] Brainwriting: Generate 8-10 ideas independently (blocked by 1)
+4. [Facilitator] Collect all ideas, remove duplicates, cluster by theme (blocked by 2-3)
 5. [Lead] USER FEEDBACK GATE — present clusters, ask user to prioritize/decline (blocked by 4)
 6. [Visionary] Build on prioritized ideas — combine, enhance, amplify (blocked by 5)
 7. [Realist] Add implementation details, stepping stones, effort estimates (blocked by 5)
 8. [Facilitator] Convergence — evaluate refined ideas against success criteria (blocked by 6-7)
-9. [Lead] Synthesize final output with ranked recommendations (blocked by 8)
+9. [Lead] Synthesize final output with ranked recommendations and next steps (blocked by 8)
 ```
-
-### Task Structure
-
-```
-Tasks:
-1. [Facilitator] Define brainstorming parameters and rules of engagement
-2. [Visionary] Brainwriting: Generate 8-10 ideas independently (blocked by 1)
-3. [Realist] Brainwriting: Generate 8-10 ideas independently (blocked by 1)
-4. [User Voice*] Brainwriting: Generate 8-10 ideas from user perspective (blocked by 1)
-5. [Domain Expert*] Brainwriting: Generate 8-10 ideas from domain expertise (blocked by 1)
-6. [Facilitator] Collect and cluster all ideas, present to lead (blocked by 2-5)
-7. [Lead] USER FEEDBACK GATE — present clusters, user prioritizes/declines (blocked by 6)
-8. [Visionary] Build on prioritized ideas — combine, enhance, amplify (blocked by 7)
-9. [Realist] Add implementation details, stepping stones, effort (blocked by 7)
-10. [Facilitator] Convergence — evaluate refined ideas, rank by viability (blocked by 8-9)
-11. [Lead] Synthesize final brainstorm output with ranked recommendations (blocked by 10)
-```
-
-*Tasks 4-5 only if optional teammates are included.
 
 ### Configuration Tips
 
-- The spawn command runs a **discovery interview** before creating the team — this ensures rich shared context
-- 4 brainstorming categories (Tech / Product / Process / Ops) shape the Visionary and Realist lenses
-- The user feedback gate is the key mechanism — it prevents the team from converging on ideas the user doesn't care about
+- The spawn command runs a **discovery interview** (5 core + 2-5 extended questions) before creating the team
+- 4 brainstorming categories (Tech / Product / Process / Ops) shape the Visionary and Realist lenses — auto-inferred from keywords when obvious
+- The **user feedback gate** after idea clustering is the key mechanism — the human decides which ideas to invest in
 - Independent brainwriting prevents anchoring bias — teammates don't see each other's ideas until the Facilitator collects them
+- **Optional teammates** add depth: User Voice for product/process brainstorms, Domain Expert for tech/ops brainstorms
+- **Output contracts:** Ranked idea list scored against success criteria, idea clusters with theme groupings, recommended next steps with downstream commands (`/spawn-planning-team`, `/spawn-research-team`, `/spawn-design-team`, `/spawn-feature-team`)
 - 3 core teammates keeps cost low; add User Voice and/or Domain Expert for richer sessions
 - Include the Task Blocking Protocol in the spawn prompt — brainwriting phases must complete before collection (see "Task Blocking Protocol" section below)
 
@@ -650,6 +629,97 @@ Every spawn prompt should include the standard Task Blocking Protocol block to e
 
 This is especially important for blueprints with deep dependency chains (Frontend Design, Productivity Systems, Brainstorming) where later tasks depend on specific outputs from earlier ones.
 
+## Design Patterns
+
+These patterns are used across multiple blueprints. When customizing blueprints or designing new teams with the team-architect agent, apply these patterns where they add value.
+
+### Adaptive Mode Pattern
+
+One spawn command dispatches to mode-specific team compositions and task structures. This lets a single entry point serve multiple related use cases without creating separate commands.
+
+**Structure:**
+1. **Mode table** — Lists modes with "When to Use" descriptions and effects on team composition
+2. **Auto-inference keywords** — Common terms that auto-select the mode from `$ARGUMENTS` (confirmed rather than asked)
+3. **Mode-specific interviews** — Core questions shared across all modes + extended questions per mode
+4. **Shared task skeleton** — All modes follow the same phase flow (e.g., Initial Analysis → Feedback Gate → Detailed Work → Cross-Review → Synthesis) with mode-specific task content
+
+**Blueprints using this pattern:**
+- Planning (7 modes) — most comprehensive implementation
+- Research (3 modes) — Technology Evaluation, Landscape Survey, Risk Assessment
+- Design (3 modes) — New Component, Page/Flow, Redesign
+- Review (3 modes) — Security-focused, Performance-focused, Balanced
+
+**When to use:** When a team concept serves multiple related use cases that need different team compositions, expertise, or deliverables — but share the same overall workflow shape.
+
+### Cross-Team Pipeline Pattern
+
+Teams chain together where one team's output becomes another team's input. This enables complex workflows to span multiple specialized teams rather than overloading a single team.
+
+**Pipeline map:**
+
+```
+                        ┌─────────────────┐
+                        │  Brainstorming   │
+                        │  (ideation)      │
+                        └────────┬────────┘
+                                 │ winning ideas
+                                 ▼
+┌─────────────┐         ┌─────────────────┐
+│ Business    │────────▶│    Planning      │
+│ Case / GTM  │         │  (7 modes)      │
+│ / OKR       │         └────────┬────────┘
+└─────────────┘                  │ phase briefs / specs
+                                 ▼
+                        ┌─────────────────┐         ┌─────────────────┐
+                        │   Research       │────────▶│   Design        │
+                        │  (3 modes)      │         │  (3 modes)      │
+                        └────────┬────────┘         └────────┬────────┘
+                                 │ evaluation report          │ design specs
+                                 ▼                            ▼
+                        ┌─────────────────────────────────────┐
+                        │          Feature Development         │
+                        └────────────────┬────────────────────┘
+                                         │ implementation
+                                         ▼
+                        ┌─────────────────────────────────────┐
+                        │          Code Review & QA            │
+                        └───────┬─────────────────┬───────────┘
+                                │ issues found     │ rework needed
+                                ▼                  ▼
+                        ┌─────────────┐   ┌─────────────────┐
+                        │   Debug     │   │ Feature (rework) │
+                        │ (investigate)│   └─────────────────┘
+                        └─────────────┘
+```
+
+**Key principle:** Each team's output section includes explicit downstream command references (e.g., "feeds into `/spawn-feature-team`"). This lets users chain teams without guessing which command comes next.
+
+**Common pipelines:**
+- **Full product cycle:** Business Case → Product Roadmap → Technical Spec → Feature Dev → Code Review
+- **Design-to-implementation:** Brainstorming → Design → Feature Dev → Review
+- **Bug lifecycle:** Review → Debug → Feature Dev (fix) → Review (verify fix)
+- **Productivity loop:** Productivity Systems → Feature Dev (automation) → next Productivity cycle
+
+### Discovery Interview Pattern
+
+Pre-spawn structured questioning that builds rich shared context for all teammates. Moves context gathering before the team spawns so teammates can start working immediately instead of interviewing the user.
+
+**Structure:** 5 core questions (shared across modes) + 2-5 extended questions (per mode or category). Questions are presented in batches of 3-5 using `AskUserQuestion`. Questions already answered in `$ARGUMENTS` are skipped. Results are compiled into a structured `## Context` section in the spawn prompt.
+
+**Blueprints using this pattern:** Planning, Research, Design, Brainstorming, Feature, Productivity
+
+**When to use:** Any team where shared context quality directly drives output quality. See the "Discovery Interview Pattern" section in the team-coordination skill for detailed implementation guidance.
+
+### User Feedback Gate Pattern
+
+Mid-execution checkpoint where the lead presents findings to the user for prioritization and direction before the team invests in detailed work.
+
+**Implementation:** A dedicated `[Lead]` task with blocking dependencies on both sides — upstream work must complete before the gate, and downstream work cannot start until the user responds.
+
+**Blueprints using this pattern:** Planning (after initial phases), Research (after initial findings), Design (after specs + accessibility review), Feature (after API contract), Productivity (after Auditor's scored plan), Brainstorming (after idea clustering), Debug (root cause confirmation)
+
+**When to use:** Any team where significant effort could go in the wrong direction without user input. See the "User Feedback Gate" section in the team-coordination skill for detailed implementation guidance.
+
 ## Customizing Blueprints
 
 These blueprints are starting points. Adapt them by:
@@ -663,13 +733,27 @@ These blueprints are starting points. Adapt them by:
 ## Choosing the Right Blueprint
 
 ```
-Is the task about understanding something?     → Research & Discovery
+Is the task about understanding something?     → Research & Discovery (3 modes)
 Is the task about building something new?      → Feature Development
-Is the task about reviewing existing work?     → Code Review & QA
+Is the task about reviewing existing work?     → Code Review & QA (3 modes)
 Is the task about fixing something broken?     → Debugging & Investigation
-Is the task about designing a user interface?  → Frontend Design
-Is the task about sequencing what to build?    → Planning & Roadmapping
+Is the task about designing a user interface?  → Frontend Design (3 modes)
+Is the task about sequencing what to build?    → Planning & Roadmapping (7 modes)
 Is the task about optimizing workflows?        → Productivity Systems
 Is the task about generating creative ideas?   → Brainstorming & Ideation
 Is it a mix?                                   → Use team-architect agent for custom design
+```
+
+### Pipeline Composition
+
+When a task spans multiple phases, chain blueprints together using their pipeline context:
+
+```
+Need to explore before building?      → Research → Feature Dev
+Need to plan before building?         → Planning → Feature Dev
+Need design before implementation?    → Design → Feature Dev → Review
+Need ideas before planning?           → Brainstorming → Planning → Feature Dev
+Found bugs during review?             → Review → Debug → Feature Dev (fix)
+Need to optimize an existing flow?    → Productivity → Feature Dev (automation)
+Full product cycle?                   → Business Case → Roadmap → Spec → Feature Dev → Review
 ```

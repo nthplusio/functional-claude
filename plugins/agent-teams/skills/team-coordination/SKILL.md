@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user needs guidance on managing an active agent team, coordinating tasks between teammates, handling team communication, or understanding team lifecycle. Use this skill when the user asks about "task management", "team communication", "delegate mode", "plan approval", "shutdown teammates", "team messaging", or says "how do I manage my team".
 
   Covers task management, messaging patterns, plan approval workflow, delegate mode, display modes, and graceful shutdown.
-version: 0.7.0
+version: 0.8.0
 ---
 
 # Team Coordination Patterns
@@ -268,6 +268,148 @@ Runs when a teammate is about to go idle. Exit with code 2 to send feedback and 
 Runs when a task is being marked complete. Exit with code 2 to prevent completion and send feedback.
 
 Example: Require test coverage before a task can be marked complete.
+
+## Discovery Interview Pattern
+
+A **discovery interview** is a structured pre-spawn questioning phase that builds rich shared context for all teammates. Without it, teammates start with only a brief topic string and must independently discover constraints, goals, and context — leading to shallow, misaligned outputs.
+
+### When to Include
+
+Include a discovery interview when **shared context quality drives output quality**:
+
+| Include | Skip |
+|---------|------|
+| Planning teams (the plan quality depends on understanding constraints) | Debugging teams (the bug description IS the input; urgency matters) |
+| Research teams (research direction depends on knowing what matters) | Review teams (the code diff IS the input) |
+| Design teams (design decisions depend on understanding users and constraints) | Teams where the input is already structured (e.g., a spec document) |
+| Brainstorming teams (ideation quality depends on understanding the problem space) | |
+| Feature teams (implementation depends on understanding scope and acceptance criteria) | |
+
+### Standard Structure
+
+Every discovery interview has **Core Questions** (asked for all modes/uses) and **Extended Questions** (asked based on mode, category, or complexity):
+
+```
+Core Questions (up to 5, always asked):
+1. Objective — What are we doing? What's the desired end state?
+2. Current state — What exists today?
+3. Constraints — What are the non-negotiables?
+4. Stakeholders — Who decides, who's affected?
+5. Success definition — How will we know this succeeded?
+
+Extended Questions (2-5, mode-specific):
+6-10. Questions that probe deeper into the specific mode or category
+```
+
+### Adaptive Behavior
+
+**Skip questions already answered in `$ARGUMENTS`.** If the user's initial prompt says "brainstorm API authentication approaches for our Express.js app, we need to support OAuth and JWT," skip questions about the topic, tech stack, and known approaches.
+
+### Batch Presentation
+
+Present questions in groups of 3-5 using `AskUserQuestion` rather than asking one at a time. This respects the user's time while still gathering comprehensive context.
+
+### Output Compilation
+
+Compile all interview answers into a structured `## Context` section (named for the team type — e.g., `## Planning Context`, `## Brainstorming Context`, `## Research Context`) in the spawn prompt. This section becomes shared context for all teammates:
+
+```
+## [Team Type] Context
+
+### Objective
+[What we're doing, desired end state]
+
+### Current State
+[What exists today, starting point]
+
+### Constraints
+[Non-negotiables: budget, timeline, tech stack, team size, regulatory]
+
+### Stakeholders
+[Key stakeholders, decision makers, affected parties]
+
+### Success Definition
+[How success is measured, what done looks like]
+
+### Additional Context
+[Mode-specific extended question answers — as applicable]
+
+### Project Analysis
+[Findings from codebase/document analysis — if applicable]
+```
+
+### Canonical Implementations
+
+- **Planning team** (`/spawn-planning-team`) — 5 core + 5 extended questions per mode (7 modes), full context compilation
+- **Brainstorming team** (`/spawn-brainstorming-team`) — 5 core + 5 extended questions, category-specific adaptation
+
+## User Feedback Gate
+
+A **user feedback gate** is a mid-execution checkpoint where the lead presents intermediate findings to the user for direction before the team invests in detailed work. It prevents expensive effort from going in the wrong direction.
+
+### How It Differs from Plan Approval
+
+| | Plan Approval | User Feedback Gate |
+|---|---|---|
+| **Direction** | Teammate → Lead | Lead → User |
+| **Purpose** | Validate a teammate's implementation plan | Validate the team's analytical direction |
+| **When** | Before a teammate starts risky implementation | After initial analysis, before detailed work |
+| **Who decides** | The lead (approves/rejects teammate plans) | The user (confirms/adjusts team direction) |
+
+### When to Include
+
+Include a user feedback gate when **significant effort could go in the wrong direction**:
+
+| Include | Skip |
+|---------|------|
+| Planning teams (phases could be wrongly prioritized) | Review teams (reviews are single-pass; cross-reference serves as validation) |
+| Feature teams (API contracts are expensive to change post-implementation) | Debug teams (urgency; but DO confirm root cause before proposing fixes) |
+| Design teams (implementation effort is wasted if specs are wrong) | |
+| Brainstorming teams (building phase should only work on ideas the user cares about) | |
+| Productivity teams (designing solutions for the wrong bottlenecks wastes effort) | |
+| Research teams (deep-dive synthesis should focus on what the user found promising) | |
+
+### Implementation
+
+Create a dedicated `[Lead]` task with blocking dependencies on both sides:
+
+```
+Tasks:
+...
+4. [Teammate A] Initial analysis (produces findings)
+5. [Teammate B] Alternative analysis (produces findings)
+6. [Lead] USER FEEDBACK GATE — Present initial findings to user. Ask user to:
+   confirm direction, adjust priorities, flag misalignment, and provide
+   guidance for detailed work (blocked by tasks 4, 5)
+7. [Teammate A] Detailed work based on user direction (blocked by task 6)
+8. [Teammate B] Detailed work based on user direction (blocked by task 6)
+...
+```
+
+The gate task **blocks all downstream tasks**, ensuring no teammate begins detailed work until the user has validated the direction.
+
+### Standard Phrasing
+
+The feedback gate task description should follow this pattern:
+
+```
+[Lead] USER FEEDBACK GATE — Present [what's being shown] to user. Ask user to:
+[list of 3-4 specific actions the user can take], and provide direction for
+[next phase of work] (blocked by tasks [upstream tasks])
+```
+
+### Placement Guidance
+
+Place the feedback gate at the **most expensive decision point** — the moment where changing direction afterwards would waste the most effort:
+
+| Team Type | Feedback Gate Placement | Why |
+|-----------|------------------------|-----|
+| Planning | After initial phase structure, before detailed planning | Phases set the frame for all subsequent work |
+| Feature | After API contract definition, before implementation | API contracts are expensive to change |
+| Design | After specs + accessibility review, before implementation | Implementation is the biggest cost |
+| Brainstorming | After idea clustering, before building phase | Building should focus on user-selected ideas |
+| Productivity | After Auditor's scored plan, before solution design | Designing for wrong bottlenecks wastes effort |
+| Research | After initial findings, before deep-dive synthesis | Deep research should follow user interest |
 
 ## Anti-Patterns
 

@@ -37,6 +37,12 @@ Ask the user which brainstorming category best fits their topic. This shapes the
 
 If the category is obvious from `$ARGUMENTS`, confirm it rather than asking. For example, "brainstorm API authentication approaches" is clearly Tech.
 
+**Auto-inference keywords:**
+- API, architecture, framework, library, performance, database, infrastructure → **Tech**
+- Feature, user experience, onboarding, pricing, market, customers → **Product**
+- Workflow, pipeline, CI/CD, process, collaboration, meetings, sprint → **Process**
+- Infrastructure, deployment, scaling, monitoring, reliability, uptime → **Ops**
+
 ## Step 2: Discovery Interview
 
 Before spawning the team, conduct a structured interview to deeply understand the brainstorming topic. The interview results become shared context for all teammates — this ensures rich, informed ideation rather than shallow brainstorming on a bare topic string.
@@ -89,6 +95,8 @@ If the category is Tech, quickly analyze the project to identify:
 - Integration points that ideas should be aware of
 
 Include findings in the brainstorming context section of the spawn prompt.
+
+**Pipeline context:** Feeds into `/spawn-planning-team` (turn winning ideas into roadmap items), `/spawn-research-team` (investigate feasibility of promising ideas), `/spawn-design-team` (design UI concepts from ideation), `/spawn-feature-team` (implement straightforward ideas directly)
 
 ## Step 5: Spawn the Team
 
@@ -191,6 +199,11 @@ The user feedback gate (task 7) is mandatory — the human decides which ideas t
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
 ```
 
+**Output format:**
+- **Ranked idea list** — Ideas scored against success criteria with viability ratings
+- **Idea clusters** — Themed groupings showing how ideas relate
+- **Recommended next steps** — For each top idea, which downstream command to run: `/spawn-planning-team` (for strategic ideas needing roadmapping), `/spawn-research-team` (for ideas needing feasibility research), `/spawn-design-team` (for UI/UX concepts), or `/spawn-feature-team` (for straightforward implementations)
+
 ## Output
 
 After spawning, inform the user:
@@ -201,5 +214,6 @@ After spawning, inform the user:
 - **Phase 4 (Building):** The Visionary enhances and the Realist adds implementation details to your prioritized ideas
 - **Phase 5 (Convergence):** The Facilitator drives structured evaluation and the lead synthesizes the final output
 - The Facilitator enforces brainstorming rules — no premature evaluation during ideation
+- The final output includes recommended downstream commands for each top idea
 - Use Shift+Up/Down to interact with teammates or provide additional context
 - Use Ctrl+T to monitor the shared task list

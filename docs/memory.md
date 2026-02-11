@@ -22,7 +22,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | opentui-dev | 0.1.4 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
 | tabby-dev | 0.1.1 | Tabby terminal configuration, SSH connections, and plugin development |
-| agent-teams | 0.7.0 | Agent team blueprints, coordination patterns, and reusable personas for application development phases with adaptive planning (7 modes) |
+| agent-teams | 0.8.0 | Agent team blueprints, coordination patterns, and reusable personas for application development phases with adaptive modes, discovery interviews, user feedback gates, and cross-team pipelines |
 
 ## Architecture Overview
 
@@ -352,38 +352,38 @@ Tabby terminal configuration, SSH connections, and plugin development.
 | sources.json | - | Documentation source URLs |
 | learnings.md | Weekly | Documentation and session learnings |
 
-## agent-teams Plugin (v0.7.0)
+## agent-teams Plugin (v0.8.0)
 
-Agent team blueprints, coordination patterns, and reusable personas for application development phases.
+Agent team blueprints, coordination patterns, and reusable personas for application development phases. All teams feature discovery interviews for rich shared context, user feedback gates for mid-course correction, and pipeline context for chaining teams together. Most teams support adaptive modes for different use cases.
 
 ### Skills
 
 | Skill | Purpose | Trigger Phrases |
 |-------|---------|-----------------|
 | agent-teams | Overview, concepts, when to use | "agent teams", "create a team", "coordinate agents" |
-| team-blueprints | Pre-designed team configs for 8 dev phases | "research team", "feature team", "review team", "debug team", "design team", "planning team", "productivity team", "brainstorming team" |
-| team-coordination | Task management, messaging, lifecycle | "manage tasks", "team communication", "delegate mode" |
+| team-blueprints | Pre-designed team configs for 8 dev phases with design patterns | "research team", "feature team", "review team", "debug team", "design team", "planning team", "productivity team", "brainstorming team" |
+| team-coordination | Task management, messaging, lifecycle, discovery interviews, user feedback gates | "manage tasks", "team communication", "delegate mode" |
 | team-personas | Reusable behavioral profiles with deep methodology | "personas", "behavioral profiles", "productivity loop", "auditor persona" |
 
 ### Agents
 
 | Agent | Purpose | Trigger Phrases |
 |-------|---------|-----------------|
-| team-architect | Custom team design with persona support | "design a team", "custom team", "what team do I need" |
+| team-architect | Custom team design with persona support and advanced pattern awareness | "design a team", "custom team", "what team do I need" |
 
 ### Commands
 
 | Command | Purpose |
 |---------|---------|
 | /agent-teams | Plugin overview with available commands and quickstart |
-| /spawn-research-team | Spawn research & discovery team (Explorer, Analyst, Critic) |
-| /spawn-feature-team | Spawn feature development team (Frontend, Backend, Tester) |
-| /spawn-review-team | Spawn code review team (Security, Performance, Quality) |
-| /spawn-debug-team | Spawn debugging team with competing hypothesis investigators |
-| /spawn-design-team | Spawn frontend design team with Product Owner, Designer, Dev, User Advocate |
+| /spawn-research-team | Spawn research team with 3 modes (Technology Evaluation, Landscape Survey, Risk Assessment), discovery interview, feedback gate, optional teammates |
+| /spawn-feature-team | Spawn feature development team with discovery interview, feedback gate after API contract, optional DevOps/Documentation teammates |
+| /spawn-review-team | Spawn code review team with 3 modes (Security-focused, Performance-focused, Balanced), brief interview, optional Accessibility/Architecture reviewers |
+| /spawn-debug-team | Spawn debugging team with hypothesis confirmation gate, competing investigators, root cause confirmation |
+| /spawn-design-team | Spawn frontend design team with 3 modes (New Component, Page/Flow, Redesign), discovery interview, feedback gate before implementation |
 | /spawn-planning-team | Spawn adaptive planning team with 7 modes (Product Roadmap, Technical Spec, Architecture Decision, Migration Strategy, Business Case, Go-to-Market, OKR/Goals) |
-| /spawn-productivity-team | Spawn productivity systems team with 5-persona loop (Auditor, Architect, Analyst, Refiner, Compounder) |
-| /spawn-brainstorming-team | Spawn brainstorming & ideation team with Facilitator, Visionary, Realist + optional User Voice, Domain Expert |
+| /spawn-productivity-team | Spawn productivity systems team with pre-spawn interview, feedback gate after scored plan, 5-persona loop (Auditor, Architect, Analyst, Refiner, Compounder) |
+| /spawn-brainstorming-team | Spawn brainstorming team with category-based lenses (Tech/Product/Process/Ops), discovery interview, feedback gate, optional User Voice/Domain Expert |
 
 ### Reference Files
 

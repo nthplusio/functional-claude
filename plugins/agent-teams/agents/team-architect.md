@@ -79,7 +79,7 @@ Personas are deep behavioral profiles that add structured methodology, scoring c
 - **Scoring criteria** — Quantitative evaluation dimensions (e.g., the Refiner persona's convergence scoring)
 - **Interaction patterns** — When to pause, check in, hand off (e.g., the Auditor persona's discovery-before-scoring flow)
 
-Available personas: Auditor, Architect, Analyst, Refiner, Compounder. Each can be applied individually to any teammate — they don't have to be used as a complete set.
+Available personas: Auditor, Architect, Analyst, Refiner, Compounder, Facilitator, Visionary, Realist. Each can be applied individually to any teammate — they don't have to be used as a complete set.
 
 To apply a persona, include in the teammate's spawn description:
 ```
@@ -87,6 +87,16 @@ Read the [Persona Name] persona definition at:
 ${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/[name].md
 Follow the methodology phases, scoring criteria, and behavioral instructions defined in the persona.
 ```
+
+### Step 3.75: Consider Advanced Patterns
+
+Based on the task complexity, consider whether the team design should include these patterns from the built-in blueprints:
+
+**Discovery Interview** — Include when shared context quality drives output quality. Design 3-5 core questions that anchor the session, plus 2-5 extended questions specific to the task type. Skip when the input is already structured (bug reports, code diffs).
+
+**User Feedback Gate** — Include when significant effort could go in the wrong direction. Place a dedicated `[Lead]` task at the most expensive decision point — the moment where changing direction afterwards would waste the most effort. The gate blocks all downstream detailed work until the user validates direction.
+
+**Cross-Team Pipeline** — Consider how the team's output feeds into downstream teams. Structure the output format so it can be directly consumed by the next team command (e.g., a planning team produces phase briefs that feed into `/spawn-feature-team`). Document the pipeline in the spawn prompt output section.
 
 ### Step 4: Design the Team
 
@@ -104,6 +114,7 @@ Create a task list with:
 3. 5-6 tasks per teammate
 4. Critical path identified
 5. Task Blocking Protocol included in the spawn prompt (see Step 6)
+6. User feedback gate placement — if the team benefits from mid-execution user validation, place a `[Lead] USER FEEDBACK GATE` task at the most expensive decision point, with blocking dependencies on both sides
 
 ### Step 6: Generate the Prompt
 
@@ -119,6 +130,21 @@ Create an agent team called "[team-name]" to [goal]. Spawn [N] teammates:
 
 [Optional: model selection, delegate mode, plan approval]
 
+[IF DISCOVERY INTERVIEW WAS CONDUCTED:]
+## Context
+
+### Objective
+[Compiled from interview — what we're doing, desired end state]
+
+### Current State
+[What exists today]
+
+### Constraints
+[Non-negotiables]
+
+### Additional Context
+[Task-specific details from extended questions and project analysis]
+
 **Task Blocking Protocol -- ALL teammates MUST follow:**
 - Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
 - NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
@@ -128,10 +154,13 @@ Create an agent team called "[team-name]" to [goal]. Spawn [N] teammates:
 
 Create these tasks:
 1. [Owner] Task description (dependencies if any)
-2. [Owner] Task description (blocked by task N)
+...
+N. [Lead] USER FEEDBACK GATE — Present findings to user, ask for direction (blocked by upstream tasks)
+N+1. [Owner] Detailed work based on user direction (blocked by task N)
 ...
 
 [Coordination instructions: file boundaries, communication patterns, synthesis]
+[Output format: what the team produces and which downstream commands it feeds into]
 ```
 
 ### Step 7: Review with User
@@ -153,6 +182,8 @@ Iterate based on feedback before finalizing.
 5. **Concrete names** — Name teammates by what they do, not abstract roles
 6. **Minimal team size** — Don't add teammates just because you can; each should justify their token cost
 7. **Blocking protocol** — Every spawn prompt must include the Task Blocking Protocol so teammates respect dependencies and read upstream outputs
+8. **Rich context via discovery interviews** — When shared context quality drives output quality, design a pre-spawn interview that compiles answers into a structured Context section in the spawn prompt
+9. **User feedback gates for mid-course correction** — When significant effort could go in the wrong direction, place a `[Lead] USER FEEDBACK GATE` task at the most expensive decision point to let the user validate direction before detailed work begins
 
 ## Anti-Patterns to Avoid
 

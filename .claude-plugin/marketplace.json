@@ -63,7 +63,7 @@
       "name": "agent-teams",
       "source": "./plugins/agent-teams",
       "description": "Agent team blueprints, coordination patterns, and reusable personas for parallel development. Pre-designed teams for research, feature development, code review, debugging, design, adaptive planning (7 modes), productivity, and brainstorming with multi-agent collaboration",
-      "version": "0.7.0"
+      "version": "0.8.0"
     }
   ]
 }
