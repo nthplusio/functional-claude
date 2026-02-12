@@ -1,3 +1,17 @@
 {
-  "hooks": {}
+  "description": "Agent team deduplication guards",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "TeamCreate|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/dedup-guard.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
 }

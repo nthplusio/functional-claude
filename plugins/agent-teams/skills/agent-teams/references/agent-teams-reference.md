@@ -292,6 +292,14 @@ vulnerabilities. Focus on JWT handling. Report with severity ratings."
 7. **Permissions set at spawn** — all teammates start with lead's mode
 8. **Split panes** — not supported in VS Code terminal, Windows Terminal, or Ghostty
 
+### Dedup Guard
+
+A PreToolUse hook guards against duplicate teams and teammates:
+
+- **TeamCreate** — denied if `~/.claude/teams/{team-name}/config.json` already exists. The deny message lists current members and suggests using the existing team, deleting first, or renaming.
+- **Task teammate spawn** — denied if a member with the same name (case-insensitive) is already registered in the team config. The deny message identifies the existing member and suggests messaging them, shutting down then respawning, or using a different name.
+- **Fail-safe** — on any error (file read, JSON parse, stdin), the hook allows the operation to avoid blocking legitimate workflows.
+
 ## Token Cost Considerations
 
 Agent teams use significantly more tokens than a single session:

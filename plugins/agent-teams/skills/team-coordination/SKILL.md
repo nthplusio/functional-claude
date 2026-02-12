@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user needs guidance on managing an active agent team, coordinating tasks between teammates, handling team communication, or understanding team lifecycle. Use this skill when the user asks about "task management", "team communication", "delegate mode", "plan approval", "shutdown teammates", "team messaging", or says "how do I manage my team".
 
   Covers task management, messaging patterns, plan approval workflow, delegate mode, display modes, and graceful shutdown.
-version: 0.9.0
+version: 0.10.0
 ---
 
 # Team Coordination Patterns
@@ -550,3 +550,18 @@ task outputs to `tasks/`, team README with metadata, and update root index at `d
 | Broadcasting every message | Expensive and noisy | Default to direct messages |
 | No task dependencies | Tasks done in wrong order | Define blocking relationships |
 | Starting blocked tasks early | Wasted effort, stale assumptions | Include Task Blocking Protocol in spawn prompts |
+
+## Dedup Guard
+
+A PreToolUse hook automatically prevents duplicate teams and teammates. The hook intercepts `TeamCreate` and `Task` calls and checks `~/.claude/teams/{team-name}/config.json` for existing state.
+
+### What Gets Blocked
+
+| Scenario | Detection | Remediation |
+|----------|-----------|-------------|
+| `TeamCreate` with a name that already exists | Config file found at `~/.claude/teams/{name}/` | Use the existing team, `TeamDelete` first, or pick a new name |
+| `Task` spawning a teammate whose name is already registered | Case-insensitive match in config `members` array | `SendMessage` to assign new work, `shutdown_request` then respawn, or spawn with a different name |
+
+### Fail-Safe
+
+On any error (file read failure, JSON parse error, stdin issue), the hook allows the operation to proceed. This prevents the guard from blocking legitimate workflows.
