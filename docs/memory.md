@@ -17,7 +17,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | hyper-dev | 0.3.6 | Hyper terminal configuration and plugin development |
 | prisma-dev | 0.1.6 | Prisma ORM development with schema analysis and migration safety |
 | shadcn-dev | 0.1.9 | shadcn/ui and Tailwind CSS v4 development workflows |
-| pre-commit | 0.3.0 | Pre-push checks for typechecking, linting, building, and testing |
+| code-quality | 1.0.0 | Deterministic code quality infrastructure — git hooks, lint-staged, and formatters |
 | claude-plugin-dev | 0.3.1 | Plugin development with guided workflows and AI-assisted creation |
 | opentui-dev | 0.1.4 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
@@ -173,39 +173,47 @@ plugins/<plugin-name>/
 | cache-refresh | SessionStart | Checks if documentation cache needs refreshing |
 | learnings-capture | Stop | Prompts for learnings capture after shadcn work |
 
-## Pre-Commit Plugin (v0.2.0)
+## Code Quality Plugin (v1.0.0)
+
+Deterministic code quality infrastructure — git hooks, lint-staged, and formatters that run on every commit and push.
 
 ### Skills
 
 | Skill | Purpose | Trigger Phrases |
 |-------|---------|-----------------|
-| pre-commit-setup | Repository analysis and config generation | "set up pre-commit", "configure pre-push checks", "add typecheck hooks" |
+| code-quality | Overview, routing to focused skills | "code quality", "quality checks", "set up code quality" |
+| code-quality-setup | Guided setup: detect → recommend → configure | "set up code quality", "configure git hooks", "add pre-commit hooks", "set up lint-staged" |
+| code-quality-hooks | Git hook framework deep reference | "configure husky", "set up lefthook", "add pre-push hook" |
+| code-quality-lint | Linter, formatter, lint-staged reference | "set up eslint", "configure prettier", "add biome", "set up ruff" |
+
+### Agent
+
+| Agent | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| code-quality-troubleshoot | Diagnose broken hooks and configs | "git hooks not running", "lint-staged not working", "husky broken" |
+
+### Commands
+
+| Command | Purpose |
+|---------|---------|
+| /code-quality-setup | Guided setup workflow for git hooks and lint-staged |
 
 ### Hooks
 
 | Hook | Event | Purpose |
 |------|-------|---------|
-| check-pre-push | PreToolUse | Runs typecheck/lint/build/test before git push |
+| code-quality-recon | SessionStart | Detects quality infrastructure, suggests setup or migration |
 
-### Config File
+### Supported Frameworks
 
-Location: `${CLAUDE_PROJECT_DIR}/.claude/pre-commit.json`
+- **Husky** — JS/TS single-package projects
+- **Lefthook** — Monorepos, polyglot projects
+- **pre-commit** — Python projects, polyglot repos
+- **Shell scripts** — Rust, Go, minimal setups
 
-Supported checks (in execution order):
-1. **typecheck** - Type checking (tsc, mypy, cargo check, go build)
-2. **lint** - Linting (eslint, biome, ruff, clippy, golangci-lint)
-3. **build** - Build verification (npm run build, cargo build, python -m build, go build)
-4. **test** - Testing (npm test, pytest, cargo test, go test)
+### Migration from Pre-Commit Plugin
 
-Supported ecosystems:
-- JavaScript/TypeScript (npm, yarn, pnpm, bun)
-- Python (mypy, ruff, pytest, python -m build)
-- Rust (cargo check, clippy, cargo build, cargo test)
-- Go (go build, golangci-lint, go test)
-
-Each check can be set to `"block"` (deny push) or `"warn"` (allow with message).
-
-For monorepos, use manual override with filter commands (e.g., `pnpm --filter @scope/pkg build`).
+The legacy `pre-commit` plugin used a Claude PreToolUse hook to intercept `git push` — this only ran when Claude performed the push. The `code-quality` plugin sets up real git hooks that run for every developer. If `.claude/pre-commit.json` is detected, `/code-quality-setup` guides the migration.
 
 ## opentui-dev Plugin (v0.1.3)
 
@@ -477,13 +485,25 @@ functional-claude/
     │   ├── agents/
     │   │   └── shadcn-troubleshoot.md
     │   └── .cache/
-    ├── pre-commit/
+    ├── code-quality/
     │   ├── .claude-plugin/plugin.json
     │   ├── hooks/
     │   │   ├── hooks.json
-    │   │   └── check-pre-push.js
-    │   └── skills/
-    │       └── pre-commit-setup/
+    │   │   └── code-quality-recon.js
+    │   ├── skills/
+    │   │   ├── code-quality/
+    │   │   │   └── SKILL.md
+    │   │   ├── code-quality-setup/
+    │   │   │   └── SKILL.md
+    │   │   ├── code-quality-hooks/
+    │   │   │   └── SKILL.md
+    │   │   └── code-quality-lint/
+    │   │       └── SKILL.md
+    │   ├── agents/
+    │   │   └── code-quality-troubleshoot.md
+    │   ├── commands/
+    │   │   └── code-quality-setup.md
+    │   └── .cache/
     ├── claude-plugin-dev/
     │   ├── .claude-plugin/plugin.json
     │   ├── hooks/hooks.json

@@ -1,0 +1,16 @@
+{
+  "description": "Code quality infrastructure detection on session start",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/code-quality-recon.js\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

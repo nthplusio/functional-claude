@@ -30,10 +30,10 @@
       "version": "0.1.9"
     },
     {
-      "name": "pre-commit",
-      "source": "./plugins/pre-commit",
-      "description": "Pre-push checks for typechecking, linting, building, and testing with auto-detection and configurable enforcement",
-      "version": "0.3.0"
+      "name": "code-quality",
+      "source": "./plugins/code-quality",
+      "description": "Deterministic code quality infrastructure — git hooks, lint-staged, and formatters that run on every commit and push, with guided setup and ecosystem detection",
+      "version": "1.0.0"
     },
     {
       "name": "claude-plugin-dev",
