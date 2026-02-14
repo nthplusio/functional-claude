@@ -24,6 +24,7 @@
     ]
   },
   "enabledPlugins": {
-    "claude-plugin-dev@functional-claude": true
+    "claude-plugin-dev@functional-claude": true,
+    "gemini-cli@functional-claude": true
   }
 }
