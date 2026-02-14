@@ -1,0 +1,16 @@
+{
+  "description": "Gemini CLI hooks - validates CLI installation, authentication, and nano-banana extension on session start",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/gemini-session-start.js",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

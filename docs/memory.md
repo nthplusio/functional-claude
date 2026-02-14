@@ -23,6 +23,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
 | tabby-dev | 0.1.1 | Tabby terminal configuration, SSH connections, and plugin development |
 | agent-teams | 0.10.0 | Agent team blueprints, coordination patterns, and reusable personas for application development phases with adaptive modes, discovery interviews, user feedback gates, cross-team pipelines, and artifact output to `docs/teams/` |
+| gemini-cli | 0.1.0 | Gemini CLI integration for large context review and image generation via nano-banana extension |
 
 ## Architecture Overview
 
@@ -413,6 +414,39 @@ Agent team blueprints, coordination patterns, and reusable personas for applicat
 | references/visionary.md | Visionary persona: Divergent Thinker |
 | references/realist.md | Realist persona: Practical Thinker |
 
+## gemini-cli Plugin (v0.1.0)
+
+Gemini CLI integration for large context review and image generation via nano-banana extension. Validates CLI installation, authentication, and extension availability on session start.
+
+### Skills
+
+| Skill | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| gemini-cli | Overview, setup, CLI usage | "use gemini", "gemini cli", "configure gemini" |
+| gemini-review | Large context review via Gemini headless mode | "review with gemini", "gemini code review", "large context review" |
+| gemini-images | Image/icon generation via nano-banana extension | "generate image", "create icon", "nano-banana", "gemini image" |
+
+### Agents
+
+| Agent | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| gemini-review | Autonomous large context review delegation | "use gemini to review", "second opinion from gemini" |
+| gemini-troubleshoot | Diagnose CLI, auth, and extension issues | "gemini not working", "fix gemini", "gemini error" |
+| gemini-cache-update | Silent cache refresh | Triggered by SessionStart hook when cache is stale |
+
+### Hooks
+
+| Hook | Event | Purpose |
+|------|-------|---------|
+| gemini-session-start | SessionStart | Validates CLI installation, auth env vars, and nano-banana extension |
+
+### Cache Files
+
+| File | Refresh | Purpose |
+|------|---------|---------|
+| sources.json | - | Documentation source URLs |
+| learnings.md | Weekly | Documentation and session learnings |
+
 ## Root-Level Skills
 
 | Skill | Purpose |
@@ -593,6 +627,20 @@ functional-claude/
         │           └── realist.md
         ├── agents/
         │   └── team-architect.md
+        └── .cache/
+    └── gemini-cli/
+        ├── .claude-plugin/plugin.json
+        ├── hooks/
+        │   ├── hooks.json
+        │   └── gemini-session-start.js
+        ├── skills/
+        │   ├── gemini-cli/            # Main skill (overview)
+        │   ├── gemini-review/
+        │   └── gemini-images/
+        ├── agents/
+        │   ├── gemini-review.md
+        │   ├── gemini-troubleshoot.md
+        │   └── gemini-cache-update.md
         └── .cache/
 ```
 
