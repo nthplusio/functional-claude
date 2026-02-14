@@ -1,7 +1,7 @@
 ---
 name: gemini-images
 description: This skill should be used when the user asks to "generate image with gemini", "create icon", "nano-banana", "gemini image", "generate pattern", "create diagram with gemini", "app icon", "generate favicon", or wants to use the nano-banana Gemini CLI extension for image generation, icon creation, pattern design, or visual content.
-version: 0.3.0
+version: 0.4.0
 ---
 
 # Gemini Image Generation (nano-banana)

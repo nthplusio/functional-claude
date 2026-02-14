@@ -1,7 +1,7 @@
 ---
 name: gemini-cli
 description: This skill should be used when the user asks to "use gemini", "gemini cli", "configure gemini", "set up gemini", "gemini review", "gemini images", or mentions general Gemini CLI usage. For specific topics, focused skills may be more appropriate.
-version: 0.3.0
+version: 0.4.0
 ---
 
 # Gemini CLI Development
@@ -69,13 +69,13 @@ The key integration pattern is Gemini's **headless mode** (`-p` flag), which acc
 
 ```bash
 # Simple prompt
-gemini -p --model gemini-2.5-pro "Explain this error: ..."
+gemini -m gemini-3-pro-preview -p "Explain this error: ..."
 
 # Pipe file content for review
-cat large-file.ts | gemini -p --model gemini-2.5-pro "Review this code for bugs and security issues" 2>&1
+cat large-file.ts | gemini -m gemini-3-pro-preview -p "Review this code for bugs and security issues" 2>&1
 
 # Pipe a directory of files
-find src/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done | gemini -p --model gemini-2.5-pro "Review this codebase" 2>&1
+find src/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done | gemini -m gemini-3-pro-preview -p "Review this codebase" 2>&1
 
 # Use sandbox mode for untrusted operations
 gemini -p --sandbox "Analyze this codebase"
@@ -84,10 +84,13 @@ gemini -p --sandbox "Analyze this codebase"
 ### Model Selection
 
 ```bash
-# Use a specific model
-gemini -p --model gemini-2.5-pro "Your prompt here"
+# Use a specific model (default: gemini-3-pro-preview)
+gemini -m gemini-3-pro-preview -p "Your prompt here"
 
-# Available models: gemini-2.5-pro, gemini-2.5-flash, gemini-2.0-flash
+# Fallback if pro is unavailable
+gemini -m gemini-2.5-pro -p "Your prompt here"
+
+# Available models: gemini-3-pro-preview, gemini-2.5-pro, gemini-2.5-flash
 ```
 
 ### Configuration
@@ -117,23 +120,23 @@ When a task involves reviewing more context than is practical in the current ses
 
 ```bash
 # Review an entire codebase directory
-find src/ -name "*.ts" -exec cat {} + | gemini -p "Review this TypeScript codebase for: 1) Security vulnerabilities 2) Performance issues 3) Code quality"
+find src/ -name "*.ts" -exec cat {} + | gemini -m gemini-3-pro-preview -p "Review this TypeScript codebase for: 1) Security vulnerabilities 2) Performance issues 3) Code quality"
 
 # Review a large log file
-gemini -p "Summarize errors and patterns in this log" < /var/log/app.log
+gemini -m gemini-3-pro-preview -p "Summarize errors and patterns in this log" < /var/log/app.log
 
 # Compare implementations
-diff -u old.ts new.ts | gemini -p "Review this diff for correctness and potential regressions"
+diff -u old.ts new.ts | gemini -m gemini-3-pro-preview -p "Review this diff for correctness and potential regressions"
 ```
 
 ### Using Gemini with File Context
 
 ```bash
 # Pass specific files as context
-gemini -p "Given these files, suggest improvements" --file src/api.ts --file src/types.ts
+gemini -m gemini-3-pro-preview -p "Given these files, suggest improvements" --file src/api.ts --file src/types.ts
 
 # Review with project context
-gemini -p "Review the architecture of this project" --file package.json --file tsconfig.json --file src/index.ts
+gemini -m gemini-3-pro-preview -p "Review the architecture of this project" --file package.json --file tsconfig.json --file src/index.ts
 ```
 
 ## Troubleshooting

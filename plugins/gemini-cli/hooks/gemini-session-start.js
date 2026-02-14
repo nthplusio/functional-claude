@@ -89,8 +89,8 @@ process.stdin.on('end', async () => {
     // Preferred models (newest first) — used as default and fallback
     const PREFERRED_IMAGE_MODEL = 'gemini-3-pro-image-preview';
     const FALLBACK_IMAGE_MODEL = 'gemini-2.5-flash-image';
-    const PREFERRED_TEXT_MODEL = 'gemini-2.5-pro';
-    const FALLBACK_TEXT_MODEL = 'gemini-2.5-flash';
+    const PREFERRED_TEXT_MODEL = 'gemini-3-pro-preview';
+    const FALLBACK_TEXT_MODEL = 'gemini-2.5-pro';
 
     if (nanoBananaInfo.installed) {
       const model = process.env.NANOBANANA_MODEL;

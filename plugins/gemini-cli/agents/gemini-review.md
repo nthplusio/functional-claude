@@ -67,7 +67,7 @@ If no auth is detected, return this error and stop:
 
 Construct a SINGLE Bash command that:
 1. Gathers the target content (cat, find, git diff, etc.)
-2. Pipes it directly to `gemini -p --model gemini-2.5-pro "<prompt>"`
+2. Pipes it directly to `gemini -m gemini-3-pro-preview -p "<prompt>"`
 
 **The content gathering and gemini call MUST be a single piped command.** Do not read files in one step and call gemini in another.
 
@@ -75,30 +75,30 @@ Construct a SINGLE Bash command that:
 
 ```bash
 # Single file
-cat path/to/file.ts | gemini -p --model gemini-2.5-pro "Review this code for security vulnerabilities. For each finding provide: severity (critical/high/medium/low), location, description, and suggested fix." 2>&1
+cat path/to/file.ts | gemini -m gemini-3-pro-preview -p "Review this code for security vulnerabilities. For each finding provide: severity (critical/high/medium/low), location, description, and suggested fix." 2>&1
 ```
 
 ```bash
 # Directory — concatenate with file markers, pipe to gemini
-find src/api/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done | gemini -p --model gemini-2.5-pro "Review these files for security vulnerabilities. For each finding provide: severity, file, location, description, and suggested fix." 2>&1
+find src/api/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done | gemini -m gemini-3-pro-preview -p "Review these files for security vulnerabilities. For each finding provide: severity, file, location, description, and suggested fix." 2>&1
 ```
 
 #### For diffs:
 
 ```bash
-git diff main...HEAD | gemini -p --model gemini-2.5-pro "Review this diff for correctness, potential regressions, and missing edge cases." 2>&1
+git diff main...HEAD | gemini -m gemini-3-pro-preview -p "Review this diff for correctness, potential regressions, and missing edge cases." 2>&1
 ```
 
 #### For logs:
 
 ```bash
-tail -50000 /var/log/app.log | gemini -p --model gemini-2.5-pro "Analyze these logs. Identify error patterns, frequency, security events, and performance signals." 2>&1
+tail -50000 /var/log/app.log | gemini -m gemini-3-pro-preview -p "Analyze these logs. Identify error patterns, frequency, security events, and performance signals." 2>&1
 ```
 
 #### For very large content (write to temp file first):
 
 ```bash
-find src/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done > /tmp/gemini-review-input.txt && gemini -p --model gemini-2.5-pro "Review this codebase for quality and correctness issues." < /tmp/gemini-review-input.txt 2>&1
+find src/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done > /tmp/gemini-review-input.txt && gemini -m gemini-3-pro-preview -p "Review this codebase for quality and correctness issues." < /tmp/gemini-review-input.txt 2>&1
 ```
 
 ### Step 3: Handle errors — fallback model (one Bash call, only if Step 2 failed)
@@ -107,7 +107,7 @@ If the output from Step 2 contains "quota", "capacity", "unavailable", "429", or
 
 ```bash
 # Same command as Step 2 but with flash model
-cat path/to/file.ts | gemini -p --model gemini-2.5-flash "<same prompt>" 2>&1
+cat path/to/file.ts | gemini -m gemini-2.5-pro -p "<same prompt>" 2>&1
 ```
 
 ### Step 4: Return the result
