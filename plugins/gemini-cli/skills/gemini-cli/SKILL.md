@@ -1,7 +1,7 @@
 ---
 name: gemini-cli
 description: This skill should be used when the user asks to "use gemini", "gemini cli", "configure gemini", "set up gemini", "gemini review", "gemini images", or mentions general Gemini CLI usage. For specific topics, focused skills may be more appropriate.
-version: 0.2.0
+version: 0.3.0
 ---
 
 # Gemini CLI Development
@@ -59,16 +59,23 @@ For nano-banana image generation, also set (if using a separate key):
 export NANOBANANA_GEMINI_API_KEY="your-key"
 ```
 
+## Critical Rule: Always Use the CLI
+
+**Every task in this plugin MUST execute the Gemini CLI via Bash.** The entire purpose of this plugin is to delegate work to Gemini — not to do it with Claude. If you find yourself reading files with Read/Grep/Glob and analyzing them, you are doing it wrong. Instead, pipe content directly to `gemini -p` in a single Bash command.
+
 ## Core Usage: Headless Mode
 
-The key integration pattern is Gemini's **headless mode** (`-p` flag), which accepts a prompt and returns output non-interactively:
+The key integration pattern is Gemini's **headless mode** (`-p` flag), which accepts a prompt and returns output non-interactively. All content gathering and the gemini call should be a **single piped Bash command**:
 
 ```bash
 # Simple prompt
-gemini -p "Explain this error: ..."
+gemini -p --model gemini-2.5-pro "Explain this error: ..."
 
 # Pipe file content for review
-cat large-file.ts | gemini -p "Review this code for bugs and security issues"
+cat large-file.ts | gemini -p --model gemini-2.5-pro "Review this code for bugs and security issues" 2>&1
+
+# Pipe a directory of files
+find src/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done | gemini -p --model gemini-2.5-pro "Review this codebase" 2>&1
 
 # Use sandbox mode for untrusted operations
 gemini -p --sandbox "Analyze this codebase"

@@ -1,5 +1,5 @@
 {
   "name": "gemini-cli",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Gemini CLI integration for large context review and image generation via nano-banana extension. Validates CLI installation and environment on session start"
 }

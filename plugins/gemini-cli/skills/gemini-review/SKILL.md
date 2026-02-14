@@ -1,7 +1,7 @@
 ---
 name: gemini-review
 description: This skill should be used when the user asks to "review with gemini", "gemini code review", "analyze large file with gemini", "gemini review codebase", "large context review", "second opinion from gemini", or wants to use Gemini CLI for reviewing code, documents, logs, or other large context items.
-version: 0.2.0
+version: 0.3.0
 ---
 
 # Gemini Large Context Review
@@ -17,14 +17,17 @@ Use Gemini CLI's large context window (up to 2M tokens) for reviewing code, docu
 - **Diff review**: Review large diffs or PRs with full context
 - **Migration analysis**: Assess large-scale migration impact across files
 
+## Critical Rule: Gemini Does the Review, Not Claude
+
+**You MUST execute every review via `gemini -p` in a Bash command.** Do NOT read files with Read/Grep/Glob and analyze them yourself — that defeats the entire purpose. The value of this skill is Gemini's independent perspective and 2M token context window. Pipe content directly to the CLI in a single command.
+
 ## Core Pattern: Headless Review
 
-All reviews use Gemini's headless mode (`-p` flag) for non-interactive execution:
+All reviews use Gemini's headless mode (`-p` flag) for non-interactive execution. Content gathering and the gemini call should be a **single piped Bash command**:
 
 ```bash
-gemini -p "REVIEW_PROMPT" < input_file
-# or
-cat files... | gemini -p "REVIEW_PROMPT"
+# Pipe files directly to gemini — do NOT read them yourself first
+cat files... | gemini -p --model gemini-2.5-pro "REVIEW_PROMPT" 2>&1
 ```
 
 ## Review Recipes
@@ -32,7 +35,7 @@ cat files... | gemini -p "REVIEW_PROMPT"
 ### Code Review (Single File)
 
 ```bash
-cat src/api/handler.ts | gemini -p "Review this TypeScript file for:
+cat src/api/handler.ts | gemini -p --model gemini-2.5-pro "Review this TypeScript file for:
 1. Security vulnerabilities (injection, auth bypass, data exposure)
 2. Error handling gaps
 3. Performance issues
@@ -47,7 +50,7 @@ Provide specific line references and severity ratings."
 for f in src/api/*.ts; do
   echo "=== FILE: $f ==="
   cat "$f"
-done | gemini -p "Review these API endpoint files as a cohesive module. Check for:
+done | gemini -p --model gemini-2.5-pro "Review these API endpoint files as a cohesive module. Check for:
 1. Inconsistent error handling patterns
 2. Missing input validation
 3. Authentication/authorization gaps
@@ -58,14 +61,14 @@ done | gemini -p "Review these API endpoint files as a cohesive module. Check fo
 
 ```bash
 # Review a git diff
-git diff main...feature-branch | gemini -p "Review this diff for:
+git diff main...feature-branch | gemini -p --model gemini-2.5-pro "Review this diff for:
 1. Correctness of changes
 2. Potential regressions
 3. Missing edge cases
 4. Test coverage gaps"
 
 # Review specific PR changes
-git log main..HEAD --oneline -p | gemini -p "Review all changes in this branch. Summarize what changed and flag any concerns."
+git log main..HEAD --oneline -p | gemini -p --model gemini-2.5-pro "Review all changes in this branch. Summarize what changed and flag any concerns."
 ```
 
 ### Architecture Review
@@ -84,7 +87,7 @@ git log main..HEAD --oneline -p | gemini -p "Review all changes in this branch. 
   echo ""
   echo "=== Key Types ==="
   cat src/types.ts
-} | gemini -p "Review this project architecture. Assess:
+} | gemini -p --model gemini-2.5-pro "Review this project architecture. Assess:
 1. Directory organization
 2. Dependency health (outdated, redundant, security)
 3. Module boundaries and coupling
@@ -95,14 +98,14 @@ git log main..HEAD --oneline -p | gemini -p "Review all changes in this branch. 
 
 ```bash
 # Analyze application logs
-tail -10000 /var/log/app.log | gemini -p "Analyze these application logs:
+tail -10000 /var/log/app.log | gemini -p --model gemini-2.5-pro "Analyze these application logs:
 1. Identify error patterns and frequency
 2. Flag any security-relevant events
 3. Note performance degradation signals
 4. Suggest monitoring improvements"
 
 # Analyze build output
-npm run build 2>&1 | gemini -p "Analyze this build output. Identify:
+npm run build 2>&1 | gemini -p --model gemini-2.5-pro "Analyze this build output. Identify:
 1. Warnings that should be addressed
 2. Bundle size concerns
 3. Deprecation notices
@@ -113,7 +116,7 @@ npm run build 2>&1 | gemini -p "Analyze this build output. Identify:
 
 ```bash
 # Review a technical spec
-cat docs/rfc-authentication.md | gemini -p "Review this technical specification for:
+cat docs/rfc-authentication.md | gemini -p --model gemini-2.5-pro "Review this technical specification for:
 1. Completeness - are there gaps in the spec?
 2. Security considerations
 3. Edge cases not addressed
@@ -123,7 +126,7 @@ cat docs/rfc-authentication.md | gemini -p "Review this technical specification 
 ### Database Schema Review
 
 ```bash
-cat prisma/schema.prisma | gemini -p "Review this Prisma schema for:
+cat prisma/schema.prisma | gemini -p --model gemini-2.5-pro "Review this Prisma schema for:
 1. Normalization issues
 2. Missing indexes for common query patterns
 3. Relationship modeling concerns
@@ -143,7 +146,7 @@ cat prisma/schema.prisma | gemini -p "Review this Prisma schema for:
   echo ""
   echo "=== Affected Routes ==="
   grep -r "user" src/routes/ --include="*.ts"
-} | gemini -p "Analyze the impact of this database migration on the codebase. Identify:
+} | gemini -p --model gemini-2.5-pro "Analyze the impact of this database migration on the codebase. Identify:
 1. Code that needs updating
 2. Potential breaking changes
 3. Required data backfills
@@ -174,7 +177,7 @@ cat app.log | gemini -p --model gemini-2.5-flash "Summarize errors..."
 For machine-readable review results:
 
 ```bash
-cat src/api.ts | gemini -p "Review this code and output findings as JSON with this schema:
+cat src/api.ts | gemini -p --model gemini-2.5-pro "Review this code and output findings as JSON with this schema:
 {
   \"findings\": [{
     \"severity\": \"critical|high|medium|low\",
@@ -196,7 +199,7 @@ The most powerful pattern is using Gemini review output as input for Claude Code
 
 ```bash
 # Step 1: Get review findings
-FINDINGS=$(find src/ -name "*.ts" -exec cat {} + | gemini -p "List files and line numbers with security issues as JSON")
+FINDINGS=$(find src/ -name "*.ts" -exec cat {} + | gemini -p --model gemini-2.5-pro "List files and line numbers with security issues as JSON")
 
 # Step 2: Claude Code fixes the issues identified
 # (The user can then ask Claude Code to fix specific findings)
@@ -208,4 +211,4 @@ FINDINGS=$(find src/ -name "*.ts" -exec cat {} + | gemini -p "List files and lin
 - **Provide context**: Include relevant config files, types, and package.json alongside the code
 - **Use file markers**: When concatenating files, add `=== FILE: path ===` headers
 - **Chunk if needed**: Even with 2M token context, very large codebases may need chunking by module
-- **Save output**: Redirect review output to a file for reference: `... | gemini -p "..." > review-findings.md`
+- **Save output**: Redirect review output to a file for reference: `... | gemini -p --model gemini-2.5-pro "..." > review-findings.md`
