@@ -145,18 +145,26 @@ For each finding, provide severity, location, description, and suggestion.
 
 ### Step 4: Execute Review via Gemini CLI
 
-Run the review using headless mode:
+Run the review using headless mode. **Always try the preferred model first, then fallback on error.**
+
+**Preferred model:** `gemini-2.5-pro` (2M token context, best quality)
+**Fallback model:** `gemini-2.5-flash` (1M token context, faster)
 
 ```bash
-# Pipe content to gemini
-<content_command> | gemini -p "<review_prompt>"
+# Step 1: Try with preferred model
+<content_command> | gemini -p --model gemini-2.5-pro "<review_prompt>" 2>&1
 
-# For very large content, use a temp file
-<content_command> > /tmp/gemini-review-input.txt
-gemini -p "<review_prompt>" < /tmp/gemini-review-input.txt
+# Step 2: If the above fails (quota, capacity, unavailable), retry with fallback
+<content_command> | gemini -p --model gemini-2.5-flash "<review_prompt>" 2>&1
 ```
 
-Use `--model gemini-2.5-pro` for thorough reviews, `--model gemini-2.5-flash` for quick scans.
+**Error detection:** If the output contains "quota", "capacity", "unavailable", "429", or "rate limit", retry with the fallback model. Always tell the user which model produced the results.
+
+For very large content, use a temp file:
+```bash
+<content_command> > /tmp/gemini-review-input.txt
+gemini -p --model gemini-2.5-pro "<review_prompt>" < /tmp/gemini-review-input.txt 2>&1
+```
 
 ### Step 5: Present Findings
 

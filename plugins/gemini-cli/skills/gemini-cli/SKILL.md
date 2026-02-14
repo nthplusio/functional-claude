@@ -1,7 +1,7 @@
 ---
 name: gemini-cli
 description: This skill should be used when the user asks to "use gemini", "gemini cli", "configure gemini", "set up gemini", "gemini review", "gemini images", or mentions general Gemini CLI usage. For specific topics, focused skills may be more appropriate.
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Gemini CLI Development

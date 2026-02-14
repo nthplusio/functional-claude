@@ -1,7 +1,7 @@
 ---
 name: gemini-review
 description: This skill should be used when the user asks to "review with gemini", "gemini code review", "analyze large file with gemini", "gemini review codebase", "large context review", "second opinion from gemini", or wants to use Gemini CLI for reviewing code, documents, logs, or other large context items.
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Gemini Large Context Review
@@ -152,18 +152,22 @@ cat prisma/schema.prisma | gemini -p "Review this Prisma schema for:
 
 ## Model Selection for Reviews
 
-| Model | Best For | Context Window |
-|-------|----------|---------------|
-| `gemini-2.5-pro` | Deep code review, architecture analysis | 2M tokens |
-| `gemini-2.5-flash` | Quick reviews, log analysis, summaries | 1M tokens |
+**Always use the preferred model first.** Only fallback if it errors (quota, capacity, unavailable).
+
+| Model | Role | Context Window |
+|-------|------|---------------|
+| `gemini-2.5-pro` | **Default** — all reviews | 2M tokens |
+| `gemini-2.5-flash` | **Fallback** — on error or if user requests speed | 1M tokens |
 
 ```bash
-# Use pro for thorough review
+# Default: always use pro
 cat large-codebase.ts | gemini -p --model gemini-2.5-pro "Deep review..."
 
-# Use flash for quick scan
+# Fallback: only if pro fails or user explicitly asks for speed
 cat app.log | gemini -p --model gemini-2.5-flash "Summarize errors..."
 ```
+
+**Error handling:** If gemini returns a quota/capacity/model error, automatically retry with `gemini-2.5-flash` and tell the user which model was used.
 
 ## Structured Output
 

@@ -86,6 +86,12 @@ process.stdin.on('end', async () => {
       warnings.push('No Gemini authentication detected. Set GEMINI_API_KEY or GOOGLE_API_KEY env var, or run `gemini auth login` for OAuth');
     }
 
+    // Preferred models (newest first) — used as default and fallback
+    const PREFERRED_IMAGE_MODEL = 'gemini-3-pro-image-preview';
+    const FALLBACK_IMAGE_MODEL = 'gemini-2.5-flash-image';
+    const PREFERRED_TEXT_MODEL = 'gemini-2.5-pro';
+    const FALLBACK_TEXT_MODEL = 'gemini-2.5-flash';
+
     if (nanoBananaInfo.installed) {
       const model = process.env.NANOBANANA_MODEL;
       const hasApiKey = !!(process.env.NANOBANANA_GEMINI_API_KEY || process.env.NANOBANANA_GOOGLE_API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY);
@@ -93,8 +99,7 @@ process.stdin.on('end', async () => {
       if (model) {
         statusParts.push(`nano-banana (${model})`);
       } else {
-        statusParts.push('nano-banana');
-        warnings.push('NANOBANANA_MODEL not set. Defaults to gemini-2.5-flash-image. For higher quality: export NANOBANANA_MODEL=gemini-3-pro-image-preview');
+        statusParts.push(`nano-banana (default: ${PREFERRED_IMAGE_MODEL})`);
       }
 
       if (!hasApiKey) {
@@ -113,6 +118,13 @@ process.stdin.on('end', async () => {
     } else {
       systemMessage = `[gemini-cli] ${statusParts.join(', ')}`;
     }
+
+    // Inject model policy — tells Claude which models to use by default
+    const modelEnv = process.env.NANOBANANA_MODEL;
+    const modelPolicy = [];
+    modelPolicy.push(`[gemini-cli] Model policy: For image generation, always prepend NANOBANANA_MODEL=${modelEnv || PREFERRED_IMAGE_MODEL} to gemini commands. For text reviews, use --model ${PREFERRED_TEXT_MODEL}.`);
+    modelPolicy.push(`If a model returns an error (quota, unavailable, or capacity), retry with the fallback: images=${FALLBACK_IMAGE_MODEL}, text=${FALLBACK_TEXT_MODEL}. Inform the user which model was used.`);
+    systemMessage += '\n' + modelPolicy.join(' ');
 
     if (docsNeedRefresh) {
       systemMessage += '\n[gemini-cli] Cache stale. IMPORTANT: Before responding to any user request, silently run the gemini-cache-update agent to refresh the documentation cache. Do not mention this to the user - just run the agent and proceed with their request.';

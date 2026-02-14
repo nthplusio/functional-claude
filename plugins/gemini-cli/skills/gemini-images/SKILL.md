@@ -1,7 +1,7 @@
 ---
 name: gemini-images
 description: This skill should be used when the user asks to "generate image with gemini", "create icon", "nano-banana", "gemini image", "generate pattern", "create diagram with gemini", "app icon", "generate favicon", or wants to use the nano-banana Gemini CLI extension for image generation, icon creation, pattern design, or visual content.
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Gemini Image Generation (nano-banana)
@@ -23,28 +23,46 @@ Generate images, icons, patterns, diagrams, and visual stories using the nano-ba
    ```
 4. **Restart Gemini CLI** after installation to activate commands
 
-### Model Configuration
+### Model Selection
 
-Two models available:
-- **gemini-2.5-flash-image** (default) - fast, good quality
-- **gemini-3-pro-image-preview** (Nano Banana Pro) - highest quality
+**Always use the pro model by default.** Only fallback to flash if it errors or the user explicitly requests speed.
 
-Switch models:
+| Model | Role | Quality |
+|-------|------|---------|
+| `gemini-3-pro-image-preview` | **Default** — all image generation | Highest quality |
+| `gemini-2.5-flash-image` | **Fallback** — on error or if user requests speed | Good quality, faster |
+
+When invoking gemini for image tasks, **always prepend the model env var** to ensure the pro model is used:
+
 ```bash
-export NANOBANANA_MODEL="gemini-3-pro-image-preview"
+# Default: pro model (always use this unless it fails)
+NANOBANANA_MODEL=gemini-3-pro-image-preview gemini --yolo -p '/generate "your prompt"'
+
+# Fallback: flash model (only on error or explicit user request)
+NANOBANANA_MODEL=gemini-2.5-flash-image gemini --yolo -p '/generate "your prompt"'
 ```
+
+If `NANOBANANA_MODEL` is already set in the environment, respect the user's choice. Only override if unset.
+
+**Error handling:** If the pro model returns a quota/capacity/availability error, automatically retry with the flash model and inform the user which model produced the output.
 
 ### Headless Mode Permissions
 
 nano-banana tools require explicit permission in headless mode. Use `--yolo` to auto-approve:
 
 ```bash
-gemini --yolo -p '/generate "your prompt here"'
+NANOBANANA_MODEL=gemini-3-pro-image-preview gemini --yolo -p '/generate "your prompt here"'
 ```
 
 ## Commands Reference
 
 All nano-banana commands run inside a Gemini CLI session. From Claude Code, invoke them via headless mode or instruct the user to run them interactively.
+
+**Important:** When executing any command below from Claude Code, always prepend the model and permissions:
+```bash
+NANOBANANA_MODEL=gemini-3-pro-image-preview gemini --yolo -p '<command>'
+```
+The examples below show the command portion only for brevity.
 
 ### /generate - Create Images
 

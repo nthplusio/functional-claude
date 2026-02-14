@@ -69,7 +69,7 @@
       "name": "gemini-cli",
       "source": "./plugins/gemini-cli",
       "description": "Gemini CLI integration for large context review and image generation via nano-banana extension. Validates CLI installation and environment on session start",
-      "version": "0.1.0"
+      "version": "0.2.0"
     }
   ]
 }
