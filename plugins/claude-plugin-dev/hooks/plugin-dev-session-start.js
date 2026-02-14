@@ -104,6 +104,20 @@ process.stdin.on('end', () => {
       child.unref(); // Allow parent to exit independently
     }
 
+    // Check for previous cache refresh failure
+    const cacheStatusPath = path.join(cacheDir, 'cache-status.json');
+    let cacheWarning = null;
+    if (fs.existsSync(cacheStatusPath)) {
+      try {
+        const cacheStatus = JSON.parse(fs.readFileSync(cacheStatusPath, 'utf8'));
+        if (cacheStatus.status === 'error') {
+          cacheWarning = cacheStatus.error || 'unknown error';
+        }
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
+
     // Build summary message - positive framing, minimal noise
     const parts = [];
 
@@ -117,6 +131,10 @@ process.stdin.on('end', () => {
 
     // Build system message
     let systemMessage = `[claude-plugin-dev] ${parts.join(', ')}`;
+
+    if (cacheWarning) {
+      systemMessage += `\n[claude-plugin-dev] Cache refresh failed: ${cacheWarning}`;
+    }
 
     // Output response immediately and exit
     console.log(JSON.stringify({

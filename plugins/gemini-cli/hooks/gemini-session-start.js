@@ -70,9 +70,27 @@ process.stdin.on('end', async () => {
       }
     }
 
+    // Check for previous cache refresh failure
+    let cacheWarning = null;
+    const cacheStatusPath = path.join(cacheDir, 'cache-status.json');
+    if (fs.existsSync(cacheStatusPath)) {
+      try {
+        const cacheStatus = JSON.parse(fs.readFileSync(cacheStatusPath, 'utf8'));
+        if (cacheStatus.status === 'error') {
+          cacheWarning = cacheStatus.error || 'unknown error';
+        }
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
+
     // Build status message
     const statusParts = [];
     const warnings = [];
+
+    if (cacheWarning) {
+      warnings.push(`Cache refresh failed: ${cacheWarning}`);
+    }
 
     if (geminiInfo.installed) {
       statusParts.push(geminiInfo.version ? `Gemini CLI ${geminiInfo.version}` : 'Gemini CLI ready');

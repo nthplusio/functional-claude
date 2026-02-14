@@ -39,7 +39,7 @@
       "name": "claude-plugin-dev",
       "source": "./plugins/claude-plugin-dev",
       "description": "Documentation and conventions for building Claude Code plugins with guided workflows, AI-assisted agent creation, and dynamic documentation caching",
-      "version": "0.3.1"
+      "version": "0.3.2"
     },
     {
       "name": "opentui-dev",
@@ -69,7 +69,7 @@
       "name": "gemini-cli",
       "source": "./plugins/gemini-cli",
       "description": "Gemini CLI integration for large context review and image generation via nano-banana extension. Validates CLI installation and environment on session start",
-      "version": "0.4.0"
+      "version": "0.4.1"
     }
   ]
 }

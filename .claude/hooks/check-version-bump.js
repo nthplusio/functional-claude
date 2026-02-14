@@ -2,10 +2,9 @@
 // check-version-bump.js
 // PreToolUse hook that validates version synchronization before git commits
 //
-// Checks that when plugin files are modified, versions are bumped consistently across:
-// - plugins/<name>/.claude-plugin/plugin.json
-// - .claude-plugin/marketplace.json
-// - plugins/<name>/skills/*/SKILL.md (frontmatter version)
+// When plugin.json version is bumped, auto-syncs the other 3 locations
+// (marketplace.json, SKILL.md frontmatter, docs/memory.md) and stages them.
+// Only denies when code changes are detected but plugin.json version was NOT bumped.
 //
 // Input: JSON with tool_input on stdin (command for Bash tool)
 // Output: JSON response with hookSpecificOutput wrapper for PreToolUse hooks
@@ -16,6 +15,9 @@ const path = require('path');
 
 // Convert Windows paths to git-compatible forward slashes
 const toGitPath = (p) => p.replace(/\\/g, '/');
+
+// Escape regex special characters
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // Helper to output proper hook response format
 function respond(decision, reason = null) {
@@ -30,6 +32,83 @@ function respond(decision, reason = null) {
   }
   console.log(JSON.stringify(response));
   process.exit(0);
+}
+
+/**
+ * Auto-sync a plugin's version from plugin.json to marketplace.json, SKILL.md files, and memory.md.
+ * Returns an array of file paths that were modified.
+ */
+function autoSyncVersion(pluginName, pluginVersion) {
+  const synced = [];
+
+  // 1. Sync marketplace.json
+  const marketplacePath = '.claude-plugin/marketplace.json';
+  if (fs.existsSync(marketplacePath)) {
+    try {
+      const marketplace = JSON.parse(fs.readFileSync(marketplacePath, 'utf8'));
+      const plugin = marketplace.plugins?.find(p => p.name === pluginName);
+      if (plugin && plugin.version !== pluginVersion) {
+        plugin.version = pluginVersion;
+        fs.writeFileSync(marketplacePath, JSON.stringify(marketplace, null, 2) + '\n');
+        synced.push(marketplacePath);
+      }
+    } catch (e) {
+      // Ignore marketplace errors
+    }
+  }
+
+  // 2. Sync SKILL.md frontmatter versions
+  const skillsDir = path.join('plugins', pluginName, 'skills');
+  if (fs.existsSync(skillsDir)) {
+    const skillDirs = fs.readdirSync(skillsDir, { withFileTypes: true })
+      .filter(d => d.isDirectory())
+      .map(d => d.name);
+
+    for (const skillDir of skillDirs) {
+      const skillPath = path.join(skillsDir, skillDir, 'SKILL.md');
+      if (!fs.existsSync(skillPath)) continue;
+
+      try {
+        let content = fs.readFileSync(skillPath, 'utf8');
+        const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+        if (frontmatterMatch) {
+          const frontmatter = frontmatterMatch[1];
+          const updatedFrontmatter = frontmatter.replace(
+            /^version:\s*.+$/m,
+            `version: ${pluginVersion}`
+          );
+          if (updatedFrontmatter !== frontmatter) {
+            content = content.replace(frontmatterMatch[1], updatedFrontmatter);
+            fs.writeFileSync(skillPath, content);
+            synced.push(skillPath);
+          }
+        }
+      } catch (e) {
+        // Ignore skill errors
+      }
+    }
+  }
+
+  // 3. Sync docs/memory.md plugin table
+  const memoryPath = 'docs/memory.md';
+  if (fs.existsSync(memoryPath)) {
+    try {
+      let content = fs.readFileSync(memoryPath, 'utf8');
+      const tableRowRegex = new RegExp(
+        `(\\| ${escapeRegex(pluginName)} \\| )\\d+\\.\\d+\\.\\d+( \\|)`,
+        'g'
+      );
+      const newContent = content.replace(tableRowRegex, `$1${pluginVersion}$2`);
+      if (newContent !== content) {
+        fs.writeFileSync(memoryPath, newContent);
+        synced.push(memoryPath);
+      }
+    } catch (e) {
+      // Ignore memory.md errors
+    }
+  }
+
+  return synced;
 }
 
 let input = '';
@@ -61,7 +140,10 @@ process.stdin.on('end', () => {
     // Get staged files
     let stagedFiles;
     try {
-      stagedFiles = execSync('git diff --cached --name-only', { encoding: 'utf8' })
+      stagedFiles = execSync('git diff --cached --name-only', {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'pipe']
+      })
         .trim()
         .split('\n')
         .filter(f => f);
@@ -106,6 +188,7 @@ process.stdin.on('end', () => {
 
     // Check version consistency for each modified plugin
     const issues = [];
+    const allSynced = [];
 
     for (const pluginName of modifiedPlugins) {
       const pluginDir = path.join('plugins', pluginName);
@@ -126,50 +209,10 @@ process.stdin.on('end', () => {
         continue;
       }
 
-      // Check marketplace.json
-      const marketplacePath = '.claude-plugin/marketplace.json';
-      if (fs.existsSync(marketplacePath)) {
-        try {
-          const marketplace = JSON.parse(fs.readFileSync(marketplacePath, 'utf8'));
-          const marketplacePlugin = marketplace.plugins?.find(p => p.name === pluginName);
-          if (marketplacePlugin && marketplacePlugin.version !== pluginVersion) {
-            issues.push(`${pluginName}: marketplace.json version (${marketplacePlugin.version}) != plugin.json version (${pluginVersion})`);
-          }
-        } catch (e) {
-          // Ignore marketplace parse errors
-        }
-      }
-
-      // Check SKILL.md files
-      const skillsDir = path.join(pluginDir, 'skills');
-      if (fs.existsSync(skillsDir)) {
-        const skillDirs = fs.readdirSync(skillsDir, { withFileTypes: true })
-          .filter(d => d.isDirectory())
-          .map(d => d.name);
-
-        for (const skillDir of skillDirs) {
-          const skillPath = path.join(skillsDir, skillDir, 'SKILL.md');
-          if (!fs.existsSync(skillPath)) continue;
-
-          try {
-            const skillContent = fs.readFileSync(skillPath, 'utf8');
-            const versionMatch = skillContent.match(/^version:\s*(.+)$/m);
-            if (versionMatch) {
-              const skillVersion = versionMatch[1].trim();
-              if (skillVersion !== pluginVersion) {
-                issues.push(`${pluginName}: ${skillDir}/SKILL.md version (${skillVersion}) != plugin.json version (${pluginVersion})`);
-              }
-            }
-          } catch (e) {
-            // Ignore skill read errors
-          }
-        }
-      }
-
       // Check if version was actually bumped (compare with last commit)
+      let versionWasBumped = false;
       try {
         const gitPluginJsonPath = toGitPath(pluginJsonPath);
-        // Get previous version from git - use stdio to suppress stderr cross-platform
         const prevContent = execSync(`git show HEAD:${gitPluginJsonPath}`, {
           encoding: 'utf8',
           stdio: ['pipe', 'pipe', 'pipe']
@@ -178,53 +221,62 @@ process.stdin.on('end', () => {
         const lastVersion = versionMatch ? versionMatch[1] : null;
         if (!lastVersion) throw new Error('No version found');
 
-        if (lastVersion === pluginVersion) {
+        versionWasBumped = lastVersion !== pluginVersion;
+
+        if (!versionWasBumped) {
           // Check if any non-trivial files were changed
           const pluginStagedFiles = stagedFiles.filter(f => f.startsWith(`plugins/${pluginName}/`));
 
-          // Files that ARE significant (plugin behavior):
-          // - SKILL.md (skill definitions)
-          // - agents/*.md (agent definitions)
-          // - commands/*.md (command definitions)
-          // - hooks.json, *.js in hooks/ (hook implementations)
-          // - plugin.json (manifest)
-          // - .mcp.json (MCP config)
           const significantPatterns = [
             /SKILL\.md$/i,
-            /agents\/.*\.md$/i,  // Agent files in agents/ directory
+            /agents\/.*\.md$/i,
             /hooks\.json$/i,
             /hooks\/.*\.js$/i,
             /plugin\.json$/i,
             /\.mcp\.json$/i,
-            /commands\/.*\.md$/i  // Command files
+            /commands\/.*\.md$/i
           ];
 
-          // Files that are trivial (documentation only):
           const trivialPatterns = [
             /README\.md$/i,
             /\.gitignore$/i,
             /\.cache\//,
-            /references\/.*\.md$/i,  // Reference docs are informational
-            /examples\//             // Example files
+            /references\/.*\.md$/i,
+            /examples\//
           ];
 
           const nonTrivialChanges = pluginStagedFiles.some(f => {
-            // If it matches a significant pattern, it's definitely non-trivial
             if (significantPatterns.some(p => p.test(f))) return true;
-            // If it matches a trivial pattern, it's trivial
             if (trivialPatterns.some(p => p.test(f))) return false;
-            // Default: non-.md files are non-trivial, .md files need checking
             if (!f.endsWith('.md')) return true;
-            // Other .md files in root of plugin are likely important
             return !f.includes('/references/');
           });
 
           if (nonTrivialChanges) {
-            issues.push(`${pluginName}: Code changes detected but version not bumped (still ${pluginVersion})`);
+            issues.push(`${pluginName}: Code changes detected but version not bumped (still ${pluginVersion}). Bump the version in plugin.json and the hook will auto-sync the rest.`);
           }
         }
       } catch (e) {
-        // New plugin or can't get last version, skip this check
+        // New plugin or can't get last version — treat as bumped
+        versionWasBumped = true;
+      }
+
+      // If version was bumped, auto-sync other locations instead of blocking
+      if (versionWasBumped) {
+        const synced = autoSyncVersion(pluginName, pluginVersion);
+        if (synced.length > 0) {
+          // Stage the synced files so they're included in the commit
+          try {
+            execSync(`git add ${synced.map(f => '"' + f + '"').join(' ')}`, {
+              encoding: 'utf8',
+              stdio: ['pipe', 'pipe', 'pipe']
+            });
+            allSynced.push(...synced.map(f => `${pluginName}: ${f}`));
+          } catch (e) {
+            // If staging fails, report as issue
+            issues.push(`${pluginName}: Auto-sync wrote files but failed to stage them: ${e.message}`);
+          }
+        }
       }
     }
 
@@ -235,11 +287,14 @@ ${issues.map(i => `  - ${i}`).join('\n')}
 
 Please ensure:
 1. plugin.json version is bumped (PATCH for fixes, MINOR for features)
-2. marketplace.json has matching version
-3. All SKILL.md files have matching version in frontmatter
-4. docs/memory.md is updated with new version`;
+2. The hook will auto-sync marketplace.json, SKILL.md files, and docs/memory.md`;
 
       respond("deny", reason);
+    }
+
+    if (allSynced.length > 0) {
+      log(`Auto-synced: ${allSynced.join(', ')}`);
+      respond("allow", `Version check passed (auto-synced: ${allSynced.join(', ')})`);
     }
 
     respond("allow", "Version check passed");

@@ -21,10 +21,26 @@ if (!cacheDir || !today || !learningsPath) {
   process.exit(1);
 }
 
+const cacheStatusPath = path.join(cacheDir, 'cache-status.json');
+
 // Main execution
 refreshLearningsCache(cacheDir, today, learningsPath)
-  .then(() => process.exit(0))
-  .catch(() => process.exit(1));
+  .then((fetchMethod) => {
+    fs.writeFileSync(cacheStatusPath, JSON.stringify({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      source: fetchMethod || 'unknown'
+    }, null, 2));
+    process.exit(0);
+  })
+  .catch((err) => {
+    fs.writeFileSync(cacheStatusPath, JSON.stringify({
+      status: 'error',
+      timestamp: new Date().toISOString(),
+      error: err.message || String(err)
+    }, null, 2));
+    process.exit(1);
+  });
 
 /**
  * Fetch URL content with timeout
@@ -352,5 +368,7 @@ ${existingLearnings || `### Successful Patterns
 `;
 
   fs.writeFileSync(learningsPath, learningsContent);
+
+  return fetchMethod;
 }
 // debug test
