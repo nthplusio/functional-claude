@@ -1,7 +1,7 @@
 ---
 name: gemini-review
 description: This skill should be used when the user asks to "review with gemini", "gemini code review", "analyze large file with gemini", "gemini review codebase", "large context review", "second opinion from gemini", or wants to use Gemini CLI for reviewing code, documents, logs, or other large context items.
-version: 0.4.1
+version: 0.5.0
 ---
 
 # Gemini Large Context Review
@@ -188,6 +188,92 @@ cat src/api.ts | gemini -m gemini-3-pro-preview -p "Review this code and output 
   }]
 }"
 ```
+
+## File-Output Pattern
+
+For very large reviews where stdout capture may be truncated or unreliable, instruct Gemini to write its output directly to a file:
+
+### When to Use
+
+- Full codebase reviews expected to produce long output
+- Detailed multi-file analysis with per-file findings
+- Structured reports that need to be saved for later reference
+
+### How It Works
+
+1. Add `--yolo` to the gemini command (allows file writes without prompting)
+2. Include a file-output instruction in the prompt: "Write your findings to /tmp/gemini-review-{timestamp}.md"
+3. After execution, read the output file
+
+```bash
+# File-output pattern
+TIMESTAMP=$(date +%s) && gemini --yolo -m gemini-3-pro-preview -p "Review all files in src/ for security issues. Write your complete findings to /tmp/gemini-review-${TIMESTAMP}.md in markdown format." 2>&1 && cat /tmp/gemini-review-${TIMESTAMP}.md
+```
+
+### Validation
+
+After execution, verify:
+- The output file exists at the expected path
+- The file is non-empty (> 0 bytes)
+- The file contains review content, not error messages
+
+If the file doesn't exist or is empty, fall back to re-running the review with normal stdout capture.
+
+## Timeout Configuration
+
+Reviews have configurable timeouts to prevent hanging on large content or slow network conditions.
+
+### Default Timeouts
+
+| Content Size | Timeout | Description |
+|-------------|---------|-------------|
+| Single file (< 1000 lines) | 5 minutes (300s) | Quick file review |
+| Multiple files (< 10 files) | 10 minutes (600s) | Module-level review |
+| Large directory | 15 minutes (900s) | Directory-level review |
+| Full codebase | 20 minutes (1200s) | Complete codebase review |
+
+### How Timeouts Work
+
+Commands are wrapped with `timeout N bash -c '...'`:
+
+```bash
+# 10-minute timeout for a multi-file review
+timeout 600 bash -c 'find src/api/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done | gemini -m gemini-3-pro-preview -p "Review these files" 2>&1'
+```
+
+### Timeout Recovery
+
+If a review times out (exit code 124):
+- **Reduce scope**: Review a single directory or file instead of the full codebase
+- **Use file-output**: The file-output pattern can handle longer reviews
+- **Split the review**: Break large codebases into module-by-module reviews using `/gemini-batch`
+
+## Output Validation
+
+The review agent validates output quality before returning results.
+
+### Validation Checks
+
+| Check | What It Detects | Result |
+|-------|----------------|--------|
+| Minimum length | Output < 100 chars | Warning added to output header |
+| Error contamination | "Error:", "Exception:", "Traceback" as primary content | Warning added to output header |
+| Markdown structure | Missing headings/bullets in structured reviews | Warning added to output header |
+| JSON validity | Invalid JSON when JSON format was requested | Warning added to output header |
+| File existence | Missing or empty file for file-output pattern | Automatic retry with stdout |
+
+### What Happens on Failure
+
+- **Warnings** are added to the output header but do NOT block results — you still see Gemini's output
+- **File-output failures** trigger an automatic retry using stdout capture instead
+- **No automatic re-runs** for other validation failures — the warning lets you decide whether to re-run
+
+### Troubleshooting
+
+- **"Output unusually short"**: The review may have hit a content filter or the input was too small. Try a more specific prompt.
+- **"Output may contain error messages"**: Check your API key, model availability, and network. The output itself may contain diagnostic information.
+- **"Output lacks expected structure"**: Try adding "Format your response with markdown headings and bullet points" to the prompt.
+- **"Requested JSON output is not valid JSON"**: Gemini sometimes wraps JSON in markdown code blocks. Try adding "Output raw JSON only, no markdown formatting" to the prompt.
 
 ## Combining with Claude Code
 

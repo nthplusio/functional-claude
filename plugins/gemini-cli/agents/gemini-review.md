@@ -71,51 +71,127 @@ Construct a SINGLE Bash command that:
 
 **The content gathering and gemini call MUST be a single piped command.** Do not read files in one step and call gemini in another.
 
+#### Timeout Selection
+
+Choose a timeout based on content size:
+
+| Content | Timeout (seconds) | Bash tool timeout (ms) |
+|---------|-------------------|------------------------|
+| Single file (< 1000 lines) | 300 (5 min) | 330000 |
+| Multiple files (< 10 files) | 600 (10 min) | 630000 |
+| Large directory or codebase | 900 (15 min) | 930000 |
+| Full codebase review | 1200 (20 min) | 1230000 |
+
+Wrap all commands with `timeout N bash -c '...'` and set the Bash tool timeout to `(N + 30) * 1000` ms.
+
 #### For files/directories:
 
 ```bash
 # Single file
-cat path/to/file.ts | gemini -m gemini-3-pro-preview -p "Review this code for security vulnerabilities. For each finding provide: severity (critical/high/medium/low), location, description, and suggested fix." 2>&1
+timeout 300 bash -c 'cat path/to/file.ts | gemini -m gemini-3-pro-preview -p "Review this code for security vulnerabilities. For each finding provide: severity (critical/high/medium/low), location, description, and suggested fix." 2>&1'
 ```
 
 ```bash
 # Directory — concatenate with file markers, pipe to gemini
-find src/api/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done | gemini -m gemini-3-pro-preview -p "Review these files for security vulnerabilities. For each finding provide: severity, file, location, description, and suggested fix." 2>&1
+timeout 900 bash -c 'find src/api/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done | gemini -m gemini-3-pro-preview -p "Review these files for security vulnerabilities. For each finding provide: severity, file, location, description, and suggested fix." 2>&1'
 ```
 
 #### For diffs:
 
 ```bash
-git diff main...HEAD | gemini -m gemini-3-pro-preview -p "Review this diff for correctness, potential regressions, and missing edge cases." 2>&1
+timeout 600 bash -c 'git diff main...HEAD | gemini -m gemini-3-pro-preview -p "Review this diff for correctness, potential regressions, and missing edge cases." 2>&1'
 ```
 
 #### For logs:
 
 ```bash
-tail -50000 /var/log/app.log | gemini -m gemini-3-pro-preview -p "Analyze these logs. Identify error patterns, frequency, security events, and performance signals." 2>&1
+timeout 600 bash -c 'tail -50000 /var/log/app.log | gemini -m gemini-3-pro-preview -p "Analyze these logs. Identify error patterns, frequency, security events, and performance signals." 2>&1'
 ```
 
 #### For very large content (write to temp file first):
 
 ```bash
-find src/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done > /tmp/gemini-review-input.txt && gemini -m gemini-3-pro-preview -p "Review this codebase for quality and correctness issues." < /tmp/gemini-review-input.txt 2>&1
+timeout 1200 bash -c 'find src/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done > /tmp/gemini-review-input.txt && gemini -m gemini-3-pro-preview -p "Review this codebase for quality and correctness issues." < /tmp/gemini-review-input.txt 2>&1'
 ```
 
-### Step 3: Handle errors — fallback model (one Bash call, only if Step 2 failed)
+#### File-Output Pattern (for very large reviews)
 
-If the output from Step 2 contains "quota", "capacity", "unavailable", "429", or "rate limit", re-run the SAME command with `--model gemini-2.5-flash`:
+When the review output is expected to be very long (full codebase reviews, detailed multi-file analysis), use the file-output pattern to avoid stdout truncation:
+
+1. Use `--yolo` flag to allow Gemini to write files
+2. Include a file-output instruction in the prompt
+3. Validate the output file exists after execution
 
 ```bash
-# Same command as Step 2 but with flash model
-cat path/to/file.ts | gemini -m gemini-2.5-pro -p "<same prompt>" 2>&1
+TIMESTAMP=$(date +%s) && timeout 1200 bash -c "gemini --yolo -m gemini-3-pro-preview -p 'Review all TypeScript files in src/ for security vulnerabilities. Write your complete findings to /tmp/gemini-review-${TIMESTAMP}.md in markdown format. Include severity ratings, file locations, and suggested fixes.' 2>&1" && cat /tmp/gemini-review-${TIMESTAMP}.md 2>/dev/null
 ```
 
-### Step 4: Return the result
+If the file does not exist after execution, fall back to stdout capture (re-run without the file-output instruction).
+
+### Step 3: Handle errors (only if Step 2 failed)
+
+Inspect the output from Step 2 and handle errors based on type:
+
+#### Rate Limit (429, "quota", "rate limit", "resource exhausted")
+
+1. Wait 45 seconds: `sleep 45`
+2. Retry the SAME command with the same model
+3. If retry also fails with rate limit, fall back to `gemini-2.5-pro`
+4. Note which attempt succeeded in the output header
+
+```bash
+# Retry after rate limit
+sleep 45 && timeout 300 bash -c 'cat path/to/file.ts | gemini -m gemini-3-pro-preview -p "<same prompt>" 2>&1'
+```
+
+```bash
+# Fallback after second rate limit failure
+timeout 300 bash -c 'cat path/to/file.ts | gemini -m gemini-2.5-pro -p "<same prompt>" 2>&1'
+```
+
+#### Model Unavailable ("unavailable", "capacity", "not found", "does not exist")
+
+Immediately fall back to `gemini-2.5-pro` — no retry with the same model:
+
+```bash
+timeout 300 bash -c 'cat path/to/file.ts | gemini -m gemini-2.5-pro -p "<same prompt>" 2>&1'
+```
+
+#### Timeout (exit code 124)
+
+Report the timeout and suggest remediation. Do NOT retry:
+
+> Review timed out after N seconds. Suggestions:
+> - Try a smaller scope (fewer files or a single directory)
+> - Use the file-output pattern for large reviews
+> - Increase the timeout if the content genuinely requires more time
+
+#### Auth Errors ("authentication", "permission denied", "invalid api key", "401", "403")
+
+Stop immediately. Do NOT retry:
+
+> Authentication error. Check your Gemini API key or run `gemini auth login`.
+
+### Step 4: Validate output
+
+Before returning results, validate the output quality:
+
+| Check | Condition | Action |
+|-------|-----------|--------|
+| Minimum length | Output < 100 characters | Add warning: "Output unusually short — review may be incomplete" |
+| Error contamination | Output contains "Error:", "Exception:", "Traceback" as primary content | Add warning: "Output may contain error messages rather than review content" |
+| Markdown structure | For structured reviews: no headings or bullet points found | Add warning: "Output lacks expected structure — may need re-run" |
+| JSON validity | When JSON was requested: output is not valid JSON | Add warning: "Requested JSON output is not valid JSON" |
+| File existence | For file-output pattern: output file missing or empty | Retry with stdout capture instead of file output |
+
+Validation failures add warnings to the output header but do NOT block returning results (except file-output failures which trigger a stdout retry).
+
+### Step 5: Return the result
 
 Present Gemini's output with this format:
 
 ```
-## Gemini Review (model: gemini-2.5-pro)
+## Gemini Review (model: gemini-3-pro-preview)
 
 <gemini's verbatim output here>
 ```
@@ -123,7 +199,39 @@ Present Gemini's output with this format:
 If you had to fallback:
 
 ```
-## Gemini Review (model: gemini-2.5-flash — pro model unavailable)
+## Gemini Review (model: gemini-2.5-pro — primary model unavailable)
+
+<gemini's verbatim output here>
+```
+
+If you used file-output pattern:
+
+```
+## Gemini Review (model: gemini-3-pro-preview, output: file)
+
+<gemini's verbatim output here>
+```
+
+Include attempt information when relevant:
+
+```
+## Gemini Review (model: gemini-3-pro-preview, completed after rate-limit retry)
+
+<gemini's verbatim output here>
+```
+
+```
+## Gemini Review (model: gemini-2.5-pro — fallback after rate limit, completed on second attempt)
+
+<gemini's verbatim output here>
+```
+
+If validation produced warnings, include them:
+
+```
+## Gemini Review (model: gemini-3-pro-preview)
+
+> **Warning:** Output unusually short — review may be incomplete.
 
 <gemini's verbatim output here>
 ```

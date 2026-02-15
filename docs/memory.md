@@ -23,7 +23,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
 | tabby-dev | 0.1.1 | Tabby terminal configuration, SSH connections, and plugin development |
 | agent-teams | 0.10.0 | Agent team blueprints, coordination patterns, and reusable personas for application development phases with adaptive modes, discovery interviews, user feedback gates, cross-team pipelines, and artifact output to `docs/teams/` |
-| gemini-cli | 0.4.1 | Gemini CLI integration for large context review and image generation via nano-banana extension |
+| gemini-cli | 0.5.0 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
 
 ## Architecture Overview
 
@@ -414,9 +414,9 @@ Agent team blueprints, coordination patterns, and reusable personas for applicat
 | references/visionary.md | Visionary persona: Divergent Thinker |
 | references/realist.md | Realist persona: Practical Thinker |
 
-## gemini-cli Plugin (v0.4.1)
+## gemini-cli Plugin (v0.5.0)
 
-Gemini CLI integration for large context review and image generation via nano-banana extension. Validates CLI installation, authentication, and extension availability on session start.
+Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension. Includes file-output pattern, configurable timeouts, retry logic, output validation, and batch command. Validates CLI installation, authentication, and extension availability on session start.
 
 ### Skills
 
@@ -433,6 +433,12 @@ Gemini CLI integration for large context review and image generation via nano-ba
 | gemini-review | Autonomous large context review delegation | "use gemini to review", "second opinion from gemini" |
 | gemini-troubleshoot | Diagnose CLI, auth, and extension issues | "gemini not working", "fix gemini", "gemini error" |
 | gemini-cache-update | Silent cache refresh | Triggered by SessionStart hook when cache is stale |
+
+### Commands
+
+| Command | Purpose |
+|---------|---------|
+| /gemini-batch | Sequential batch review of multiple targets with rate limit awareness and aggregate summary |
 
 ### Hooks
 
@@ -633,6 +639,8 @@ functional-claude/
         ├── hooks/
         │   ├── hooks.json
         │   └── gemini-session-start.js
+        ├── commands/
+        │   └── gemini-batch.md
         ├── skills/
         │   ├── gemini-cli/            # Main skill (overview)
         │   ├── gemini-review/
