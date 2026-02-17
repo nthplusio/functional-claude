@@ -1,12 +1,25 @@
 ---
 name: gemini-review
 description: This skill should be used when the user asks to "review with gemini", "gemini code review", "analyze large file with gemini", "gemini review codebase", "large context review", "second opinion from gemini", or wants to use Gemini CLI for reviewing code, documents, logs, or other large context items.
-version: 0.5.0
+version: 0.6.0
 ---
 
 # Gemini Large Context Review
 
 Use Gemini CLI's large context window (up to 2M tokens) for reviewing code, documents, logs, and other large content that benefits from a second AI perspective or exceeds practical limits.
+
+## Prerequisites
+
+**API key required.** The gemini-review agent requires `GEMINI_API_KEY` or `GOOGLE_API_KEY` to be set as an environment variable. OAuth and Vertex AI are not supported for headless review execution — the agent needs deterministic API key auth to fail fast on auth issues.
+
+```bash
+# Set one of these before using gemini-review:
+export GEMINI_API_KEY="your-api-key-here"
+# or
+export GOOGLE_API_KEY="your-api-key-here"
+```
+
+Get a key at: https://aistudio.google.com/apikey
 
 ## When to Use This
 

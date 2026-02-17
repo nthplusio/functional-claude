@@ -1,7 +1,7 @@
 ---
 name: gemini-cli
 description: This skill should be used when the user asks to "use gemini", "gemini cli", "configure gemini", "set up gemini", "gemini review", "gemini images", or mentions general Gemini CLI usage. For specific topics, focused skills may be more appropriate.
-version: 0.5.0
+version: 0.6.0
 ---
 
 # Gemini CLI Development
@@ -109,7 +109,7 @@ For specific tasks, use these focused skills:
 
 | Topic | Skill | Trigger Phrases |
 |-------|-------|-----------------|
-| Large Context Review | `gemini-cli:gemini-review` | "review with gemini", "gemini code review", "analyze large file" |
+| Large Context Review | `gemini-cli:gemini-review` | "review with gemini", "gemini code review", "analyze large file" (requires `GEMINI_API_KEY` or `GOOGLE_API_KEY`) |
 | Image Generation | `gemini-cli:gemini-images` | "generate image", "create icon", "nano-banana", "gemini image" |
 
 ## Common Patterns
