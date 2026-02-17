@@ -1,7 +1,7 @@
 ---
 name: gemini-images
 description: This skill should be used when the user asks to "generate image with gemini", "create icon", "nano-banana", "gemini image", "generate pattern", "create diagram with gemini", "app icon", "generate favicon", or wants to use the nano-banana Gemini CLI extension for image generation, icon creation, pattern design, or visual content.
-version: 0.6.0
+version: 0.6.1
 ---
 
 # Gemini Image Generation (nano-banana)
@@ -48,11 +48,13 @@ If `NANOBANANA_MODEL` is already set in the environment, respect the user's choi
 
 ### Headless Mode Permissions
 
-nano-banana tools require explicit permission in headless mode. Use `--yolo` to auto-approve:
+nano-banana tools require explicit permission in headless mode. Use `--yolo` to auto-approve image generation tool calls:
 
 ```bash
 NANOBANANA_MODEL=gemini-3-pro-image-preview gemini --yolo -p '/generate "your prompt here"'
 ```
+
+**Note:** `--yolo` is ONLY permitted for image generation via nano-banana. Never use `--yolo` for code reviews or text analysis — use `--sandbox` instead. Gemini's role outside of image creation is strictly advisory.
 
 ## Commands Reference
 

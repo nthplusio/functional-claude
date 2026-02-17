@@ -1,7 +1,7 @@
 ---
 name: gemini-review
 description: This skill should be used when the user asks to "review with gemini", "gemini code review", "analyze large file with gemini", "gemini review codebase", "large context review", "second opinion from gemini", or wants to use Gemini CLI for reviewing code, documents, logs, or other large context items.
-version: 0.6.0
+version: 0.6.1
 ---
 
 # Gemini Large Context Review
@@ -30,17 +30,25 @@ Get a key at: https://aistudio.google.com/apikey
 - **Diff review**: Review large diffs or PRs with full context
 - **Migration analysis**: Assess large-scale migration impact across files
 
-## Critical Rule: Gemini Does the Review, Not Claude
+## Critical Rules
+
+### Gemini is Advisory Only — No Edits
+
+**Gemini MUST NEVER modify source files, configuration, or any project content.** Its role is strictly advisory: review code, analyze logs, provide recommendations. All review output is returned to Claude Code for the user to act on. Gemini does not implement fixes, refactor code, or make any changes.
+
+**Always use `--sandbox` mode for reviews** to enforce read-only access. Never use `--yolo` for reviews — it auto-approves file writes and can lead to unauthorized modifications.
+
+### Gemini Does the Review, Not Claude
 
 **You MUST execute every review via `gemini -p` in a Bash command.** Do NOT read files with Read/Grep/Glob and analyze them yourself — that defeats the entire purpose. The value of this skill is Gemini's independent perspective and 2M token context window. Pipe content directly to the CLI in a single command.
 
 ## Core Pattern: Headless Review
 
-All reviews use Gemini's headless mode (`-p` flag) for non-interactive execution. Content gathering and the gemini call should be a **single piped Bash command**:
+All reviews use Gemini's headless mode (`-p` flag) with `--sandbox` for read-only, non-interactive execution. Content gathering and the gemini call should be a **single piped Bash command**:
 
 ```bash
 # Pipe files directly to gemini — do NOT read them yourself first
-cat files... | gemini -m gemini-3-pro-preview -p "REVIEW_PROMPT" 2>&1
+cat files... | gemini --sandbox -m gemini-3-pro-preview -p "REVIEW_PROMPT" 2>&1
 ```
 
 ## Review Recipes
@@ -48,7 +56,7 @@ cat files... | gemini -m gemini-3-pro-preview -p "REVIEW_PROMPT" 2>&1
 ### Code Review (Single File)
 
 ```bash
-cat src/api/handler.ts | gemini -m gemini-3-pro-preview -p "Review this TypeScript file for:
+cat src/api/handler.ts | gemini --sandbox -m gemini-3-pro-preview -p "Review this TypeScript file for:
 1. Security vulnerabilities (injection, auth bypass, data exposure)
 2. Error handling gaps
 3. Performance issues
@@ -63,7 +71,7 @@ Provide specific line references and severity ratings."
 for f in src/api/*.ts; do
   echo "=== FILE: $f ==="
   cat "$f"
-done | gemini -m gemini-3-pro-preview -p "Review these API endpoint files as a cohesive module. Check for:
+done | gemini --sandbox -m gemini-3-pro-preview -p "Review these API endpoint files as a cohesive module. Check for:
 1. Inconsistent error handling patterns
 2. Missing input validation
 3. Authentication/authorization gaps
@@ -74,14 +82,14 @@ done | gemini -m gemini-3-pro-preview -p "Review these API endpoint files as a c
 
 ```bash
 # Review a git diff
-git diff main...feature-branch | gemini -m gemini-3-pro-preview -p "Review this diff for:
+git diff main...feature-branch | gemini --sandbox -m gemini-3-pro-preview -p "Review this diff for:
 1. Correctness of changes
 2. Potential regressions
 3. Missing edge cases
 4. Test coverage gaps"
 
 # Review specific PR changes
-git log main..HEAD --oneline -p | gemini -m gemini-3-pro-preview -p "Review all changes in this branch. Summarize what changed and flag any concerns."
+git log main..HEAD --oneline -p | gemini --sandbox -m gemini-3-pro-preview -p "Review all changes in this branch. Summarize what changed and flag any concerns."
 ```
 
 ### Architecture Review
@@ -100,7 +108,7 @@ git log main..HEAD --oneline -p | gemini -m gemini-3-pro-preview -p "Review all 
   echo ""
   echo "=== Key Types ==="
   cat src/types.ts
-} | gemini -m gemini-3-pro-preview -p "Review this project architecture. Assess:
+} | gemini --sandbox -m gemini-3-pro-preview -p "Review this project architecture. Assess:
 1. Directory organization
 2. Dependency health (outdated, redundant, security)
 3. Module boundaries and coupling
@@ -111,14 +119,14 @@ git log main..HEAD --oneline -p | gemini -m gemini-3-pro-preview -p "Review all 
 
 ```bash
 # Analyze application logs
-tail -10000 /var/log/app.log | gemini -m gemini-3-pro-preview -p "Analyze these application logs:
+tail -10000 /var/log/app.log | gemini --sandbox -m gemini-3-pro-preview -p "Analyze these application logs:
 1. Identify error patterns and frequency
 2. Flag any security-relevant events
 3. Note performance degradation signals
 4. Suggest monitoring improvements"
 
 # Analyze build output
-npm run build 2>&1 | gemini -m gemini-3-pro-preview -p "Analyze this build output. Identify:
+npm run build 2>&1 | gemini --sandbox -m gemini-3-pro-preview -p "Analyze this build output. Identify:
 1. Warnings that should be addressed
 2. Bundle size concerns
 3. Deprecation notices
@@ -129,7 +137,7 @@ npm run build 2>&1 | gemini -m gemini-3-pro-preview -p "Analyze this build outpu
 
 ```bash
 # Review a technical spec
-cat docs/rfc-authentication.md | gemini -m gemini-3-pro-preview -p "Review this technical specification for:
+cat docs/rfc-authentication.md | gemini --sandbox -m gemini-3-pro-preview -p "Review this technical specification for:
 1. Completeness - are there gaps in the spec?
 2. Security considerations
 3. Edge cases not addressed
@@ -139,7 +147,7 @@ cat docs/rfc-authentication.md | gemini -m gemini-3-pro-preview -p "Review this 
 ### Database Schema Review
 
 ```bash
-cat prisma/schema.prisma | gemini -m gemini-3-pro-preview -p "Review this Prisma schema for:
+cat prisma/schema.prisma | gemini --sandbox -m gemini-3-pro-preview -p "Review this Prisma schema for:
 1. Normalization issues
 2. Missing indexes for common query patterns
 3. Relationship modeling concerns
@@ -159,7 +167,7 @@ cat prisma/schema.prisma | gemini -m gemini-3-pro-preview -p "Review this Prisma
   echo ""
   echo "=== Affected Routes ==="
   grep -r "user" src/routes/ --include="*.ts"
-} | gemini -m gemini-3-pro-preview -p "Analyze the impact of this database migration on the codebase. Identify:
+} | gemini --sandbox -m gemini-3-pro-preview -p "Analyze the impact of this database migration on the codebase. Identify:
 1. Code that needs updating
 2. Potential breaking changes
 3. Required data backfills
@@ -177,7 +185,7 @@ cat prisma/schema.prisma | gemini -m gemini-3-pro-preview -p "Review this Prisma
 
 ```bash
 # Default: always use pro
-cat large-codebase.ts | gemini -m gemini-3-pro-preview -p "Deep review..."
+cat large-codebase.ts | gemini --sandbox -m gemini-3-pro-preview -p "Deep review..."
 
 # Fallback: only if pro fails or user explicitly asks for speed
 cat app.log | gemini -m gemini-2.5-pro -p "Summarize errors..."
@@ -190,7 +198,7 @@ cat app.log | gemini -m gemini-2.5-pro -p "Summarize errors..."
 For machine-readable review results:
 
 ```bash
-cat src/api.ts | gemini -m gemini-3-pro-preview -p "Review this code and output findings as JSON with this schema:
+cat src/api.ts | gemini --sandbox -m gemini-3-pro-preview -p "Review this code and output findings as JSON with this schema:
 {
   \"findings\": [{
     \"severity\": \"critical|high|medium|low\",
@@ -202,35 +210,16 @@ cat src/api.ts | gemini -m gemini-3-pro-preview -p "Review this code and output 
 }"
 ```
 
-## File-Output Pattern
+## Saving Review Output
 
-For very large reviews where stdout capture may be truncated or unreliable, instruct Gemini to write its output directly to a file:
-
-### When to Use
-
-- Full codebase reviews expected to produce long output
-- Detailed multi-file analysis with per-file findings
-- Structured reports that need to be saved for later reference
-
-### How It Works
-
-1. Add `--yolo` to the gemini command (allows file writes without prompting)
-2. Include a file-output instruction in the prompt: "Write your findings to /tmp/gemini-review-{timestamp}.md"
-3. After execution, read the output file
+For large reviews, redirect stdout to a file for later reference:
 
 ```bash
-# File-output pattern
-TIMESTAMP=$(date +%s) && gemini --yolo -m gemini-3-pro-preview -p "Review all files in src/ for security issues. Write your complete findings to /tmp/gemini-review-${TIMESTAMP}.md in markdown format." 2>&1 && cat /tmp/gemini-review-${TIMESTAMP}.md
+# Redirect review output to a file (Gemini stays read-only via --sandbox)
+find src/ -name "*.ts" -exec cat {} + | gemini --sandbox -m gemini-3-pro-preview -p "Review this codebase for security issues." 2>&1 | tee /tmp/gemini-review-$(date +%s).md
 ```
 
-### Validation
-
-After execution, verify:
-- The output file exists at the expected path
-- The file is non-empty (> 0 bytes)
-- The file contains review content, not error messages
-
-If the file doesn't exist or is empty, fall back to re-running the review with normal stdout capture.
+**Never use `--yolo` for reviews.** The `--yolo` flag auto-approves all tool calls including file edits. Gemini's role is advisory only — it must never modify source files. Use stdout redirection (`| tee` or `>`) to save output instead.
 
 ## Timeout Configuration
 
@@ -251,7 +240,7 @@ Commands are wrapped with `timeout N bash -c '...'`:
 
 ```bash
 # 10-minute timeout for a multi-file review
-timeout 600 bash -c 'find src/api/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done | gemini -m gemini-3-pro-preview -p "Review these files" 2>&1'
+timeout 600 bash -c 'find src/api/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done | gemini --sandbox -m gemini-3-pro-preview -p "Review these files" 2>&1'
 ```
 
 ### Timeout Recovery
@@ -298,7 +287,7 @@ The most powerful pattern is using Gemini review output as input for Claude Code
 
 ```bash
 # Step 1: Get review findings
-FINDINGS=$(find src/ -name "*.ts" -exec cat {} + | gemini -m gemini-3-pro-preview -p "List files and line numbers with security issues as JSON")
+FINDINGS=$(find src/ -name "*.ts" -exec cat {} + | gemini --sandbox -m gemini-3-pro-preview -p "List files and line numbers with security issues as JSON")
 
 # Step 2: Claude Code fixes the issues identified
 # (The user can then ask Claude Code to fix specific findings)
@@ -310,4 +299,4 @@ FINDINGS=$(find src/ -name "*.ts" -exec cat {} + | gemini -m gemini-3-pro-previe
 - **Provide context**: Include relevant config files, types, and package.json alongside the code
 - **Use file markers**: When concatenating files, add `=== FILE: path ===` headers
 - **Chunk if needed**: Even with 2M token context, very large codebases may need chunking by module
-- **Save output**: Redirect review output to a file for reference: `... | gemini -m gemini-3-pro-preview -p "..." > review-findings.md`
+- **Save output**: Redirect review output to a file for reference: `... | gemini --sandbox -m gemini-3-pro-preview -p "..." > review-findings.md`

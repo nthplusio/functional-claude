@@ -119,11 +119,28 @@ echo "Hello" | gemini -p "Say hello back in one word" 2>&1
 echo "test" | gemini -p --model gemini-2.5-flash "Reply with OK" 2>&1
 ```
 
-### 5. Check Configuration
+### 5. Check Configuration & Gemini 3 Pro Settings
 
 ```bash
 # Check settings file
 cat ~/.gemini/settings.json 2>/dev/null || echo "No settings file"
+
+# Check if Preview Features is enabled (required for Gemini 3 Pro)
+node -e "
+  const fs = require('fs');
+  const home = process.env.HOME || '';
+  const paths = [home + '/.gemini/settings.json', home + '/.config/gemini/settings.json'];
+  for (const p of paths) {
+    try {
+      const s = JSON.parse(fs.readFileSync(p, 'utf8'));
+      console.log('Settings found at:', p);
+      console.log('Preview Features:', s.general?.previewFeatures ? 'ENABLED' : 'DISABLED (Gemini 3 Pro will not work!)');
+      console.log('Auth type:', s.security?.auth?.selectedType || 'not set');
+      process.exit(0);
+    } catch (e) {}
+  }
+  console.log('No settings file found');
+" 2>/dev/null
 
 # Check GEMINI.md in current project
 cat GEMINI.md 2>/dev/null || echo "No GEMINI.md"
@@ -132,13 +149,19 @@ cat GEMINI.md 2>/dev/null || echo "No GEMINI.md"
 cat .geminiignore 2>/dev/null || echo "No .geminiignore"
 ```
 
+**Gemini 3 Pro Prerequisites:**
+- `general.previewFeatures` must be `true` in `~/.gemini/settings.json`
+- Enable via: Run `gemini`, then `/settings` → enable Preview Features
+- Or add manually: `"general": { "previewFeatures": true }` to `~/.gemini/settings.json`
+
 ### 6. Common Issues
 
 | Issue | Symptom | Fix |
 |-------|---------|-----|
 | CLI not found | `command not found: gemini` | `npm install -g @google/gemini-cli` |
 | Auth failed | `401 Unauthorized` | Set `GEMINI_API_KEY` or run `gemini auth login` |
-| Model not available | `model not found` | Use `gemini-2.5-flash` or `gemini-2.5-pro` |
+| Model not available | `model not found` | Enable Preview Features in settings, or use `gemini-2.5-pro` as fallback |
+| Gemini 3 Pro unavailable | `gemini-3-pro-preview` not found | Enable Preview Features: `/settings` → Preview Features → ON |
 | Extension not loaded | `/generate` command not recognized | Reinstall extension, restart CLI |
 | Rate limited | `429 Too Many Requests` | Wait and retry, or reduce request frequency |
 | Timeout | Command hangs | Check network, try `--model gemini-2.5-flash` |

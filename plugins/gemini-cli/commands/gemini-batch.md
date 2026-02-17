@@ -66,10 +66,10 @@ For each target, execute a gemini review command:
 
 ```bash
 # For a directory target
-timeout ${TIMEOUT} bash -c 'find ${TARGET} -type f -name "*.ts" -o -name "*.js" -o -name "*.tsx" -o -name "*.jsx" -o -name "*.py" -o -name "*.go" -o -name "*.rs" | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done | gemini -m gemini-3-pro-preview -p "${PROMPT}" 2>&1'
+timeout ${TIMEOUT} bash -c 'find ${TARGET} -type f -name "*.ts" -o -name "*.js" -o -name "*.tsx" -o -name "*.jsx" -o -name "*.py" -o -name "*.go" -o -name "*.rs" | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done | gemini --sandbox -m gemini-3-pro-preview -p "${PROMPT}" 2>&1'
 
 # For a single file target
-timeout ${TIMEOUT} bash -c 'cat ${TARGET} | gemini -m gemini-3-pro-preview -p "${PROMPT}" 2>&1'
+timeout ${TIMEOUT} bash -c 'cat ${TARGET} | gemini --sandbox -m gemini-3-pro-preview -p "${PROMPT}" 2>&1'
 ```
 
 **Rate limit handling per target:**
@@ -137,7 +137,9 @@ Use these prompts based on the review-type argument:
 
 ## Important
 
+- **Gemini is advisory only.** It MUST NEVER modify source files. Always use `--sandbox` to enforce read-only mode.
 - **Do NOT analyze code yourself.** Every review MUST go through `gemini -p`.
 - **Return Gemini's output verbatim.** Do not rewrite or summarize.
 - **Respect rate limits.** The delay between targets prevents quota exhaustion.
 - **Continue on failure.** If one target fails, record the failure and continue to the next.
+- **Never use `--yolo` for reviews.** It auto-approves file writes. Use `--sandbox` instead.

@@ -84,12 +84,19 @@ process.stdin.on('end', async () => {
       }
     }
 
+    // 5. Check Gemini CLI settings for Gemini 3 Pro support
+    const settingsInfo = checkSettings();
+
     // Build status message
     const statusParts = [];
     const warnings = [];
 
     if (cacheWarning) {
       warnings.push(`Cache refresh failed: ${cacheWarning}`);
+    }
+
+    if (!settingsInfo.previewFeatures) {
+      warnings.push('Gemini 3 Pro requires Preview Features enabled. Run `gemini` then `/settings` and enable Preview Features, or add `"general": { "previewFeatures": true }` to ~/.gemini/settings.json');
     }
 
     if (geminiInfo.installed) {
@@ -102,6 +109,10 @@ process.stdin.on('end', async () => {
       statusParts.push(`auth: ${authInfo.method}`);
     } else {
       warnings.push('No Gemini authentication detected. Set GEMINI_API_KEY or GOOGLE_API_KEY env var, or run `gemini auth login` for OAuth');
+    }
+
+    if (settingsInfo.previewFeatures) {
+      statusParts.push('Gemini 3 Pro enabled');
     }
 
     // Preferred models (newest first) — used as default and fallback
@@ -234,6 +245,34 @@ function checkAuth() {
     result.authenticated = true;
     result.method = 'Vertex AI';
     return result;
+  }
+
+  return result;
+}
+
+/**
+ * Check Gemini CLI settings for Gemini 3 Pro support
+ */
+function checkSettings() {
+  const result = { previewFeatures: false, settingsFound: false };
+
+  const home = process.env.HOME || process.env.USERPROFILE || '';
+  const settingsPaths = [
+    path.join(home, '.gemini', 'settings.json'),
+    path.join(home, '.config', 'gemini', 'settings.json')
+  ];
+
+  for (const settingsPath of settingsPaths) {
+    if (fs.existsSync(settingsPath)) {
+      try {
+        const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+        result.settingsFound = true;
+        result.previewFeatures = !!(settings.general && settings.general.previewFeatures);
+        return result;
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
   }
 
   return result;

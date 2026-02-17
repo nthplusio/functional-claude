@@ -23,7 +23,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
 | tabby-dev | 0.1.1 | Tabby terminal configuration, SSH connections, and plugin development |
 | agent-teams | 0.11.0 | Agent team blueprints, coordination patterns, and reusable personas for application development phases with adaptive modes, discovery interviews, user feedback gates, cross-team pipelines, and artifact output to `docs/teams/` |
-| gemini-cli | 0.6.0 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
+| gemini-cli | 0.6.1 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
 
 ## Architecture Overview
 
