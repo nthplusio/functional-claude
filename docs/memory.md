@@ -24,6 +24,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | tabby-dev | 0.1.1 | Tabby terminal configuration, SSH connections, and plugin development |
 | agent-teams | 0.11.0 | Agent team blueprints, coordination patterns, and reusable personas for application development phases with adaptive modes, discovery interviews, user feedback gates, cross-team pipelines, and artifact output to `docs/teams/` |
 | gemini-cli | 0.6.1 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
+| session-insights | 0.1.0 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
 
 ## Architecture Overview
 
@@ -453,6 +454,46 @@ Gemini CLI integration for large context review, batch processing, and image gen
 | sources.json | - | Documentation source URLs |
 | learnings.md | Weekly | Documentation and session learnings |
 
+## session-insights Plugin (v0.1.0)
+
+Interactive session analysis, deep drill-down into Claude Code conversation history, and workflow improvement generation. Uses programmatic Node.js streaming scripts to parse JSONL session data without loading raw files into context.
+
+### Skills
+
+| Skill | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| session-insights | Overview, routing to commands | "analyze sessions", "review my Claude usage", "session insights", "what have I been working on" |
+
+### Agents
+
+| Agent | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| session-analyst | Deep-dive analysis for specific dimensions (insights, improvements, patterns) | Launched by /session-review Phase 3 |
+| workflow-improver | Generates concrete workflow improvements from analysis findings | Launched by /session-review Phase 6 |
+
+### Commands
+
+| Command | Purpose |
+|---------|---------|
+| /session-review | 6-phase deep analysis: discovery, selection, parallel analysis, synthesis, drill-down, workflow improvement |
+| /session-stats | Quick dashboard of usage statistics |
+
+### Hooks
+
+| Hook | Event | Purpose |
+|------|-------|---------|
+| session-insights-session-start | SessionStart | Quick data availability check with message/session/project counts |
+
+### Scripts
+
+| Script | Purpose |
+|--------|---------|
+| list-projects.js | Enumerate projects with session counts and sizes |
+| list-sessions.js | List sessions for a project with metadata |
+| extract-session.js | Turn-by-turn session extraction with detail levels (low/medium/high) |
+| extract-history.js | Parse history.jsonl with project/date filters |
+| aggregate-stats.js | Cross-session aggregate statistics with sampling |
+
 ## Root-Level Skills
 
 | Skill | Purpose |
@@ -649,6 +690,27 @@ functional-claude/
         │   ├── gemini-review.md
         │   ├── gemini-troubleshoot.md
         │   └── gemini-cache-update.md
+        └── .cache/
+    └── session-insights/
+        ├── .claude-plugin/plugin.json
+        ├── hooks/
+        │   ├── hooks.json
+        │   └── session-insights-session-start.js
+        ├── scripts/
+        │   ├── list-projects.js
+        │   ├── list-sessions.js
+        │   ├── extract-session.js
+        │   ├── extract-history.js
+        │   └── aggregate-stats.js
+        ├── commands/
+        │   ├── session-review.md
+        │   └── session-stats.md
+        ├── skills/
+        │   └── session-insights/       # Single overview skill
+        │       └── SKILL.md
+        ├── agents/
+        │   ├── session-analyst.md
+        │   └── workflow-improver.md
         └── .cache/
 ```
 

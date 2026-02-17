@@ -70,6 +70,12 @@
       "source": "./plugins/gemini-cli",
       "description": "Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension. Advisory-only with --sandbox enforcement, configurable timeouts, retry logic, and output validation",
       "version": "0.6.1"
+    },
+    {
+      "name": "session-insights",
+      "source": "./plugins/session-insights",
+      "description": "Interactive session analysis, deep drill-down into Claude Code conversation history, and workflow improvement generation with programmatic JSONL parsing",
+      "version": "0.1.0"
     }
   ]
 }

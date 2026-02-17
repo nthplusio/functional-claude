@@ -1,0 +1,5 @@
+{
+  "name": "session-insights",
+  "version": "0.1.0",
+  "description": "Interactive session analysis, deep drill-down into Claude Code conversation history, and workflow improvement generation"
+}
