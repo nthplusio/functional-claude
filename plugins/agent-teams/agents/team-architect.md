@@ -150,9 +150,11 @@ Create an agent team called "[team-name]" to [goal]. Spawn [N] teammates:
 **Task Blocking Protocol -- ALL teammates MUST follow:**
 - Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
 - NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
 - After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
+- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
+- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
 
 Create these tasks:
 1. [Owner] Task description (dependencies if any)
@@ -160,7 +162,7 @@ Create these tasks:
 N. [Lead] USER FEEDBACK GATE — Present findings to user, ask for direction (blocked by upstream tasks)
 N+1. [Owner] Detailed work based on user direction (blocked by task N)
 ...
-N+X. [Lead] Compile final deliverables — write to docs/teams/[TEAM-NAME]/: primary artifact as [filename].md with frontmatter, task outputs to tasks/, team README, and update root index at docs/teams/README.md
+N+X. [Designated Teammate] Compile final deliverables — write to docs/teams/[TEAM-NAME]/: primary artifact as [filename].md with frontmatter, task outputs to tasks/, team README, and update root index at docs/teams/README.md
 
 [Coordination instructions: file boundaries, communication patterns, synthesis]
 [Output format: what the team produces and which downstream commands it feeds into]

@@ -113,7 +113,7 @@ Spawn 5 teammates:
    Your outputs feed into the next cycle's Auditor (or the user for manual review).
    Use Sonnet model.
 
-Enable delegate mode — focus on coordination, synthesis, and the final report.
+Enable delegate mode — focus on coordination and user feedback. A designated teammate handles final document compilation.
 
 ## Productivity Context
 
@@ -147,7 +147,7 @@ Create these tasks:
 10. [Refiner] Generate initial implementation addressing Critical findings (blocked by task 9)
 11. [Refiner] Run convergence loop — score, diagnose, rewrite until quality bar met (blocked by task 10)
 12. [Compounder] Review all outputs — progress check, friction log, patterns, next target (blocked by task 11)
-13. [Lead] Synthesize final report with cumulative impact summary and next-cycle recommendations — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `productivity-report.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
+13. [Compounder] Compile final report with cumulative impact summary and next-cycle recommendations — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `productivity-report.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 
 Important: This team is intentionally sequential — each persona's output feeds the next.
 The loop is the mechanism: improvements compound because each cycle builds on accumulated knowledge.
@@ -159,9 +159,18 @@ further development.
 **Task Blocking Protocol -- ALL teammates MUST follow:**
 - Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
 - NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
 - After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
+- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
+- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
+
+**Output Standards -- ALL teammates MUST follow:**
+- Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
+- Lead with conclusions, then supporting evidence — not the other way around
+- Never restate the Productivity Context back — teammates already have it
+- Every sentence should add new information. Cut filler, hedging, and throat-clearing
+- Task outputs go to `docs/teams/[TEAM-NAME]/tasks/` — keep each under 500 lines
 ```
 
 **Output format (per-phase deliverables):**

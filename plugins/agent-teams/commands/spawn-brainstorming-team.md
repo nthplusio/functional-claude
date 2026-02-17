@@ -185,7 +185,7 @@ Create these tasks:
 8. [Visionary] Build on prioritized ideas — combine, enhance, amplify, extend (blocked by task 7)
 9. [Realist] Add implementation details, stepping stones, effort estimates, risk assessment (blocked by task 7)
 10. [Facilitator] Drive convergence — evaluate refined ideas against success criteria, rank by viability (blocked by tasks 8-9)
-11. [Lead] Synthesize final brainstorm output with ranked recommendations, trade-offs, and next steps (blocked by task 10) — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `brainstorm-output.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
+11. [Facilitator] Compile final brainstorm output with ranked recommendations, trade-offs, and next steps (blocked by task 10) — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `brainstorm-output.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 
 Important: The brainwriting tasks (2-5) MUST be independent — no teammate should see others' ideas
 until the Facilitator collects them. This prevents anchoring bias.
@@ -194,9 +194,18 @@ The user feedback gate (task 7) is mandatory — the human decides which ideas t
 **Task Blocking Protocol -- ALL teammates MUST follow:**
 - Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
 - NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
 - After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
+- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
+- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
+
+**Output Standards -- ALL teammates MUST follow:**
+- Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
+- Lead with conclusions, then supporting evidence — not the other way around
+- Never restate the Brainstorming Context back — teammates already have it
+- Every sentence should add new information. Cut filler, hedging, and throat-clearing
+- Task outputs go to `docs/teams/[TEAM-NAME]/tasks/` — keep each under 500 lines
 ```
 
 **Output format:**

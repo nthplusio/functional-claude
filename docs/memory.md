@@ -22,7 +22,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | opentui-dev | 0.1.4 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
 | tabby-dev | 0.1.1 | Tabby terminal configuration, SSH connections, and plugin development |
-| agent-teams | 0.10.0 | Agent team blueprints, coordination patterns, and reusable personas for application development phases with adaptive modes, discovery interviews, user feedback gates, cross-team pipelines, and artifact output to `docs/teams/` |
+| agent-teams | 0.11.0 | Agent team blueprints, coordination patterns, and reusable personas for application development phases with adaptive modes, discovery interviews, user feedback gates, cross-team pipelines, and artifact output to `docs/teams/` |
 | gemini-cli | 0.5.0 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
 
 ## Architecture Overview
@@ -361,7 +361,7 @@ Tabby terminal configuration, SSH connections, and plugin development.
 | sources.json | - | Documentation source URLs |
 | learnings.md | Weekly | Documentation and session learnings |
 
-## agent-teams Plugin (v0.10.0)
+## agent-teams Plugin (v0.11.0)
 
 Agent team blueprints, coordination patterns, and reusable personas for application development phases. All teams feature discovery interviews for rich shared context, user feedback gates for mid-course correction, pipeline context for chaining teams together, and artifact output to `docs/teams/` for persistent, git-tracked deliverables. Most teams support adaptive modes for different use cases.
 

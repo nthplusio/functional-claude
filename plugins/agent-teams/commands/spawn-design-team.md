@@ -127,7 +127,7 @@ Spawn 4 teammates:
    specs AND the Frontend Dev's implementation.
    Use Sonnet model.
 
-Enable delegate mode — focus on coordination, not implementation.
+Enable delegate mode — focus on coordination and user feedback. A designated teammate handles final document compilation.
 
 ## Design Context
 
@@ -171,7 +171,7 @@ Create these tasks:
 11. [User Advocate] Accessibility review of implementation — keyboard, screen reader, contrast (blocked by task 9)
 12. [Frontend Dev] Address feedback from Designer and User Advocate reviews (blocked by tasks 10, 11)
 13. [Product Owner] Final acceptance review against user stories (blocked by task 12)
-14. [Lead] Compile design artifacts — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact (mode-specific: `component-spec.md`, `page-spec.md`, or `redesign-spec.md`) with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md` (blocked by task 13)
+14. [Frontend Dev] Compile design artifacts — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact (mode-specific: `component-spec.md`, `page-spec.md`, or `redesign-spec.md`) with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md` (blocked by task 13)
 
 Important: The Designer and User Advocate provide specifications and review but do not
 write implementation code. The Frontend Dev is the sole implementer to avoid conflicts.
@@ -182,9 +182,18 @@ implementation is the costliest phase.
 **Task Blocking Protocol -- ALL teammates MUST follow:**
 - Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
 - NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
 - After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
+- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
+- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
+
+**Output Standards -- ALL teammates MUST follow:**
+- Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
+- Lead with conclusions, then supporting evidence — not the other way around
+- Never restate the Design Context back — teammates already have it
+- Every sentence should add new information. Cut filler, hedging, and throat-clearing
+- Task outputs go to `docs/teams/[TEAM-NAME]/tasks/` — keep each under 500 lines
 ```
 
 **Output format (mode-specific):**

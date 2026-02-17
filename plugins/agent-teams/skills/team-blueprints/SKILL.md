@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "design team", "planning team", "roadmap team", "team blueprint", "team template", or says "spawn a team for [development phase]".
 
   Provides 8 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, Frontend Design, Planning & Roadmapping, Productivity Systems, and Brainstorming & Ideation.
-version: 0.10.0
+version: 0.11.0
 ---
 
 # Agent Team Blueprints
@@ -55,7 +55,7 @@ Tasks:
 7. [Critic] Challenge the leading option (blocked by 6)
 8. [All] Cross-review findings
 9. [Analyst] Final recommendation (blocked by 8)
-10. [Lead] Compile evaluation report
+10. [Analyst] Compile evaluation report
 ```
 
 ### Configuration Tips
@@ -112,7 +112,7 @@ Tasks:
 7. [Tester] Write unit tests for backend (blocked by 5)
 8. [Tester] Write unit tests for frontend (blocked by 6)
 9. [Tester] Write integration tests (blocked by 7, 8)
-10. [Lead] Compile implementation summary
+10. [Backend] Compile implementation summary
 ```
 
 ### Configuration Tips
@@ -186,7 +186,7 @@ Tasks:
 5. [Quality] Verify adherence to project patterns and conventions
 6. [Quality] Assess test coverage and identify gaps
 7. [All] Cross-reference findings across review domains
-8. [Lead] Compile unified review report with prioritized action items
+8. [Quality Reviewer] Compile unified review report with prioritized action items
 ```
 
 ### Configuration Tips
@@ -362,7 +362,7 @@ Tasks:
 | # | Mode | Category | Team Composition | Output |
 |---|------|----------|-----------------|--------|
 | 1 | **Product Roadmap** | Technical | Strategist, Prioritizer, Outcomes Analyst, Stakeholder Advocate | Phase briefs → `/spawn-feature-team` |
-| 2 | **Technical Spec** | Technical | Architect, API Designer, Risk Analyst, DX Advocate | Spec document → `/spawn-feature-team` |
+| 2 | **Technical Spec** | Technical | Architect, API Designer, Risk Analyst | Spec document → `/spawn-feature-team` |
 | 3 | **Architecture Decision** | Technical | Solution Architect, Explorer, Trade-off Analyst, Critic | ADR → implementation teams |
 | 4 | **Migration Strategy** | Technical | State Analyst, Migration Planner, Risk Mitigator, Stakeholder Advocate | Migration plan |
 | 5 | **Business Case** | Business | Market Analyst, Financial Analyst, Strategist, Risk Analyst | Decision document → Product Roadmap |
@@ -413,7 +413,7 @@ Tasks:
 8. [Stakeholder Advocate] Feasibility review — challenge assumptions (blocked by 6, 7)
 9. [Outcomes Analyst] Refine outcomes based on feedback (blocked by 8)
 10. [All] Cross-review: validate plan coherence
-11. [Lead] Compile roadmap document with phase briefs
+11. [Strategist] Compile roadmap document with phase briefs
 
 Each phase brief should be directly usable as input to /spawn-feature-team or /spawn-design-team.
 ```
@@ -427,17 +427,17 @@ Phase 1 — Initial Analysis (tasks 1-3/4):  Parallel exploration from each team
 Phase 2 — USER FEEDBACK GATE (task 4/5):   Lead presents findings, user chooses direction
 Phase 3 — Detailed Planning (tasks 5/6-8): Refined work based on user's direction
 Phase 4 — Cross-Review (task 9/10):        All teammates validate coherence
-Phase 5 — Synthesis (task 10/11/12):       Lead compiles final output document
+Phase 5 — Compilation (task 10/11/12):     Designated teammate compiles final output document
 ```
 
 ### Configuration Tips
 
 - The spawn command runs a **discovery interview** before creating the team — 5 core questions + 2-5 mode-specific extended questions
 - Mode is auto-inferred from keywords when obvious, confirmed rather than asked
-- **Optional teammates** add depth: Security Reviewer and DevOps Advisor for technical modes; Data Analyst and Customer Voice for business modes
+- **Optional teammates** add depth: DevOps Advisor for technical modes; Data Analyst and Customer Voice for business modes
 - The **user feedback gate** is the key mechanism — it prevents the team from investing effort in directions the user doesn't want
 - All teammates use Sonnet — planning is analysis and writing, not code generation
-- Enable delegate mode for the lead — the final output is a synthesis of all perspectives
+- Enable delegate mode for the lead — a designated teammate handles final document compilation
 - Business mode outputs feed into technical modes: Business Case → Product Roadmap → Technical Spec → `/spawn-feature-team`
 - Include the Task Blocking Protocol in the spawn prompt (see "Task Blocking Protocol" section below)
 
@@ -522,7 +522,7 @@ Tasks:
 10. [Refiner] Generate initial implementation addressing Critical findings (blocked by 9)
 11. [Refiner] Run convergence loop until quality bar met (blocked by 10)
 12. [Compounder] Review all outputs — progress check, friction log, patterns, next target (blocked by 11)
-13. [Lead] Synthesize final report with cumulative impact summary and next-cycle recommendations
+13. [Compounder] Compile final report with cumulative impact summary and next-cycle recommendations
 
 Important: This team is intentionally sequential — each persona's output feeds the next.
 The user feedback gate ensures the Architect designs solutions for the right bottlenecks.
@@ -596,7 +596,7 @@ Tasks:
 6. [Visionary] Build on prioritized ideas — combine, enhance, amplify (blocked by 5)
 7. [Realist] Add implementation details, stepping stones, effort estimates (blocked by 5)
 8. [Facilitator] Convergence — evaluate refined ideas against success criteria (blocked by 6-7)
-9. [Lead] Synthesize final output with ranked recommendations and next steps (blocked by 8)
+9. [Facilitator] Compile final output with ranked recommendations and next steps (blocked by 8)
 ```
 
 ### Configuration Tips
@@ -622,9 +622,11 @@ Every spawn prompt should include the standard Task Blocking Protocol block to e
 **Task Blocking Protocol -- ALL teammates MUST follow:**
 - Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
 - NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
 - After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
+- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
+- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
 ```
 
 This is especially important for blueprints with deep dependency chains (Frontend Design, Productivity Systems, Brainstorming) where later tasks depend on specific outputs from earlier ones.
@@ -749,7 +751,7 @@ Team deliverables are written to disk as git-tracked markdown files in `docs/tea
 | Productivity | `productivity-{slug}` | `productivity-report.md` |
 | Brainstorming | `brainstorm-{slug}` | `brainstorm-output.md` |
 
-Each team's lead compiles the primary deliverable with YAML frontmatter, writes task outputs, creates a team README, and updates the root index at `docs/teams/README.md`. See the "Artifact Output Protocol" section in the team-coordination skill for full frontmatter schemas and guidelines.
+A designated teammate compiles the primary deliverable with YAML frontmatter, writes task outputs, creates a team README, and updates the root index at `docs/teams/README.md`. See the "Artifact Output Protocol" section in the team-coordination skill for full frontmatter schemas and guidelines.
 
 ## Customizing Blueprints
 

@@ -151,7 +151,7 @@ Spawn [3-5] teammates:
    create a minimal proof-of-concept for the leading option. Flag unexpected technical blockers.
    Use Sonnet model.
 
-Enable delegate mode — focus on coordination, user feedback, and final synthesis.
+Enable delegate mode — focus on coordination and user feedback. A designated teammate handles final document compilation.
 
 ## Research Context
 
@@ -185,7 +185,7 @@ Create these tasks:
 7. [Critic] Challenge the leading option — stress test assumptions and probe edge cases (blocked by task 6)
 8. [All] Cross-review: validate findings across explorer, analyst, and critic perspectives
 9. [Analyst] Final recommendation with confidence levels and caveats (blocked by task 8)
-10. [Lead] Compile technology evaluation report with comparison matrix, recommendation, and migration guidance — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `evaluation-report.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
+10. [Analyst] Compile technology evaluation report with comparison matrix, recommendation, and migration guidance — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `evaluation-report.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 11. [Lead] Produce actionable next steps — what downstream team commands to run with which inputs
 
 Important: The final evaluation report should include: candidate profiles, comparison matrix,
@@ -196,9 +196,19 @@ should be directly usable as input to /spawn-planning-team (for roadmapping adop
 **Task Blocking Protocol -- ALL teammates MUST follow:**
 - Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
 - NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
 - After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
+- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
+- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
+
+**Output Standards -- ALL teammates MUST follow:**
+- Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
+- Lead with conclusions, then supporting evidence — not the other way around
+- Never restate the Research Context back — teammates already have it
+- Schemas, models, and contracts appear ONCE (owned by one teammate) — others reference by name
+- Every sentence should add new information. Cut filler, hedging, and throat-clearing
+- Task outputs go to `docs/teams/[TEAM-NAME]/tasks/` — keep each under 500 lines
 ```
 
 **Output format:** Technology evaluation report with comparison matrix and recommendation → feeds into `/spawn-planning-team`, `/spawn-feature-team`
@@ -245,7 +255,7 @@ Spawn [3-5] teammates:
    specific situation. Flag integration considerations.
    Use Sonnet model.
 
-Enable delegate mode — focus on coordination, user feedback, and final synthesis.
+Enable delegate mode — focus on coordination and user feedback. A designated teammate handles final document compilation.
 
 ## Research Context
 
@@ -279,7 +289,7 @@ Create these tasks:
 7. [Analyst] Strategic analysis of prioritized categories — adoption, sustainability, trajectory (blocked by task 4)
 8. [All] Cross-review: validate landscape map completeness and accuracy
 9. [Analyst] Final landscape assessment with recommendations for further investigation (blocked by task 8)
-10. [Lead] Compile landscape survey report with map, trend analysis, and recommended next steps — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `landscape-report.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
+10. [Analyst] Compile landscape survey report with map, trend analysis, and recommended next steps — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `landscape-report.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 11. [Lead] Identify which areas warrant deeper investigation via /spawn-research-team (Technology Evaluation mode)
 
 Important: The final landscape map should be structured so that specific categories can be
@@ -289,9 +299,19 @@ option profiles, trend analysis, gap analysis, and recommended next steps.
 **Task Blocking Protocol -- ALL teammates MUST follow:**
 - Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
 - NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
 - After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
+- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
+- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
+
+**Output Standards -- ALL teammates MUST follow:**
+- Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
+- Lead with conclusions, then supporting evidence — not the other way around
+- Never restate the Research Context back — teammates already have it
+- Schemas, models, and contracts appear ONCE (owned by one teammate) — others reference by name
+- Every sentence should add new information. Cut filler, hedging, and throat-clearing
+- Task outputs go to `docs/teams/[TEAM-NAME]/tasks/` — keep each under 500 lines
 ```
 
 **Output format:** Landscape survey report with taxonomy and trend analysis → feeds into `/spawn-research-team` (Technology Evaluation), `/spawn-planning-team`
@@ -339,7 +359,7 @@ Spawn [3-5] teammates:
    priority mitigations. Flag mitigations that would require architectural changes.
    Use Sonnet model.
 
-Enable delegate mode — focus on coordination, user feedback, and final synthesis.
+Enable delegate mode — focus on coordination and user feedback. A designated teammate handles final document compilation.
 
 ## Research Context
 
@@ -373,7 +393,7 @@ Create these tasks:
 7. [Risk Analyst] Reassess residual risk after proposed mitigations (blocked by tasks 5, 6)
 8. [All] Cross-review: validate risk register completeness and mitigation feasibility
 9. [Mitigator] Final mitigation plan with implementation priorities and monitoring (blocked by task 8)
-10. [Lead] Compile risk assessment report with risk register, mitigation plan, and monitoring recommendations — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `risk-assessment.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
+10. [Analyst] Compile risk assessment report with risk register, mitigation plan, and monitoring recommendations — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `risk-assessment.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 11. [Lead] Identify actions that should be addressed via /spawn-feature-team or /spawn-debug-team
 
 Important: The final risk register should include: categorized risks with scores, mitigation
@@ -384,9 +404,19 @@ implementation teams.
 **Task Blocking Protocol -- ALL teammates MUST follow:**
 - Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
 - NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
 - After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
+- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
+- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
+
+**Output Standards -- ALL teammates MUST follow:**
+- Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
+- Lead with conclusions, then supporting evidence — not the other way around
+- Never restate the Research Context back — teammates already have it
+- Schemas, models, and contracts appear ONCE (owned by one teammate) — others reference by name
+- Every sentence should add new information. Cut filler, hedging, and throat-clearing
+- Task outputs go to `docs/teams/[TEAM-NAME]/tasks/` — keep each under 500 lines
 ```
 
 **Output format:** Risk assessment report with risk register and mitigation plan → feeds into `/spawn-planning-team`, `/spawn-feature-team`, `/spawn-debug-team`

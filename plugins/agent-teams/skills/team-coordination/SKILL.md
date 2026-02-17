@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user needs guidance on managing an active agent team, coordinating tasks between teammates, handling team communication, or understanding team lifecycle. Use this skill when the user asks about "task management", "team communication", "delegate mode", "plan approval", "shutdown teammates", "team messaging", or says "how do I manage my team".
 
   Covers task management, messaging patterns, plan approval workflow, delegate mode, display modes, and graceful shutdown.
-version: 0.10.0
+version: 0.11.0
 ---
 
 # Team Coordination Patterns
@@ -71,9 +71,11 @@ Every teammate should follow this protocol:
 
 1. **Check before starting:** Call `TaskList` and verify the task's `blockedBy` list is empty before beginning work
 2. **Never start blocked tasks:** Even if you think you know what to do — upstream tasks may change your requirements
-3. **Wait when blocked:** If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+3. **Go idle silently when blocked:** Do NOT send "standing by" or status messages — the system notifies the lead automatically
 4. **Check after completing:** Immediately call `TaskList` after completing a task to find newly unblocked tasks to claim
 5. **Read upstream outputs:** When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it — they contain context you need
+6. **Respect user decisions:** When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints — do not include approaches, options, or paths the user explicitly rejected
+7. **Shutdown compliance:** When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
 
 #### Including in Spawn Prompts
 
@@ -83,9 +85,11 @@ Since teammates don't inherit the lead's conversation or read skill files, the b
 **Task Blocking Protocol -- ALL teammates MUST follow:**
 - Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
 - NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
 - After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
+- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
+- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
 ```
 
 ## Communication Patterns
@@ -173,8 +177,11 @@ Press **Shift+Tab** to cycle into delegate mode after starting a team.
 The lead's available tools become coordination-only:
 - Spawn and message teammates
 - Manage tasks
-- Synthesize results
 - No file editing or code execution
+
+### Compilation in Delegate Mode
+
+In delegate mode, the lead cannot write files — so the final compilation/synthesis task must be assigned to a designated teammate, not the lead. Each spawn command assigns compilation to a domain-expert teammate (e.g., Architect compiles specs, Strategist compiles roadmaps, Analyst compiles research reports). The lead coordinates and presents user feedback gates; a teammate handles the final document write.
 
 ## Display Modes
 
@@ -244,18 +251,24 @@ Monitor → Steer → Synthesize
 
 ### Shutdown
 
+The lead should batch shutdown requests — send all at once without waiting between:
+
 ```
-1. Ask the lead: "Ask [teammate] to shut down"
-2. Lead sends shutdown request
-3. Teammate approves (exits) or rejects (continues working)
-4. Repeat for each teammate
-5. Ask lead: "Clean up the team"
+1. Lead sends shutdown_request to ALL teammates (batch, not sequential)
+2. Teammates MUST approve immediately unless mid-write on a file
+3. If no response after 30s, lead re-sends the shutdown_request
+4. Once all teammates have shut down, lead calls TeamDelete
 ```
 
-**Important:**
-- Teammates finish current work before shutting down
-- Always use the lead to clean up (not teammates)
-- Lead checks for active members before cleanup
+**Teammate rules:**
+- Approve shutdown immediately upon receiving the request
+- Only exception: mid-write on a file (finish the write, then approve)
+- Do NOT reject to "finish up" analysis or messages — those can be resumed later
+
+**Lead rules:**
+- Send all shutdown_requests in one batch, not one-by-one
+- Re-request after 30s if a teammate hasn't responded
+- Call `TeamDelete` after all teammates have shut down
 
 ## Quality Gates with Hooks
 

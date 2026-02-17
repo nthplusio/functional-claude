@@ -111,6 +111,8 @@ Create an agent team called "review-[target-slug]" to review [TARGET]. Spawn [3-
 
 Use Sonnet for all reviewers to keep costs manageable.
 
+Enable delegate mode — focus on coordination and user feedback. A designated teammate handles final document compilation.
+
 ## Review Context
 
 ### Review Focus
@@ -130,7 +132,7 @@ Create these tasks:
 5. [Quality] Verify adherence to project patterns and conventions
 6. [Quality] Assess test coverage and identify gaps
 7. [All] Cross-reference findings across review domains
-8. [Lead] Compile unified review report with prioritized action items — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `review-report.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
+8. [Quality Reviewer] Compile unified review report with prioritized action items — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `review-report.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
 
 Each reviewer should produce a structured report. Have them share reports so they
 can cross-reference findings (e.g., a performance issue might also be a security
@@ -140,9 +142,18 @@ Wait for all reviewers to complete before compiling the unified report.
 **Task Blocking Protocol -- ALL teammates MUST follow:**
 - Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
 - NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, message the lead to report you are waiting, then go idle
+- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
 - After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
+- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
+- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
+
+**Output Standards -- ALL teammates MUST follow:**
+- Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
+- Lead with conclusions, then supporting evidence — not the other way around
+- Never restate the Review Context back — teammates already have it
+- Every sentence should add new information. Cut filler, hedging, and throat-clearing
+- Task outputs go to `docs/teams/[TEAM-NAME]/tasks/` — keep each under 500 lines
 ```
 
 **Output format:** Unified review report + per-reviewer reports + action items checklist → feeds into `/spawn-debug-team` (for investigating issues found), `/spawn-feature-team` (for rework)
