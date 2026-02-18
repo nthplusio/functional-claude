@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user asks about Claude Code agent teams, wants to understand team-based development workflows, or needs guidance on when and how to use agent teams. Use this skill when the user asks to "create a team", "use agent teams", "coordinate agents", "parallel development", "team workflow", or says "how do agent teams work".
 
   This skill provides an overview of agent teams, when to use them vs subagents, and routes to focused skills for team blueprints and coordination patterns.
-version: 0.11.0
+version: 0.12.0
 ---
 
 # Agent Teams for Application Development
@@ -38,6 +38,23 @@ Agent teams are most effective when parallel exploration adds real value:
 | **Token cost** | Lower (results summarized back) | Higher (each teammate is a separate instance) |
 
 **Rule of thumb:** Use subagents for quick, focused workers. Use agent teams when teammates need to share findings, challenge each other, and coordinate independently.
+
+### When NOT to Use Teams
+
+Teams add ~40 coordination tool calls of overhead per team created (TaskCreate + TaskUpdate + SendMessage). Skip teams and use plan-then-implement when:
+- Fewer than 3 genuinely parallel workstreams
+- A single agent can hold all necessary context
+- The task is primarily sequential
+- Total expected work is under ~30 minutes
+
+### Team Sizing Guidelines
+
+| Constraint | Guideline |
+|------------|-----------|
+| Teams per session | Max 2 (sessions with 7+ teams spent ~50% of turns on coordination) |
+| Tasks per team | Cap at 8 (beyond this, TaskUpdate churn dominates) |
+| Agents per team | 3-4 preferred (lead + 2-3 specialists) |
+| Messages | Batch instructions into one SendMessage per teammate |
 
 ## Prerequisites
 

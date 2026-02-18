@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "design team", "planning team", "roadmap team", "team blueprint", "team template", or says "spawn a team for [development phase]".
 
   Provides 8 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, Frontend Design, Planning & Roadmapping, Productivity Systems, and Brainstorming & Ideation.
-version: 0.11.0
+version: 0.12.0
 ---
 
 # Agent Team Blueprints
@@ -762,6 +762,16 @@ These blueprints are starting points. Adapt them by:
 3. **Adding plan approval** — For risky changes, require teammates to plan before implementing
 4. **Enabling delegate mode** — Press Shift+Tab to keep the lead focused on coordination
 5. **Defining file boundaries** — Assign specific directories to avoid merge conflicts
+
+### Efficiency Guidelines
+
+Session analysis shows coordination overhead scales non-linearly. Keep teams lean:
+
+- **Cap tasks at 8 per team** — Beyond this, TaskUpdate churn dominates execution
+- **Prefer 3-4 agents** — Larger teams increase SendMessage overhead without proportional output gains
+- **Max 2 teams per session** — Chain sessions for complex multi-team pipelines instead
+- **Batch instructions** — One detailed SendMessage per teammate beats multiple short follow-ups
+- **Skip teams for small work** — If total implementation is under ~30 minutes or fewer than 3 parallel tracks, use plan-then-implement instead
 
 ## Choosing the Right Blueprint
 
