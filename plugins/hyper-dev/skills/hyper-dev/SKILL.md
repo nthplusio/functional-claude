@@ -1,25 +1,12 @@
 ---
 name: hyper-dev
 description: This skill should be used when the user asks to "configure Hyper", "hyper config", "hyper.js", "customize Hyper terminal", "set up hyper", or mentions general Hyper configuration questions. For specific topics, focused skills may be more appropriate.
-version: 0.3.6
+version: 0.3.7
 ---
 
 # Hyper Development
 
 Configure and customize Hyper terminal and develop plugins using JavaScript, React, and Redux.
-
-## First Action: Check Cache Files
-
-The SessionStart hook automatically detects Hyper version and refreshes caches. Check these files:
-
-1. **Version info:** `${CLAUDE_PLUGIN_ROOT}/.cache/hyper-config.json`
-   - Detected Hyper version, config path, installed plugins
-
-2. **Learnings:** `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md`
-   - Accumulated patterns and documentation
-
-3. **Plugin ecosystem:** `${CLAUDE_PLUGIN_ROOT}/.cache/plugin-ecosystem.json`
-   - Top 25 popular plugins (weekly refresh)
 
 ## Before Starting: Backup Configuration
 
@@ -131,8 +118,7 @@ See `references/semantic-retrieval.md` for detailed source selection guide.
 ## Reference Files
 
 - **`references/plugin-development.md`** - Complete plugin API reference
-- **`references/cache-management.md`** - Cache system documentation
-- **`references/semantic-retrieval.md`** - When to use Context7 vs local cache vs WebFetch
+- **`references/semantic-retrieval.md`** - When to use Context7 vs WebFetch for documentation
 
 ## Example Files
 

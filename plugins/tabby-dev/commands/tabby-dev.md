@@ -10,9 +10,8 @@ Provide the user with Tabby terminal development guidance based on the current c
 
 ## Instructions
 
-1. Read `${CLAUDE_PLUGIN_ROOT}/.cache/tabby-config.json` for current installation detection status
-2. Read `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md` for cached documentation and accumulated learnings
-3. Read `${CLAUDE_PLUGIN_ROOT}/skills/tabby-dev/SKILL.md` for the full overview skill content
+1. Read `${CLAUDE_PLUGIN_ROOT}/skills/tabby-dev/SKILL.md` for the full overview skill content
+2. Read reference files in `${CLAUDE_PLUGIN_ROOT}/skills/tabby-dev/references/` as needed
 
 ## Topic Routing
 
@@ -26,8 +25,7 @@ If `$ARGUMENTS` specifies a topic, focus on that area:
 | `serial` | Serial port connections - use tabby-connections skill knowledge |
 | `connections` | All connection types - use tabby-connections skill knowledge |
 | `plugins` | Plugin discovery and development - use tabby-plugins skill knowledge |
-| `status` | Show current installation detection from the config cache |
-| `cache` | Show cache freshness and learnings summary |
+| `status` | Show current installation detection |
 
 ## Default Overview (no arguments)
 

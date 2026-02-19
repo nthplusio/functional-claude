@@ -1,7 +1,7 @@
 ---
 name: prisma-dev
 description: This skill should be used when the user asks to "configure prisma", "prisma config", "set up prisma", "prisma orm", "work with prisma", or mentions general Prisma ORM questions. For specific topics, focused skills may be more appropriate.
-version: 0.1.6
+version: 0.1.7
 ---
 
 # Prisma Development
@@ -18,15 +18,6 @@ Before proceeding with any Prisma work, verify the repository has been analyzed:
 2. Check if schema location and model structure are cached
 3. If missing or stale, run the prisma-recon skill to analyze the repository
 4. Use cached information to provide context-aware guidance
-
-### 2. Check Reference Cache
-
-Check if the cache needs refreshing:
-
-1. Read `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md` (if it exists)
-2. Check the `last_refresh` date in the YAML frontmatter
-3. If older than 7 days or missing, consider refreshing documentation cache
-4. Preserve any existing Learnings section when refreshing
 
 ## Prisma Project Structure
 

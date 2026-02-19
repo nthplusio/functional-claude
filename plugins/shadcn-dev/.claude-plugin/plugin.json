@@ -1,5 +1,5 @@
 {
   "name": "shadcn-dev",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "shadcn/ui and Tailwind CSS v4 development workflows for React applications. Covers component usage, form building with react-hook-form and zod, theming, data tables with TanStack Table, and Tailwind CSS v4 migration"
 }

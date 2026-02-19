@@ -1,5 +1,5 @@
 {
-  "description": "shadcn-dev hooks - cache refresh, backup verification, and learnings capture",
+  "description": "shadcn-dev hooks - setup detection, backup verification, and learnings capture",
   "hooks": {
     "PreToolUse": [
       {

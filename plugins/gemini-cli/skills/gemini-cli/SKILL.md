@@ -1,7 +1,7 @@
 ---
 name: gemini-cli
 description: This skill should be used when the user asks to "use gemini", "gemini cli", "configure gemini", "set up gemini", "gemini review", "gemini images", or mentions general Gemini CLI usage. For specific topics, focused skills may be more appropriate.
-version: 0.6.2
+version: 0.6.3
 ---
 
 # Gemini CLI Development
@@ -201,14 +201,6 @@ For debugging issues, the gemini-troubleshoot agent can diagnose common problems
 - Authentication failures
 - Extension issues
 - Model availability
-
-## Documentation Cache
-
-The plugin automatically maintains a documentation cache at `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md`. This cache is refreshed automatically via SessionStart hook when stale (>7 days) or missing.
-
-**To use cached documentation:** Read the cache file for up-to-date CLI options and patterns.
-
-**Cache sources are defined in:** `${CLAUDE_PLUGIN_ROOT}/.cache/sources.json`
 
 ## Resources
 

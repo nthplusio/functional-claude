@@ -9,10 +9,8 @@ This guide explains when and how to use different documentation sources for Hype
 | Terminal rendering, buffer API | Context7 (xterm.js) | `mcp__plugin_context7_context7__query-docs` |
 | Electron window, IPC, native features | Context7 (Electron) | `mcp__plugin_context7_context7__query-docs` |
 | React components, hooks, patterns | Context7 (React) | `mcp__plugin_context7_context7__query-docs` |
-| Hyper config, .hyper.js syntax | Local cache | Read `.cache/learnings.md` |
-| Hyper plugin API quick reference | Local cache | Read `.cache/learnings.md` |
-| Hyper version info, installed plugins | Local cache | Read `.cache/hyper-config.json` |
-| Popular plugins, ecosystem | Local cache | Read `.cache/plugin-ecosystem.json` |
+| Hyper config, .hyper.js syntax | Static references | Read `references/plugin-development.md` |
+| Hyper plugin API quick reference | Static references | Read `references/plugin-development.md` |
 | Release notes, breaking changes | WebFetch | Fetch from GitHub |
 | Plugin store, latest plugins | WebFetch | Fetch from hyper.is |
 
@@ -81,44 +79,6 @@ Parameters:
 - "Component lifecycle methods class components"
 - "useEffect cleanup patterns"
 
-## Local Cache Sources
-
-### learnings.md
-
-Contains:
-- Fetched documentation summaries
-- Session learnings (successful patterns, mistakes)
-- Plugin development patterns
-
-**When to use:** General Hyper configuration questions, accumulated knowledge.
-
-### hyper-config.json
-
-Contains:
-- Detected Hyper version
-- Config file location
-- Installed plugins list
-
-**When to use:** Version-specific questions, checking current setup.
-
-### plugin-ecosystem.json
-
-Contains:
-- Top 25 popular plugins
-- Download counts
-- Plugin patterns and exports
-
-**When to use:** Plugin recommendations, ecosystem exploration.
-
-### docs-index.json
-
-Contains:
-- Documentation source URLs
-- Last refresh timestamps
-- Source types (webfetch vs context7)
-
-**When to use:** Checking documentation freshness.
-
 ## WebFetch Sources
 
 ### GitHub Releases
@@ -163,16 +123,13 @@ Question about Hyper?
 │  └─ Use Context7: /facebook/react
 │
 ├─ Plugin API/exports?
-│  └─ Read local cache: learnings.md (Reference Cache section)
+│  └─ Read references/plugin-development.md
 │
 ├─ Config syntax/patterns?
-│  └─ Read local cache: learnings.md
-│
-├─ Version/installation?
-│  └─ Read local cache: hyper-config.json
+│  └─ Read references/plugin-development.md
 │
 ├─ Plugin recommendations?
-│  └─ Read local cache: plugin-ecosystem.json
+│  └─ Use hyper-ecosystem skill + npm/WebFetch
 │
 ├─ Release notes/changelog?
 │  └─ WebFetch: GitHub releases
@@ -180,24 +137,3 @@ Question about Hyper?
 └─ Latest plugins/store?
    └─ WebFetch: hyper.is/plugins
 ```
-
-## Caching Strategy
-
-| Source | Cache Duration | Refresh Trigger |
-|--------|---------------|-----------------|
-| Context7 (xterm.js, Electron, React) | 7 days | Automatic (via Context7) |
-| learnings.md (Reference Cache) | 24 hours | SessionStart hook |
-| hyper-config.json | 24 hours | SessionStart hook |
-| Plugin ecosystem | 7 days | SessionStart hook |
-| WebFetch | Per-session | Manual request |
-
-## Example: Answering a Complex Question
-
-**Question:** "How do I add a custom search addon to Hyper?"
-
-**Resolution:**
-
-1. **Check local cache** for existing search patterns in `learnings.md`
-2. **Query Context7** for xterm.js search addon: `/xtermjs/xterm.js` with query "search addon implementation"
-3. **Check ecosystem** for existing search plugins in `plugin-ecosystem.json`
-4. **Combine** knowledge into implementation guidance

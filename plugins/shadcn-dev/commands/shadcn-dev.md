@@ -10,9 +10,8 @@ Provide the user with shadcn/ui development guidance based on the current projec
 
 ## Instructions
 
-1. Read `${CLAUDE_PLUGIN_ROOT}/.cache/shadcn-config.json` for current project detection status
-2. Read `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md` for cached documentation and accumulated learnings
-3. Read `${CLAUDE_PLUGIN_ROOT}/skills/shadcn-dev/SKILL.md` for the full overview skill content
+1. Read `${CLAUDE_PLUGIN_ROOT}/skills/shadcn-dev/SKILL.md` for the full overview skill content
+2. Read reference files in `${CLAUDE_PLUGIN_ROOT}/skills/shadcn-dev/references/` as needed
 
 ## Topic Routing
 
@@ -26,8 +25,7 @@ If `$ARGUMENTS` specifies a topic, focus on that area:
 | `theming` | Theme and dark mode setup - use shadcn-theming skill knowledge |
 | `tables` | Data table setup with TanStack Table - use shadcn-data-tables skill knowledge |
 | `tailwind` | Tailwind CSS v4 configuration - use tailwindv4 skill knowledge |
-| `status` | Show current project detection from the config cache |
-| `cache` | Show cache freshness and learnings summary |
+| `status` | Show current project detection from components.json |
 
 ## Default Overview (no arguments)
 

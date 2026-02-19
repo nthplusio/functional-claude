@@ -1,7 +1,7 @@
 ---
 name: opentui-keyboard
 description: This skill should be used when the user asks about OpenTUI keyboard handling, shortcuts, key events, focus management, or input handling in TUIs.
-version: 0.1.4
+version: 0.1.5
 ---
 
 # OpenTUI Keyboard Input Handling

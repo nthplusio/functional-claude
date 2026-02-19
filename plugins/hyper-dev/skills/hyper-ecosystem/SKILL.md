@@ -1,25 +1,12 @@
 ---
 name: hyper-ecosystem
 description: This skill should be used when the user asks about "popular hyper plugins", "best hyper plugins", "find hyper plugin", "plugin recommendations", "hyper plugin examples", "what plugins", or mentions discovering and evaluating Hyper terminal plugins.
-version: 0.3.6
+version: 0.3.7
 ---
 
 # Hyper Plugin Ecosystem
 
 Discover, evaluate, and use popular Hyper terminal plugins.
-
-## First Action: Check Plugin Cache
-
-Read the cached plugin ecosystem data:
-
-```
-${CLAUDE_PLUGIN_ROOT}/.cache/plugin-ecosystem.json
-```
-
-This file is automatically refreshed weekly by the SessionStart hook and contains:
-- Top 25 most popular Hyper plugins
-- Download counts and patterns
-- Key exports for each plugin
 
 ## Popular Plugin Categories
 
@@ -123,17 +110,6 @@ Common conflicts:
 For plugin development guidance, use the **hyper-plugins** skill.
 
 For theme creation, use the **hyper-themes** skill.
-
-## Refreshing the Cache
-
-The plugin ecosystem cache refreshes automatically every 7 days.
-
-To force a refresh, delete the cache file:
-```bash
-rm "${CLAUDE_PLUGIN_ROOT}/.cache/plugin-ecosystem.json"
-```
-
-Then start a new Claude session.
 
 ## Example: Finding a Plugin
 

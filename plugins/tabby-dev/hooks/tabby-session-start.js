@@ -1,16 +1,14 @@
 #!/usr/bin/env node
 // tabby-session-start.js
-// SessionStart hook that detects Tabby version and refreshes cache
+// SessionStart hook that detects Tabby version and connection profiles
 //
 // Input: JSON with session info on stdin
-// Output: JSON with systemMessage containing version and cache status
+// Output: JSON with systemMessage containing version info
 
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
-// Read JSON input from stdin
 let input = '';
 
 process.stdin.setEncoding('utf8');
@@ -18,60 +16,13 @@ process.stdin.on('data', chunk => {
   input += chunk;
 });
 
-process.stdin.on('end', async () => {
+process.stdin.on('end', () => {
   try {
-    const data = JSON.parse(input || '{}');
-    const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT;
-
-    if (!pluginRoot) {
-      console.log(JSON.stringify({ continue: true }));
-      process.exit(0);
-    }
-
-    const cacheDir = path.join(pluginRoot, '.cache');
-    const configCachePath = path.join(cacheDir, 'tabby-config.json');
-
-    // Ensure cache directory exists
-    if (!fs.existsSync(cacheDir)) {
-      fs.mkdirSync(cacheDir, { recursive: true });
-    }
-
     // Detect Tabby version and installation
     const tabbyInfo = detectTabbyVersion();
 
-    // Check if we have a cached config
-    let cachedConfig = null;
-    if (fs.existsSync(configCachePath)) {
-      try {
-        cachedConfig = JSON.parse(fs.readFileSync(configCachePath, 'utf8'));
-      } catch (e) {
-        // Ignore parse errors
-      }
-    }
-
-    // Check if version changed or cache is stale (>24h)
-    const now = new Date();
-    const today = now.toISOString().split('T')[0];
-    const needsConfigRefresh = !cachedConfig ||
-      cachedConfig.detected_version !== tabbyInfo.version ||
-      !cachedConfig.detection_timestamp ||
-      (now - new Date(cachedConfig.detection_timestamp)) > 24 * 60 * 60 * 1000;
-
     // Count SSH and serial connections from config
     const connections = countConnections(tabbyInfo.config_path);
-
-    // Update config cache
-    const newConfig = {
-      detected_version: tabbyInfo.version,
-      detection_method: tabbyInfo.method,
-      detection_timestamp: now.toISOString(),
-      config_path: tabbyInfo.config_path,
-      ssh_connections: connections.ssh,
-      serial_connections: connections.serial,
-      installed_plugins: connections.plugins
-    };
-
-    fs.writeFileSync(configCachePath, JSON.stringify(newConfig, null, 2));
 
     // Build summary message
     const parts = [];
@@ -85,10 +36,9 @@ process.stdin.on('end', async () => {
         continue: true,
         systemMessage: '[tabby-dev] No Tabby config found'
       }));
-      process.exit(0);
+      return;
     }
 
-    // Only mention connections if there are any
     if (connections.ssh > 0) {
       const word = connections.ssh === 1 ? 'SSH profile' : 'SSH profiles';
       parts.push(`${connections.ssh} ${word}`);
@@ -98,20 +48,16 @@ process.stdin.on('end', async () => {
       parts.push(`${connections.serial} ${word}`);
     }
 
-    let systemMessage = `[tabby-dev] ${parts.join(', ')}`;
-
     console.log(JSON.stringify({
       continue: true,
-      systemMessage: systemMessage
+      systemMessage: `[tabby-dev] ${parts.join(', ')}`
     }));
 
   } catch (err) {
-    // On any error, continue without blocking
     console.log(JSON.stringify({ continue: true }));
   }
 });
 
-// Handle stdin errors gracefully
 process.stdin.on('error', () => {
   console.log(JSON.stringify({ continue: true }));
 });
@@ -137,7 +83,7 @@ function detectTabbyVersion() {
 
   // Method 1: Try CLI command
   try {
-    const output = execSync('tabby --version', {
+    const output = execFileSync('tabby', ['--version'], {
       encoding: 'utf8',
       timeout: 5000,
       stdio: ['pipe', 'pipe', 'pipe']
@@ -181,7 +127,6 @@ function detectTabbyVersion() {
     const appDataLocal = process.env.LOCALAPPDATA || '';
     const programFiles = process.env.PROGRAMFILES || 'C:\\Program Files';
 
-    // Check common Windows installation paths
     const tabbyDirs = [
       path.join(appDataLocal, 'Programs', 'Tabby'),
       path.join(programFiles, 'Tabby')
@@ -190,7 +135,6 @@ function detectTabbyVersion() {
     for (const dir of tabbyDirs) {
       if (fs.existsSync(dir)) {
         try {
-          // Try to find version from package.json in resources
           const pkgPath = path.join(dir, 'resources', 'app', 'package.json');
           if (fs.existsSync(pkgPath)) {
             const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
@@ -250,7 +194,6 @@ function getTabbyConfigPaths() {
       path.join(home, '.config', 'tabby', 'config.yaml')
     ];
   } else {
-    // Linux
     const configHome = process.env.XDG_CONFIG_HOME || path.join(home, '.config');
     return [
       path.join(configHome, 'tabby', 'config.yaml'),
@@ -272,23 +215,18 @@ function countConnections(configPath) {
   try {
     const content = fs.readFileSync(configPath, 'utf8');
 
-    // Count SSH connections (look for host: entries under ssh.connections)
-    const sshMatches = content.match(/^\s+-\s+name:\s+/gm);
-    // More precise: count entries in ssh connections section
     const sshSection = content.match(/ssh:\s*\n\s+connections:\s*\n([\s\S]*?)(?=\n\w|\n$|$)/);
     if (sshSection) {
       const sshNames = sshSection[1].match(/^\s+-\s*name:/gm);
       result.ssh = sshNames ? sshNames.length : 0;
     }
 
-    // Count serial connections
     const serialSection = content.match(/serial:\s*\n\s+connections:\s*\n([\s\S]*?)(?=\n\w|\n$|$)/);
     if (serialSection) {
       const serialNames = serialSection[1].match(/^\s+-\s*name:/gm);
       result.serial = serialNames ? serialNames.length : 0;
     }
 
-    // Extract plugin names
     const pluginsSection = content.match(/plugins:\s*\n([\s\S]*?)(?=\n\w|\n$|$)/);
     if (pluginsSection) {
       const pluginNames = pluginsSection[1].matchAll(/name:\s*["']?([^"'\n]+)["']?/g);

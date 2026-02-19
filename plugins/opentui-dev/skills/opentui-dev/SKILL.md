@@ -1,20 +1,12 @@
 ---
 name: opentui-dev
 description: This skill should be used when the user asks to "build a TUI", "create terminal UI", "OpenTUI", "opentui", "terminal interface", or needs guidance on TUI development with TypeScript/Bun. Covers Core imperative API, React reconciler, and Solid reconciler.
-version: 0.1.4
+version: 0.1.5
 ---
 
 # OpenTUI Development
 
 Build terminal user interfaces with OpenTUI - a TypeScript library for creating modern TUIs with Bun.
-
-## Documentation Cache
-
-The plugin automatically maintains a documentation cache at `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md`. This cache is refreshed automatically via SessionStart hook when stale (>7 days) or missing.
-
-**To use cached documentation:** Read the cache file for up-to-date component APIs and patterns.
-
-**Cache sources are defined in:** `${CLAUDE_PLUGIN_ROOT}/.cache/sources.json`
 
 ## Critical Rules
 
@@ -143,7 +135,6 @@ Detailed documentation cached in `./references/`:
 | `keyboard-reference.md` | Keyboard input handling |
 | `animation-reference.md` | Timeline animations and easing |
 | `testing-reference.md` | Test renderer and snapshots |
-| `cache-management.md` | Cache refresh strategy and learnings capture |
 
 ## Troubleshooting
 

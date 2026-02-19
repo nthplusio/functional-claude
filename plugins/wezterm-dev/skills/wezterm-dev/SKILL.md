@@ -1,21 +1,12 @@
 ---
 name: wezterm-dev
 description: This skill should be used when the user asks to "configure WezTerm", "wezterm config", "customize terminal", "set up wezterm", "wezterm lua", or mentions general WezTerm configuration questions. For specific topics, focused skills may be more appropriate.
-version: 0.7.11
+version: 0.7.12
 ---
 
 # WezTerm Development
 
 Configure and customize WezTerm terminal emulator with Lua, focusing on Claude Code workflows.
-
-## First Action: Check Reference Cache
-
-Before proceeding, check if the cache needs refreshing:
-
-1. Read `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md` (if it exists)
-2. Check the `last_refresh` date in the YAML frontmatter
-3. If missing or stale, refresh using the terminal-cache skill pattern
-4. Preserve any existing Learnings section when refreshing
 
 ## Before Starting: Backup Configuration
 
@@ -80,7 +71,6 @@ For debugging issues, the wezterm-troubleshoot agent can autonomously diagnose a
 - **`references/status-bar.md`** - Right status bar with git branch
 - **`references/nerd-font-icons.md`** - Comprehensive icon reference
 - **`references/agent-deck.md`** - Agent Deck configuration details
-- **`references/cache-management.md`** - Cache system documentation
 
 ## Example Files
 

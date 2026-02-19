@@ -17,22 +17,8 @@ process.stdin.on('data', chunk => {
   input += chunk;
 });
 
-process.stdin.on('end', async () => {
+process.stdin.on('end', () => {
   try {
-    const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT;
-
-    if (!pluginRoot) {
-      console.log(JSON.stringify({ continue: true }));
-      process.exit(0);
-    }
-
-    const cacheDir = path.join(pluginRoot, '.cache');
-
-    // Ensure cache directory exists
-    if (!fs.existsSync(cacheDir)) {
-      fs.mkdirSync(cacheDir, { recursive: true });
-    }
-
     // 1. Check if Gemini CLI is installed
     const geminiInfo = detectGeminiCli();
 
@@ -42,30 +28,12 @@ process.stdin.on('end', async () => {
     // 3. Check if nano-banana extension is installed
     const nanoBananaInfo = checkNanoBanana();
 
-    // Check for previous cache refresh failure
-    let cacheWarning = null;
-    const cacheStatusPath = path.join(cacheDir, 'cache-status.json');
-    if (fs.existsSync(cacheStatusPath)) {
-      try {
-        const cacheStatus = JSON.parse(fs.readFileSync(cacheStatusPath, 'utf8'));
-        if (cacheStatus.status === 'error') {
-          cacheWarning = cacheStatus.error || 'unknown error';
-        }
-      } catch (e) {
-        // Ignore parse errors
-      }
-    }
-
-    // 5. Check Gemini CLI settings for Gemini 3 Pro support
+    // 4. Check Gemini CLI settings for Gemini 3 Pro support
     const settingsInfo = checkSettings();
 
     // Build status message
     const statusParts = [];
     const warnings = [];
-
-    if (cacheWarning) {
-      warnings.push(`Cache refresh failed: ${cacheWarning}`);
-    }
 
     if (!settingsInfo.previewFeatures) {
       warnings.push('Gemini 3 Pro requires Preview Features enabled. Run `gemini` then `/settings` and enable Preview Features, or add `"general": { "previewFeatures": true }` to ~/.gemini/settings.json');
@@ -174,7 +142,6 @@ function detectGeminiCli() {
 function checkAuth() {
   const result = { authenticated: false, method: null };
 
-  // Check environment variables (in priority order)
   const envVars = [
     { name: 'GEMINI_API_KEY', label: 'GEMINI_API_KEY' },
     { name: 'GOOGLE_API_KEY', label: 'GOOGLE_API_KEY' },
@@ -252,7 +219,6 @@ function checkSettings() {
 function checkNanoBanana() {
   const result = { installed: false };
 
-  // Check Gemini extensions directory
   const home = process.env.HOME || process.env.USERPROFILE || '';
   const extensionPaths = [
     path.join(home, '.gemini', 'extensions', 'nanobanana'),

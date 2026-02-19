@@ -1,22 +1,12 @@
 ---
 name: tabby-dev
 description: This skill should be used when the user asks to "configure Tabby", "tabby config", "tabby terminal", "customize Tabby", "set up tabby", or mentions general Tabby terminal configuration questions. For specific topics, focused skills may be more appropriate.
-version: 0.1.2
+version: 0.1.3
 ---
 
 # Tabby Development
 
 Configure and customize Tabby terminal emulator, manage SSH/serial connections, and develop plugins.
-
-## First Action: Check Cache Files
-
-The SessionStart hook automatically detects Tabby version and refreshes caches. Check these files:
-
-1. **Version info:** `${CLAUDE_PLUGIN_ROOT}/.cache/tabby-config.json`
-   - Detected Tabby version, config path, installed plugins
-
-2. **Learnings:** `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md`
-   - Accumulated patterns and documentation
 
 ## Before Starting: Backup Configuration
 
@@ -133,14 +123,6 @@ Tool: mcp__plugin_context7_context7__query-docs
   libraryId: /websites/electronjs
   query: [your electron question]
 ```
-
-## Documentation Cache
-
-The plugin automatically maintains a documentation cache at `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md`. This cache is refreshed automatically via SessionStart hook when stale (>7 days) or missing.
-
-**To use cached documentation:** Read the cache file for up-to-date component APIs and patterns.
-
-**Cache sources are defined in:** `${CLAUDE_PLUGIN_ROOT}/.cache/sources.json`
 
 ## Resources
 

@@ -3,7 +3,7 @@ name: agent-development
 description: This skill should be used when the user asks to "create an agent",
   "write AGENT.md", "subagent", "specialized agent", "autonomous agent",
   "agent tools", or needs guidance on building agents with specific tool access.
-version: 0.3.4
+version: 0.3.5
 ---
 
 # Agent Development

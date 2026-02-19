@@ -1,5 +1,5 @@
 {
   "name": "wezterm-dev",
-  "version": "0.7.11",
+  "version": "0.7.12",
   "description": "WezTerm terminal configuration and customization for Claude Code workflows. Includes tmux-style keybindings, visual effects (opacity, blur, themes), custom tab bars with Nerd Font icons, and Agent Deck for monitoring Claude Code agents"
 }

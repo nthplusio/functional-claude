@@ -1,7 +1,7 @@
 ---
 name: tabby-plugins
 description: This skill should be used when the user asks to "tabby plugin", "install tabby plugin", "tabby extension", "develop tabby plugin", "tabby plugin api", "tabby marketplace", or mentions discovering, installing, or developing plugins for Tabby terminal.
-version: 0.1.2
+version: 0.1.3
 ---
 
 # Tabby Plugins

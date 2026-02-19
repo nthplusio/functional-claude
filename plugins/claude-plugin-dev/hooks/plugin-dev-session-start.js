@@ -1,18 +1,13 @@
 #!/usr/bin/env node
 // plugin-dev-session-start.js
-// SessionStart hook that detects plugin development context and spawns background cache refresh
+// SessionStart hook that detects plugin development context
 //
 // Input: JSON with session info on stdin
 // Output: JSON with systemMessage containing status
-//
-// This script outputs JSON and exits immediately. Cache refresh runs in a detached
-// background process (plugin-dev-cache-refresh.js) to avoid blocking session startup.
 
 const fs = require('fs');
 const path = require('path');
-const { spawn } = require('child_process');
 
-// Read JSON input from stdin
 let input = '';
 
 process.stdin.setEncoding('utf8');
@@ -24,101 +19,11 @@ process.stdin.on('end', () => {
   try {
     const data = JSON.parse(input || '{}');
     const projectDir = data.cwd || process.cwd();
-    const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT;
-
-    if (!pluginRoot) {
-      console.log(JSON.stringify({ continue: true }));
-      return;
-    }
-
-    const cacheDir = path.join(pluginRoot, '.cache');
-    const configCachePath = path.join(cacheDir, 'plugin-dev-config.json');
-    const docsIndexPath = path.join(cacheDir, 'docs-index.json');
-    const learningsPath = path.join(cacheDir, 'learnings.md');
-
-    // Ensure cache directory exists
-    if (!fs.existsSync(cacheDir)) {
-      fs.mkdirSync(cacheDir, { recursive: true });
-    }
 
     // Detect plugin development context
     const pluginInfo = detectPluginContext(projectDir);
 
-    // Check if we have a cached config
-    let cachedConfig = null;
-    if (fs.existsSync(configCachePath)) {
-      try {
-        cachedConfig = JSON.parse(fs.readFileSync(configCachePath, 'utf8'));
-      } catch (e) {
-        // Ignore parse errors
-      }
-    }
-
-    // Check if config changed or cache is stale (>24h)
-    const now = new Date();
-    const today = now.toISOString().split('T')[0];
-    const needsRefresh = !cachedConfig ||
-      !cachedConfig.detection_timestamp ||
-      (now - new Date(cachedConfig.detection_timestamp)) > 24 * 60 * 60 * 1000;
-
-    // Update config cache
-    const newConfig = {
-      is_plugin_project: pluginInfo.isPluginProject,
-      is_marketplace: pluginInfo.isMarketplace,
-      plugin_count: pluginInfo.pluginCount,
-      detection_timestamp: now.toISOString()
-    };
-
-    fs.writeFileSync(configCachePath, JSON.stringify(newConfig, null, 2));
-
-    // Check docs index for staleness
-    let docsNeedRefresh = true;
-    if (fs.existsSync(docsIndexPath)) {
-      try {
-        const docsIndex = JSON.parse(fs.readFileSync(docsIndexPath, 'utf8'));
-        if (docsIndex.last_refresh === today) {
-          docsNeedRefresh = false;
-        }
-      } catch (e) {
-        // Needs refresh
-      }
-    }
-
-    // Spawn background cache refresh if needed (non-blocking)
-    if (docsNeedRefresh) {
-      // Update docs index immediately
-      fs.writeFileSync(docsIndexPath, JSON.stringify({
-        last_refresh: today,
-        sources: [
-          { name: 'claude-code-plugins', url: 'https://code.claude.com/docs/en/plugins-reference', type: 'webfetch' }
-        ]
-      }, null, 2));
-
-      // Spawn detached background process for slow cache refresh
-      const backgroundScript = path.join(__dirname, 'plugin-dev-cache-refresh.js');
-      const child = spawn(process.execPath, [backgroundScript, cacheDir, today, learningsPath], {
-        detached: true,
-        stdio: 'ignore',
-        windowsHide: true
-      });
-      child.unref(); // Allow parent to exit independently
-    }
-
-    // Check for previous cache refresh failure
-    const cacheStatusPath = path.join(cacheDir, 'cache-status.json');
-    let cacheWarning = null;
-    if (fs.existsSync(cacheStatusPath)) {
-      try {
-        const cacheStatus = JSON.parse(fs.readFileSync(cacheStatusPath, 'utf8'));
-        if (cacheStatus.status === 'error') {
-          cacheWarning = cacheStatus.error || 'unknown error';
-        }
-      } catch (e) {
-        // Ignore parse errors
-      }
-    }
-
-    // Build summary message - positive framing, minimal noise
+    // Build summary message
     const parts = [];
 
     if (pluginInfo.isMarketplace) {
@@ -129,26 +34,16 @@ process.stdin.on('end', () => {
       parts.push('Plugin dev ready');
     }
 
-    // Build system message
-    let systemMessage = `[claude-plugin-dev] ${parts.join(', ')}`;
-
-    if (cacheWarning) {
-      systemMessage += `\n[claude-plugin-dev] Cache refresh failed: ${cacheWarning}`;
-    }
-
-    // Output response immediately and exit
     console.log(JSON.stringify({
       continue: true,
-      systemMessage: systemMessage
+      systemMessage: `[claude-plugin-dev] ${parts.join(', ')}`
     }));
 
   } catch (err) {
-    // On any error, continue without blocking
     console.log(JSON.stringify({ continue: true }));
   }
 });
 
-// Handle stdin errors gracefully
 process.stdin.on('error', () => {
   console.log(JSON.stringify({ continue: true }));
 });

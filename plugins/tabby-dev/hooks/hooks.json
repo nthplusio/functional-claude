@@ -1,5 +1,5 @@
 {
-  "description": "Tabby development hooks - version detection, backup verification, and learnings capture",
+  "description": "Tabby development hooks - version detection and backup verification",
   "hooks": {
     "SessionStart": [
       {

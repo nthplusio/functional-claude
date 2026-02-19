@@ -48,25 +48,7 @@ You are an autonomous development agent for building features with shadcn/ui and
 
 ## Before You Start
 
-### 1. Read Project Context
-
-Read the cached project detection to understand the current setup:
-
-```
-${CLAUDE_PLUGIN_ROOT}/.cache/shadcn-config.json
-```
-
-This tells you: detected style, installed components, components path, and config path.
-
-### 2. Read Cached Documentation
-
-Read the documentation cache for up-to-date reference material:
-
-```
-${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md
-```
-
-### 3. Analyze the Task
+### 1. Analyze the Task
 
 Break the user's request into discrete steps. Identify which skill areas are involved:
 

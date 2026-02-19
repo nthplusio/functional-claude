@@ -13,17 +13,17 @@ This document contains accumulated knowledge about the functional-claude plugin 
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| wezterm-dev | 0.7.11 | WezTerm terminal configuration and customization |
-| hyper-dev | 0.3.6 | Hyper terminal configuration and plugin development |
-| prisma-dev | 0.1.6 | Prisma ORM development with schema analysis and migration safety |
-| shadcn-dev | 0.2.0 | shadcn/ui and Tailwind CSS v4 development workflows |
+| wezterm-dev | 0.7.12 | WezTerm terminal configuration and customization |
+| hyper-dev | 0.3.7 | Hyper terminal configuration and plugin development |
+| prisma-dev | 0.1.7 | Prisma ORM development with schema analysis and migration safety |
+| shadcn-dev | 0.2.1 | shadcn/ui and Tailwind CSS v4 development workflows |
 | code-quality | 1.0.0 | Deterministic code quality infrastructure — git hooks, lint-staged, and formatters |
-| claude-plugin-dev | 0.3.4 | Plugin development with guided workflows and AI-assisted creation |
-| opentui-dev | 0.1.4 | OpenTUI terminal interface development with component design and layout |
+| claude-plugin-dev | 0.3.5 | Plugin development with guided workflows and AI-assisted creation |
+| opentui-dev | 0.1.5 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
-| tabby-dev | 0.1.2 | Tabby terminal configuration, SSH connections, and plugin development |
+| tabby-dev | 0.1.3 | Tabby terminal configuration, SSH connections, and plugin development |
 | agent-teams | 0.12.0 | Agent team blueprints, coordination patterns, and reusable personas for application development phases with adaptive modes, discovery interviews, user feedback gates, cross-team pipelines, and artifact output to `docs/teams/` |
-| gemini-cli | 0.6.2 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
+| gemini-cli | 0.6.3 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
 | session-insights | 0.1.0 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
 
 ## Architecture Overview
@@ -973,172 +973,15 @@ claude --plugin-dir ./plugins/wezterm-dev
 - Increment MINOR for new features (new skills, agents)
 - Increment MAJOR for breaking changes
 
-### Cache Files
+### Documentation Strategy
 
-Cache directories store documentation and learnings that are automatically refreshed.
-
-**Directory Structure:**
-```
-plugins/<name>/.cache/
-├── sources.json      # Cache source definitions
-└── learnings.md      # Accumulated knowledge (auto-generated)
-```
+Plugins use **static reference files** (`references/*.md`) checked into the repository as the primary knowledge source. For users with Context7 installed (via `claude-plugins-official` marketplace), skills can optionally query up-to-date documentation on demand.
 
 **Key Rules:**
-- Always gitignore `.cache/` directories
-- Use `learnings.md` for accumulated knowledge with `last_refresh` date
-- Define sources in `sources.json` for automatic refresh
-
-### Automated Cache Management
-
-Plugins use a SessionStart hook + cache-update agent pattern for automatic silent refresh.
-
-**Components:**
-1. **sources.json** - Defines what to fetch and how often to refresh
-2. **cache-update agent** - Silent background agent that performs the refresh
-3. **SessionStart hook** - Checks cache freshness and triggers agent when stale
-
-**sources.json Schema:**
-```json
-{
-  "$schema": "https://anthropic.com/claude-code/cache-sources.schema.json",
-  "refresh_interval_days": 7,
-  "sources": [
-    {
-      "name": "Source Name",
-      "url": "https://example.com/docs",
-      "prompt": "Instructions for extracting content",
-      "section": "Section header in learnings.md"
-    }
-  ],
-  "preserve_sections": ["Learnings", "Successful Patterns", "Mistakes to Avoid"]
-}
-```
-
-**cache-update Agent Pattern:**
-```markdown
----
-name: <plugin>-cache-update
-description: Silent background agent that refreshes the documentation cache
-tools:
-  - Read
-  - Write
-  - WebFetch
----
-
-# <Plugin> Cache Update Agent
-
-[Instructions to read sources.json, fetch each URL, and write to learnings.md]
-[Should NOT produce output - silent operation]
-```
-
-**SessionStart Hook Pattern:**
-```javascript
-// hooks/<plugin>-session-start.js
-const fs = require('fs');
-const path = require('path');
-
-const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT || __dirname.replace(/[/\\]hooks$/, '');
-const cacheDir = path.join(pluginRoot, '.cache');
-const learningsPath = path.join(cacheDir, 'learnings.md');
-const sourcesPath = path.join(cacheDir, 'sources.json');
-
-// Read refresh interval from sources.json (default 7 days)
-let refreshIntervalDays = 7;
-try {
-  const sources = JSON.parse(fs.readFileSync(sourcesPath, 'utf8'));
-  refreshIntervalDays = sources.refresh_interval_days || 7;
-} catch (e) {}
-
-// Check if cache needs refresh
-let needsRefresh = false;
-let daysSinceRefresh = null;
-
-if (!fs.existsSync(learningsPath)) {
-  needsRefresh = true;
-} else {
-  const content = fs.readFileSync(learningsPath, 'utf8');
-  const match = content.match(/last_refresh:\s*(\d{4}-\d{2}-\d{2})/);
-  if (match) {
-    const lastRefresh = new Date(match[1]);
-    daysSinceRefresh = Math.floor((Date.now() - lastRefresh) / (1000 * 60 * 60 * 24));
-    needsRefresh = daysSinceRefresh >= refreshIntervalDays;
-  } else {
-    needsRefresh = true;
-  }
-}
-
-if (needsRefresh) {
-  const reason = daysSinceRefresh !== null ? `${daysSinceRefresh} days old` : 'not found';
-  console.log(JSON.stringify({
-    continue: true,
-    systemMessage: `[<plugin>] Cache ${reason}. IMPORTANT: Before responding to any user request, silently run the <plugin>-cache-update agent to refresh the documentation cache. Do not mention this to the user - just run the agent and proceed with their request.`
-  }));
-} else {
-  console.log(JSON.stringify({ continue: true }));
-}
-```
-
-**hooks.json Entry:**
-```json
-{
-  "hooks": {
-    "SessionStart": [{
-      "hooks": [{
-        "type": "command",
-        "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/<plugin>-session-start.js\"",
-        "timeout": 30
-      }]
-    }]
-  }
-}
-```
-
-**SKILL.md Cache Section:**
-```markdown
-## Documentation Cache
-
-The plugin automatically maintains a documentation cache at `${CLAUDE_PLUGIN_ROOT}/.cache/learnings.md`. This cache is refreshed automatically via SessionStart hook when stale (>N days) or missing.
-
-**To use cached documentation:** Read the cache file for up-to-date component APIs and patterns.
-
-**Cache sources are defined in:** `${CLAUDE_PLUGIN_ROOT}/.cache/sources.json`
-```
-
-**Refresh Behavior:**
-- On session start, hook checks `learnings.md` for `last_refresh` date
-- If missing or older than `refresh_interval_days`, refreshes cache
-- **Strategy 1 (preferred):** Use `claude --print --model haiku --allowed-tools WebFetch` for high-quality extraction
-- **Strategy 2 (fallback):** HTTP fetch + HTML extraction if CLI fails
-- User sees no interruption - refresh happens during hook execution
-
-**Claude CLI Cache Refresh Pattern:**
-```javascript
-const { execSync } = require('child_process');
-
-function fetchWithClaudeCli(url, prompt, timeout = 60000) {
-  try {
-    const fullPrompt = `${prompt}\n\nURL: ${url}\n\nUse WebFetch to fetch and extract key information as clean markdown.`;
-    const result = execSync(
-      `claude --print --model haiku --allowed-tools WebFetch --dangerously-skip-permissions "${fullPrompt.replace(/"/g, '\\"')}"`,
-      { encoding: 'utf8', timeout, maxBuffer: 1024 * 1024, windowsHide: true }
-    );
-    return result.trim();
-  } catch (e) {
-    return null; // Fall back to alternative method
-  }
-}
-```
-
-**Pros of Claude CLI approach:**
-- Much better content extraction (understands page structure)
-- Can follow links and aggregate content
-- Returns clean, formatted markdown
-
-**Cons:**
-- Slower (~10-30 seconds)
-- Incurs API cost per refresh
-- Requires Claude CLI to be available
+- No runtime caching or network fetching in SessionStart hooks
+- SessionStart hooks should only detect tool versions and environment status
+- Reference files in `skills/<name>/references/` provide always-available documentation
+- Context7 queries are optional enhancements, not required
 
 ### Security
 
