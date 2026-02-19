@@ -18,7 +18,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | prisma-dev | 0.1.6 | Prisma ORM development with schema analysis and migration safety |
 | shadcn-dev | 0.1.9 | shadcn/ui and Tailwind CSS v4 development workflows |
 | code-quality | 1.0.0 | Deterministic code quality infrastructure — git hooks, lint-staged, and formatters |
-| claude-plugin-dev | 0.3.2 | Plugin development with guided workflows and AI-assisted creation |
+| claude-plugin-dev | 0.3.3 | Plugin development with guided workflows and AI-assisted creation |
 | opentui-dev | 0.1.4 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
 | tabby-dev | 0.1.1 | Tabby terminal configuration, SSH connections, and plugin development |
@@ -257,7 +257,7 @@ OpenTUI terminal interface development with TypeScript/Bun.
 | references/testing-reference.md | Test renderer and snapshots |
 | references/cache-management.md | Cache refresh strategy and learnings |
 
-## claude-plugin-dev Plugin (v0.3.2)
+## claude-plugin-dev Plugin (v0.3.3)
 
 Plugin development documentation with guided workflows and AI-assisted creation.
 
@@ -287,6 +287,7 @@ Plugin development documentation with guided workflows and AI-assisted creation.
 | Command | Purpose |
 |---------|---------|
 | /create-plugin | 8-phase guided plugin creation workflow |
+| /bump-version | Synchronize version across all 4 sync points for a plugin |
 
 ### Reference Files
 
