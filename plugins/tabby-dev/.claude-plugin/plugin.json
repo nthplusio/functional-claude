@@ -1,5 +1,5 @@
 {
   "name": "tabby-dev",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Tabby terminal configuration, SSH connections, and plugin development for Claude Code workflows. Covers visual customization, multi-chord hotkeys, SSH/serial/telnet connection profiles, and plugin discovery and development"
 }

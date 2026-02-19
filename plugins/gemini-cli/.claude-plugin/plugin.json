@@ -1,5 +1,5 @@
 {
   "name": "gemini-cli",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension. Advisory-only with --sandbox enforcement, configurable timeouts, retry logic, and output validation"
 }

@@ -58,6 +58,12 @@ A PreToolUse hook (`.claude/hooks/check-version-bump.js`) validates version sync
 3. All `SKILL.md` frontmatter within the plugin
 4. `docs/memory.md` plugin table
 
+## Editing Guidelines
+
+- **Read before editing**: Always read a file immediately before editing it. When batch-editing multiple files, read each file right before its edit — do not read all files upfront then edit them all, as content may change between reads and edits.
+- **Same-file edits**: When making multiple edits to the same file, batch them in sequence (read once, then all edits) rather than interleaving with other file edits.
+- **Version bumping**: Use `/bump-version <plugin> <version>` to synchronize versions across all 4 sync points. Use `/pre-release <plugin>` to validate before committing.
+
 ## Current Plugins
 
 See `docs/memory.md` for current versions and component details. Plugins include:

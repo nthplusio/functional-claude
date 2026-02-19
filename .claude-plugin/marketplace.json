@@ -27,7 +27,7 @@
       "name": "shadcn-dev",
       "source": "./plugins/shadcn-dev",
       "description": "shadcn/ui and Tailwind CSS v4 development workflows for React applications. Covers component usage, form building with react-hook-form and zod, theming, data tables with TanStack Table, and Tailwind CSS v4 migration",
-      "version": "0.1.9"
+      "version": "0.2.0"
     },
     {
       "name": "code-quality",
@@ -57,7 +57,7 @@
       "name": "tabby-dev",
       "source": "./plugins/tabby-dev",
       "description": "Tabby terminal configuration, SSH connections, and plugin development for Claude Code workflows. Covers visual customization, multi-chord hotkeys, SSH/serial/telnet connection profiles, and plugin discovery and development",
-      "version": "0.1.1"
+      "version": "0.1.2"
     },
     {
       "name": "agent-teams",
@@ -69,7 +69,7 @@
       "name": "gemini-cli",
       "source": "./plugins/gemini-cli",
       "description": "Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension. Advisory-only with --sandbox enforcement, configurable timeouts, retry logic, and output validation",
-      "version": "0.6.1"
+      "version": "0.6.2"
     },
     {
       "name": "session-insights",

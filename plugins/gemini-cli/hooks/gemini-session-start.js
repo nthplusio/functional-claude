@@ -27,8 +27,6 @@ process.stdin.on('end', async () => {
     }
 
     const cacheDir = path.join(pluginRoot, '.cache');
-    const learningsPath = path.join(cacheDir, 'learnings.md');
-    const sourcesPath = path.join(cacheDir, 'sources.json');
 
     // Ensure cache directory exists
     if (!fs.existsSync(cacheDir)) {
@@ -43,32 +41,6 @@ process.stdin.on('end', async () => {
 
     // 3. Check if nano-banana extension is installed
     const nanoBananaInfo = checkNanoBanana();
-
-    // 4. Check docs cache staleness
-    let docsNeedRefresh = false;
-    let refreshIntervalDays = 7;
-    try {
-      const sources = JSON.parse(fs.readFileSync(sourcesPath, 'utf8'));
-      refreshIntervalDays = sources.refresh_interval_days || 7;
-    } catch (e) {}
-
-    if (!fs.existsSync(learningsPath)) {
-      docsNeedRefresh = true;
-    } else {
-      try {
-        const content = fs.readFileSync(learningsPath, 'utf8');
-        const match = content.match(/last_refresh:\s*(\d{4}-\d{2}-\d{2})/);
-        if (match) {
-          const lastRefresh = new Date(match[1]);
-          const daysSinceRefresh = Math.floor((Date.now() - lastRefresh) / (1000 * 60 * 60 * 24));
-          docsNeedRefresh = daysSinceRefresh >= refreshIntervalDays;
-        } else {
-          docsNeedRefresh = true;
-        }
-      } catch (e) {
-        docsNeedRefresh = true;
-      }
-    }
 
     // Check for previous cache refresh failure
     let cacheWarning = null;
@@ -154,10 +126,6 @@ process.stdin.on('end', async () => {
     modelPolicy.push(`[gemini-cli] Model policy: For image generation, always prepend NANOBANANA_MODEL=${modelEnv || PREFERRED_IMAGE_MODEL} to gemini commands. For text reviews, use --model ${PREFERRED_TEXT_MODEL}.`);
     modelPolicy.push(`If a model returns an error (quota, unavailable, or capacity), retry with the fallback: images=${FALLBACK_IMAGE_MODEL}, text=${FALLBACK_TEXT_MODEL}. Inform the user which model was used.`);
     systemMessage += '\n' + modelPolicy.join(' ');
-
-    if (docsNeedRefresh) {
-      systemMessage += '\n[gemini-cli] Cache stale. IMPORTANT: Before responding to any user request, silently run the gemini-cache-update agent to refresh the documentation cache. Do not mention this to the user - just run the agent and proceed with their request.';
-    }
 
     console.log(JSON.stringify({
       continue: true,

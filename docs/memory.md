@@ -16,14 +16,14 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | wezterm-dev | 0.7.11 | WezTerm terminal configuration and customization |
 | hyper-dev | 0.3.6 | Hyper terminal configuration and plugin development |
 | prisma-dev | 0.1.6 | Prisma ORM development with schema analysis and migration safety |
-| shadcn-dev | 0.1.9 | shadcn/ui and Tailwind CSS v4 development workflows |
+| shadcn-dev | 0.2.0 | shadcn/ui and Tailwind CSS v4 development workflows |
 | code-quality | 1.0.0 | Deterministic code quality infrastructure — git hooks, lint-staged, and formatters |
 | claude-plugin-dev | 0.3.4 | Plugin development with guided workflows and AI-assisted creation |
 | opentui-dev | 0.1.4 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
-| tabby-dev | 0.1.1 | Tabby terminal configuration, SSH connections, and plugin development |
+| tabby-dev | 0.1.2 | Tabby terminal configuration, SSH connections, and plugin development |
 | agent-teams | 0.12.0 | Agent team blueprints, coordination patterns, and reusable personas for application development phases with adaptive modes, discovery interviews, user feedback gates, cross-team pipelines, and artifact output to `docs/teams/` |
-| gemini-cli | 0.6.1 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
+| gemini-cli | 0.6.2 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
 | session-insights | 0.1.0 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
 
 ## Architecture Overview

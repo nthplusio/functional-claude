@@ -1,7 +1,7 @@
 ---
 name: tabby-dev
 description: This skill should be used when the user asks to "configure Tabby", "tabby config", "tabby terminal", "customize Tabby", "set up tabby", or mentions general Tabby terminal configuration questions. For specific topics, focused skills may be more appropriate.
-version: 0.1.1
+version: 0.1.2
 ---
 
 # Tabby Development
