@@ -32,10 +32,7 @@ process.stdin.on('end', () => {
     } else if (hyperInfo.config_path) {
       parts.push('Hyper ready');
     } else {
-      console.log(JSON.stringify({
-        continue: true,
-        systemMessage: '[hyper-dev] No Hyper config found'
-      }));
+      console.log(JSON.stringify({ continue: true }));
       return;
     }
 

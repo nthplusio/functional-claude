@@ -1,7 +1,7 @@
 ---
 name: wezterm-dev
 description: This skill should be used when the user asks to "configure WezTerm", "wezterm config", "customize terminal", "set up wezterm", "wezterm lua", or mentions general WezTerm configuration questions. For specific topics, focused skills may be more appropriate.
-version: 0.7.12
+version: 0.7.13
 ---
 
 # WezTerm Development

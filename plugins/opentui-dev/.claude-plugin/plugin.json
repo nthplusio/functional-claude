@@ -1,5 +1,5 @@
 {
   "name": "opentui-dev",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "OpenTUI terminal interface development with TypeScript/Bun. Supports Core imperative API, React reconciler, and Solid reconciler with components, flexbox layout, keyboard handling, and animations"
 }

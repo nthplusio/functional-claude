@@ -24,10 +24,7 @@ process.stdin.on('end', () => {
     const shadcnInfo = detectShadcnSetup(projectDir);
 
     if (!shadcnInfo.detected) {
-      console.log(JSON.stringify({
-        continue: true,
-        systemMessage: '[shadcn-dev] No components.json found'
-      }));
+      console.log(JSON.stringify({ continue: true }));
       return;
     }
 

@@ -1,7 +1,7 @@
 ---
 name: shadcn-data-tables
 description: This skill should be used when the user asks about "data table", "tanstack table", "sortable table", "filterable table", "table pagination", "column sorting", "row selection", or mentions building data tables, grids, or TanStack Table integration with shadcn.
-version: 0.2.1
+version: 0.2.2
 ---
 
 # shadcn/ui Data Tables

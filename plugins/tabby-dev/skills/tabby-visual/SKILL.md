@@ -1,7 +1,7 @@
 ---
 name: tabby-visual
 description: This skill should be used when the user asks about "tabby theme", "tabby colors", "tabby font", "tabby appearance", "tabby background", "tabby cursor", "tabby opacity", "color scheme tabby", or mentions visual customization of Tabby terminal.
-version: 0.1.3
+version: 0.1.4
 ---
 
 # Tabby Visual Customization

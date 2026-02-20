@@ -37,10 +37,7 @@ process.stdin.on('end', () => {
         parts.push(`v${opentuiInfo.version}`);
       }
     } else {
-      console.log(JSON.stringify({
-        continue: true,
-        systemMessage: '[opentui-dev] No OpenTUI detected'
-      }));
+      console.log(JSON.stringify({ continue: true }));
       return;
     }
 

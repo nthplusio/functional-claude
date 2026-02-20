@@ -1,7 +1,7 @@
 ---
 name: opentui-layout
 description: This skill should be used when the user asks about OpenTUI layout, flexbox, positioning, spacing, dimensions, or needs help arranging components in their TUI.
-version: 0.1.5
+version: 0.1.6
 ---
 
 # OpenTUI Layout System

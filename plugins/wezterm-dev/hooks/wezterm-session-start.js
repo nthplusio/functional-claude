@@ -29,10 +29,7 @@ process.stdin.on('end', () => {
     } else if (weztermInfo.config_path) {
       parts.push('WezTerm ready');
     } else {
-      console.log(JSON.stringify({
-        continue: true,
-        systemMessage: '[wezterm-dev] No WezTerm config found'
-      }));
+      console.log(JSON.stringify({ continue: true }));
       return;
     }
 

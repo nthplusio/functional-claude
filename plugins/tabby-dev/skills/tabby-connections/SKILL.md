@@ -1,7 +1,7 @@
 ---
 name: tabby-connections
 description: This skill should be used when the user asks about "tabby ssh", "tabby serial", "tabby telnet", "ssh profile", "ssh connection", "serial port", "tabby connection manager", "jump host", "port forwarding", or mentions remote connections in Tabby terminal.
-version: 0.1.3
+version: 0.1.4
 ---
 
 # Tabby Connections

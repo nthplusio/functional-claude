@@ -32,10 +32,7 @@ process.stdin.on('end', () => {
     } else if (tabbyInfo.config_path) {
       parts.push('Tabby ready');
     } else {
-      console.log(JSON.stringify({
-        continue: true,
-        systemMessage: '[tabby-dev] No Tabby config found'
-      }));
+      console.log(JSON.stringify({ continue: true }));
       return;
     }
 

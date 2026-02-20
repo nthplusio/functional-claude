@@ -5,7 +5,7 @@ description: >
   "review my Claude usage", "session insights", "what have I been working on",
   "improve my workflow", "analyze conversation history", or mentions reviewing
   past Claude Code sessions. Routes to /session-review or /session-stats commands.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Session Insights

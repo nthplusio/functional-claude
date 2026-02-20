@@ -1,21 +1,12 @@
 ---
 name: gemini-cli
 description: This skill should be used when the user asks to "use gemini", "gemini cli", "configure gemini", "set up gemini", "gemini review", "gemini images", or mentions general Gemini CLI usage. For specific topics, focused skills may be more appropriate.
-version: 0.6.3
+version: 0.6.4
 ---
 
 # Gemini CLI Development
 
 Use the Gemini CLI as a complementary AI tool for large context review and image generation tasks, orchestrated from within Claude Code.
-
-## First Action: Check Session Status
-
-The SessionStart hook automatically validates:
-1. **Gemini CLI installed** - checks for `gemini` binary
-2. **Authentication** - checks `GEMINI_API_KEY`, `GOOGLE_API_KEY`, OAuth, or Vertex AI
-3. **nano-banana extension** - checks for image generation capability
-
-If warnings appeared at session start, resolve them before proceeding.
 
 ## Prerequisites
 
@@ -98,16 +89,31 @@ find src/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="
 gemini --sandbox -m gemini-3-pro-preview -p "Analyze this codebase"
 ```
 
-### Model Selection
+### Model Policy
+
+**Always use the preferred model first.** Only fallback if it returns an error (quota, unavailable, capacity).
+
+| Task | Preferred Model | Fallback Model |
+|------|----------------|----------------|
+| Text reviews | `gemini-3-pro-preview` | `gemini-2.5-pro` |
+| Image generation | `gemini-3-pro-image-preview` | `gemini-2.5-flash-image` |
+
+For image generation, always prepend `NANOBANANA_MODEL=gemini-3-pro-image-preview` to gemini commands (unless the user has set `NANOBANANA_MODEL` in their environment). For text reviews, use `-m gemini-3-pro-preview`.
+
+If a model returns an error, retry with the fallback and inform the user which model was used.
 
 ```bash
-# Use a specific model (default: gemini-3-pro-preview)
+# Text review (default)
 gemini -m gemini-3-pro-preview -p "Your prompt here"
 
-# Fallback if pro is unavailable
+# Text review (fallback)
 gemini -m gemini-2.5-pro -p "Your prompt here"
 
-# Available models: gemini-3-pro-preview, gemini-2.5-pro, gemini-2.5-flash
+# Image generation (default)
+NANOBANANA_MODEL=gemini-3-pro-image-preview gemini --yolo -p '/generate "prompt"'
+
+# Image generation (fallback)
+NANOBANANA_MODEL=gemini-2.5-flash-image gemini --yolo -p '/generate "prompt"'
 ```
 
 ### Configuration
