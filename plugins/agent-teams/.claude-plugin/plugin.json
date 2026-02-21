@@ -1,5 +1,5 @@
 {
   "name": "agent-teams",
-  "version": "0.15.1",
+  "version": "0.15.2",
   "description": "Agent team blueprints, coordination patterns, and reusable personas for parallel development. Pre-designed teams for research, feature development, code review, debugging, design, planning, productivity, and brainstorming with multi-agent collaboration"
 }

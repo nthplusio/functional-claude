@@ -69,7 +69,22 @@ For each SKILL.md, verify:
 - Contains `description:` field with trigger phrases (check for quoted strings)
 - Contains `version:` field matching plugin version
 
-### Check 5: Staged File Review
+### Check 5: Plugin Manifest Validation
+
+If `plugins/<name>/plugin-manifest.json` exists:
+
+1. Read the manifest and verify its `version` field matches `plugin.json`
+2. Verify every file listed in the manifest's `files` array actually exists on disk
+3. Check for files on disk (excluding `preserve` prefixes like `.cache/`, `.claude-plugin/`) that are NOT listed in the manifest
+
+Report:
+- Version mismatch → **Error**: "Manifest version X.Y.Z doesn't match plugin.json A.B.C. Run `/bump-version` or regenerate with `node scripts/generate-plugin-manifest.js plugins/<name>`"
+- Missing files → **Error**: "Manifest lists files that don't exist: file1, file2"
+- Unlisted files → **Warning**: "Files on disk not in manifest: file1, file2. Regenerate with `node scripts/generate-plugin-manifest.js plugins/<name>`"
+
+If `plugin-manifest.json` does not exist, skip this check — not all plugins have adopted the manifest pattern yet.
+
+### Check 6: Staged File Review
 
 ```bash
 git diff --cached --name-only -- plugins/<name>/
@@ -95,6 +110,7 @@ Present results as a validation report:
 - [ ] or [x] plugin.json valid
 - [ ] or [x] All skills have SKILL.md with frontmatter
 - [ ] or [x] Hooks valid (if present)
+- [ ] or [x] Plugin manifest valid (or N/A if not adopted)
 
 ### Files to Commit
 <list of staged/modified files>

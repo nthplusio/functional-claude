@@ -3,7 +3,7 @@ name: claude-plugin-dev
 description: This skill should be used when the user asks to "create a plugin",
   "build a plugin", "plugin structure", "how do plugins work", "plugin documentation",
   or needs general guidance on Claude Code plugin development.
-version: 0.4.0
+version: 0.4.1
 ---
 
 # Claude Code Plugin Development

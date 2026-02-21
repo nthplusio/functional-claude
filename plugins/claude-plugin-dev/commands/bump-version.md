@@ -46,6 +46,16 @@ Update all four locations:
 3. **All SKILL.md files** — Edit the `version:` line in YAML frontmatter for each skill
 4. **docs/memory.md** — Edit the version in the plugin table row
 
+### Step 3.5: Regenerate Plugin Manifest (if applicable)
+
+If `plugins/<plugin>/plugin-manifest.json` exists, regenerate it to reflect the new version and any file changes:
+
+```bash
+node scripts/generate-plugin-manifest.js plugins/<plugin>
+```
+
+This updates the manifest's `version` field and file list. If the file doesn't exist, skip this step — not all plugins have adopted the manifest pattern yet.
+
 ### Step 4: Verify
 
 Run a Grep to confirm no stale version strings remain:
@@ -65,6 +75,7 @@ Report results as a verification table:
 | marketplace.json | Updated |
 | skills/<name>/SKILL.md | Updated |
 | docs/memory.md | Updated |
+| plugin-manifest.json | Updated (or N/A) |
 
 Verification: No stale version strings found.
 ```
