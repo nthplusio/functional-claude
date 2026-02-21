@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "design team", "planning team", "roadmap team", "team blueprint", "team template", or says "spawn a team for [development phase]".
 
   Provides 8 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, Frontend Design, Planning & Roadmapping, Productivity Systems, and Brainstorming & Ideation.
-version: 0.15.2
+version: 0.15.3
 ---
 
 # Agent Team Blueprints
@@ -15,19 +15,17 @@ Pre-designed team configurations for eight application development phases. Each 
 
 Three unified commands provide simplified entry points with adaptive sizing, verbosity control, and auto-mode inference. They dispatch to the same blueprints documented below.
 
-| Unified Command | Modes | Replaces |
-|---|---|---|
-| `/spawn-build` | feature, debug | `/spawn-feature-team`, `/spawn-debug-team` |
-| `/spawn-think` | research (3 submodes), planning (7 submodes), review (3 submodes) | `/spawn-research-team`, `/spawn-planning-team`, `/spawn-review-team` |
-| `/spawn-create` | design (3 submodes), brainstorm (4 categories), productivity | `/spawn-design-team`, `/spawn-brainstorming-team`, `/spawn-productivity-team` |
+| Unified Command | Modes |
+|---|---|
+| `/spawn-build` | feature, debug |
+| `/spawn-think` | research (3 submodes), planning (7 submodes), review (3 submodes) |
+| `/spawn-create` | design (3 submodes), brainstorm (4 categories), productivity |
 
 **What unified commands add:**
 - **Adaptive sizing** — Auto-recommends solo/pair/full team based on subtask count
 - **Verbosity control** — `--quiet`, `--normal` (default), `--verbose` flags
 - **Auto-mode inference** — Detects the right mode from your description keywords
 - **Streamlined discovery** — 3 core questions + 0-2 optional, with adaptive skip
-
-**Blueprint commands remain fully functional** — use them directly when you know exactly which team type you need.
 
 ---
 
@@ -43,9 +41,9 @@ Three unified commands provide simplified entry points with adaptive sizing, ver
 
 | # | Mode | Team Composition | Output |
 |---|------|-----------------|--------|
-| 1 | **Technology Evaluation** | Explorer, Analyst, Critic | Evaluation report + comparison matrix → `/spawn-planning-team`, `/spawn-feature-team` |
-| 2 | **Landscape Survey** | Explorer, Mapper, Analyst | Landscape map + trend analysis → `/spawn-research-team` (Eval mode), `/spawn-planning-team` |
-| 3 | **Risk Assessment** | Risk Analyst, System Analyst, Mitigator | Risk register + mitigation plan → `/spawn-planning-team`, `/spawn-feature-team` |
+| 1 | **Technology Evaluation** | Explorer, Analyst, Critic | Evaluation report + comparison matrix → `/spawn-think --mode planning`, `/spawn-build --mode feature` |
+| 2 | **Landscape Survey** | Explorer, Mapper, Analyst | Landscape map + trend analysis → `/spawn-think --mode research` (Eval mode), `/spawn-think --mode planning` |
+| 3 | **Risk Assessment** | Risk Analyst, System Analyst, Mitigator | Risk register + mitigation plan → `/spawn-think --mode planning`, `/spawn-build --mode feature` |
 
 ### Representative Spawn Prompt (Technology Evaluation)
 
@@ -107,7 +105,7 @@ Tasks:
 | **DevOps** (optional) | Infrastructure | Database migrations, CI/CD, environment config |
 | **Documentation** (optional) | Docs | User-facing docs, API docs, changelog |
 
-**Pipeline:** Feeds from `/spawn-planning-team`, `/spawn-design-team`, `/spawn-research-team` → feeds into `/spawn-review-team`
+**Pipeline:** Feeds from `/spawn-think --mode planning`, `/spawn-create --mode design`, `/spawn-think --mode research` → feeds into `/spawn-think --mode review`
 
 ### Representative Spawn Prompt
 
@@ -172,7 +170,7 @@ Tasks:
 | **Accessibility Reviewer** (optional) | WCAG compliance | Keyboard navigation, screen readers, ARIA, color contrast |
 | **Architecture Reviewer** (optional) | Structural quality | Design patterns, dependency direction, module boundaries |
 
-**Pipeline:** Feeds from `/spawn-feature-team`, `/spawn-design-team` → feeds into `/spawn-debug-team` (investigate issues), `/spawn-feature-team` (rework)
+**Pipeline:** Feeds from `/spawn-build --mode feature`, `/spawn-create --mode design` → feeds into `/spawn-build --mode debug` (investigate issues), `/spawn-build --mode feature` (rework)
 
 ### Representative Spawn Prompt
 
@@ -216,7 +214,7 @@ Tasks:
 - **Optional teammates** add depth: Accessibility Reviewer for frontend PRs, Architecture Reviewer for large structural PRs
 - No user feedback gate — reviews are single-pass; the cross-reference task serves as internal validation
 - Use Sonnet for all reviewers (review is read-heavy analysis)
-- The review report feeds into `/spawn-debug-team` for investigating issues or `/spawn-feature-team` for rework
+- The review report feeds into `/spawn-build --mode debug` for investigating issues or `/spawn-build --mode feature` for rework
 - Include the Task Blocking Protocol in the spawn prompt (see "Task Blocking Protocol" section below)
 
 ---
@@ -237,7 +235,7 @@ Tasks:
 | **[Hypothesis-B-Name]** | Second theory investigator | Alternative cause based on recent changes |
 | **[Hypothesis-C-Name]** | Contrarian investigator | Less obvious cause, challenges other theories |
 
-**Pipeline:** Feeds from `/spawn-review-team` (issues found during review), `/spawn-feature-team` (bugs introduced during implementation) → feeds into `/spawn-feature-team` (implement fix), `/spawn-review-team` (review fix)
+**Pipeline:** Feeds from `/spawn-think --mode review` (issues found during review), `/spawn-build --mode feature` (bugs introduced during implementation) → feeds into `/spawn-build --mode feature` (implement fix), `/spawn-think --mode review` (review fix)
 
 ### Representative Spawn Prompt
 
@@ -281,7 +279,7 @@ Require plan approval before implementing any fix.
 - The adversarial structure is the key mechanism — investigators actively challenge each other
 - **Root cause confirmation** (task 7) prevents premature fix proposals — the user validates findings before any fix is designed
 - If the bug description is vague, the command asks 1-2 clarifying questions before formulating hypotheses
-- The fix proposal feeds into `/spawn-feature-team` for implementation or `/spawn-review-team` for review
+- The fix proposal feeds into `/spawn-build --mode feature` for implementation or `/spawn-think --mode review` for review
 - Include the Task Blocking Protocol in the spawn prompt (see "Task Blocking Protocol" section below)
 
 ---
@@ -311,7 +309,7 @@ Require plan approval before implementing any fix.
 | **Frontend Dev** | Technical implementation | Component architecture, state management, performance, patterns | Default |
 | **User Advocate** | UX & accessibility | WCAG compliance, keyboard nav, screen readers, edge cases | Sonnet |
 
-**Pipeline:** Feeds from `/spawn-planning-team` (UI requirements from phase briefs), `/spawn-brainstorming-team` (UI concept ideas) → feeds into `/spawn-review-team` (design review), `/spawn-feature-team` (backend work)
+**Pipeline:** Feeds from `/spawn-think --mode planning` (UI requirements from phase briefs), `/spawn-create --mode brainstorm` (UI concept ideas) → feeds into `/spawn-think --mode review` (design review), `/spawn-build --mode feature` (backend work)
 
 ### Representative Spawn Prompt
 
@@ -381,15 +379,15 @@ Tasks:
 
 | # | Mode | Category | Team Composition | Output |
 |---|------|----------|-----------------|--------|
-| 1 | **Product Roadmap** | Technical | Strategist, Prioritizer, Outcomes Analyst, Stakeholder Advocate | Phase briefs → `/spawn-feature-team` |
-| 2 | **Technical Spec** | Technical | Architect, API Designer, Risk Analyst | Spec document → `/spawn-feature-team` |
+| 1 | **Product Roadmap** | Technical | Strategist, Prioritizer, Outcomes Analyst, Stakeholder Advocate | Phase briefs → `/spawn-build --mode feature` |
+| 2 | **Technical Spec** | Technical | Architect, API Designer, Risk Analyst | Spec document → `/spawn-build --mode feature` |
 | 3 | **Architecture Decision** | Technical | Solution Architect, Explorer, Trade-off Analyst, Critic | ADR → implementation teams |
 | 4 | **Migration Strategy** | Technical | State Analyst, Migration Planner, Risk Mitigator, Stakeholder Advocate | Migration plan |
 | 5 | **Business Case** | Business | Market Analyst, Financial Analyst, Strategist, Risk Analyst | Decision document → Product Roadmap |
 | 6 | **Go-to-Market** | Business | Positioning Strategist, Channel Planner, Customer Advocate, Launch Coordinator | GTM plan → Product Roadmap |
 | 7 | **OKR / Goals** | Business | Strategic Planner, Metrics Designer, Alignment Reviewer, Stakeholder Advocate | OKR tree → Roadmap / Spec |
 
-**Pipeline:** Business Case / GTM / OKR → Product Roadmap → Technical Spec → `/spawn-feature-team`
+**Pipeline:** Business Case / GTM / OKR → Product Roadmap → Technical Spec → `/spawn-build --mode feature`
 
 ### Representative Spawn Prompt (Product Roadmap)
 
@@ -435,7 +433,7 @@ Tasks:
 10. [All] Cross-review: validate plan coherence
 11. [Strategist] Compile roadmap document with phase briefs
 
-Each phase brief should be directly usable as input to /spawn-feature-team or /spawn-design-team.
+Each phase brief should be directly usable as input to /spawn-build --mode feature or /spawn-create --mode design.
 ```
 
 ### Task Structure (All Modes)
@@ -458,7 +456,7 @@ Phase 5 — Compilation (task 10/11/12):     Designated teammate compiles final 
 - The **user feedback gate** is the key mechanism — it prevents the team from investing effort in directions the user doesn't want
 - All teammates use Sonnet — planning is analysis and writing, not code generation
 - Enable delegate mode for the lead — a designated teammate handles final document compilation
-- Business mode outputs feed into technical modes: Business Case → Product Roadmap → Technical Spec → `/spawn-feature-team`
+- Business mode outputs feed into technical modes: Business Case → Product Roadmap → Technical Spec → `/spawn-build --mode feature`
 - Include the Task Blocking Protocol in the spawn prompt (see "Task Blocking Protocol" section below)
 
 ---
@@ -481,7 +479,7 @@ Phase 5 — Compilation (task 10/11/12):     Designated teammate compiles final 
 | **Refiner** | Convergence Loop Specialist | Iterative improvement until quality bar met | Default |
 | **Compounder** | Systems Review Partner | Progress tracking, friction logging, pattern recognition | Sonnet |
 
-**Pipeline:** Feeds into `/spawn-feature-team` (implement automation solutions); Compounder output feeds the next productivity cycle
+**Pipeline:** Feeds into `/spawn-build --mode feature` (implement automation solutions); Compounder output feeds the next productivity cycle
 
 ### Representative Spawn Prompt
 
@@ -557,7 +555,7 @@ The user feedback gate ensures the Architect designs solutions for the right bot
 - Enable delegate mode for the lead — the final report is a synthesis of the full pipeline
 - **Per-phase deliverables:** scored bottleneck inventory (Auditor), phased blueprint (Architect), multi-pass review report (Analyst), refined implementation with convergence report (Refiner), cycle report with friction log and patterns (Compounder)
 - When the Compounder finishes, run the team again with accumulated insights for the next improvement cycle
-- Implementation outputs feed into `/spawn-feature-team` for development
+- Implementation outputs feed into `/spawn-build --mode feature` for development
 - Include the Task Blocking Protocol in the spawn prompt — this blueprint's fully sequential chain makes it essential (see "Task Blocking Protocol" section below)
 
 ---
@@ -580,7 +578,7 @@ The user feedback gate ensures the Architect designs solutions for the right bot
 | **User Voice** (optional) | User perspective | Ideas grounded in user needs, adoption, and experience | Sonnet |
 | **Domain Expert** (optional) | Domain expertise | Specialized ideas a generalist would miss | Sonnet |
 
-**Pipeline:** Feeds into `/spawn-planning-team` (turn ideas into roadmap items), `/spawn-research-team` (investigate feasibility), `/spawn-design-team` (design UI concepts), `/spawn-feature-team` (implement straightforward ideas)
+**Pipeline:** Feeds into `/spawn-think --mode planning` (turn ideas into roadmap items), `/spawn-think --mode research` (investigate feasibility), `/spawn-create --mode design` (design UI concepts), `/spawn-build --mode feature` (implement straightforward ideas)
 
 ### Representative Spawn Prompt
 
@@ -626,7 +624,7 @@ Tasks:
 - The **user feedback gate** after idea clustering is the key mechanism — the human decides which ideas to invest in
 - Independent brainwriting prevents anchoring bias — teammates don't see each other's ideas until the Facilitator collects them
 - **Optional teammates** add depth: User Voice for product/process brainstorms, Domain Expert for tech/ops brainstorms
-- **Output contracts:** Ranked idea list scored against success criteria, idea clusters with theme groupings, recommended next steps with downstream commands (`/spawn-planning-team`, `/spawn-research-team`, `/spawn-design-team`, `/spawn-feature-team`)
+- **Output contracts:** Ranked idea list scored against success criteria, idea clusters with theme groupings, recommended next steps with downstream commands (`/spawn-think --mode planning`, `/spawn-think --mode research`, `/spawn-create --mode design`, `/spawn-build --mode feature`)
 - 3 core teammates keeps cost low; add User Voice and/or Domain Expert for richer sessions
 - Include the Task Blocking Protocol in the spawn prompt — brainwriting phases must complete before collection (see "Task Blocking Protocol" section below)
 
@@ -701,7 +699,7 @@ Teams chain together where one team's output becomes another team's input. This 
                         └─────────────┘
 ```
 
-**Key principle:** Each team's output section includes explicit downstream command references (e.g., "feeds into `/spawn-feature-team`"). This lets users chain teams without guessing which command comes next.
+**Key principle:** Each team's output section includes explicit downstream command references (e.g., "feeds into `/spawn-build --mode feature`"). This lets users chain teams without guessing which command comes next.
 
 **Common pipelines:**
 - **Full product cycle:** Business Case → Product Roadmap → Technical Spec → Feature Dev → Code Review

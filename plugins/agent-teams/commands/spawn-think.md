@@ -331,13 +331,3 @@ After team completion, include two prompts:
 2. `Run /evaluate-spawn to assess output quality?` (only when spec scoring was used)
 
 Neither prompt blocks session end.
-
-## Migration
-
-| Legacy Command | Equivalent |
-|---|---|
-| `/spawn-research-team <topic>` | `/spawn-think --mode research <topic>` |
-| `/spawn-planning-team <topic>` | `/spawn-think --mode planning <topic>` |
-| `/spawn-review-team <target>` | `/spawn-think --mode review <target>` |
-
-Legacy commands remain functional with deprecation notice. Use the unified command for adaptive sizing, verbosity control, and streamlined discovery.

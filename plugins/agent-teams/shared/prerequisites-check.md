@@ -32,14 +32,6 @@ If agent teams are not enabled, show the user how to enable them:
 
 | Team Command | Input-Type Value |
 |---|---|
-| spawn-feature-team | feature description |
-| spawn-research-team | research topic |
-| spawn-design-team | UI feature or design task |
-| spawn-review-team | review target (PR number, branch, or module) |
-| spawn-debug-team | bug description or symptoms |
-| spawn-planning-team | planning topic |
-| spawn-productivity-team | workflow or process to optimize |
-| spawn-brainstorming-team | brainstorming topic |
 | spawn-build | feature description or bug description |
 | spawn-think | topic to research, plan, or review |
 | spawn-create | topic to design, brainstorm, or optimize |

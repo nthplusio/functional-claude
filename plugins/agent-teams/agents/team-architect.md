@@ -96,7 +96,7 @@ Based on the task complexity, consider whether the team design should include th
 
 **User Feedback Gate** — Include when significant effort could go in the wrong direction. Place a dedicated `[Lead]` task at the most expensive decision point — the moment where changing direction afterwards would waste the most effort. The gate blocks all downstream detailed work until the user validates direction.
 
-**Cross-Team Pipeline** — Consider how the team's output feeds into downstream teams. Structure the output format so it can be directly consumed by the next team command (e.g., a planning team produces phase briefs that feed into `/spawn-feature-team`). Document the pipeline in the spawn prompt output section.
+**Cross-Team Pipeline** — Consider how the team's output feeds into downstream teams. Structure the output format so it can be directly consumed by the next team command (e.g., a planning team produces phase briefs that feed into `/spawn-build`). Document the pipeline in the spawn prompt output section.
 
 **Artifact Output** — All teams should write their deliverables to `docs/teams/{team-name}/` as git-tracked markdown with YAML frontmatter. Include artifact writing instructions in the lead's final compilation task. See the "Artifact Output Protocol" section in the team-coordination skill for the full specification and the artifact mapping table in the team-blueprints skill.
 

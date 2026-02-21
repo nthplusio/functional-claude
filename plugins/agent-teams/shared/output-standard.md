@@ -27,14 +27,6 @@ Include this block verbatim in every spawn prompt, replacing `[CONTEXT-TYPE]` wi
 
 | Team Command | Context-Type Value |
 |---|---|
-| spawn-feature-team | Feature |
-| spawn-research-team | Research |
-| spawn-design-team | Design |
-| spawn-review-team | Review |
-| spawn-debug-team | Debug |
-| spawn-planning-team | Planning |
-| spawn-productivity-team | Productivity |
-| spawn-brainstorming-team | Brainstorming |
 | spawn-build | Feature / Debug (by mode) |
 | spawn-think | Research / Planning / Review (by mode) |
 | spawn-create | Design / Brainstorming / Productivity (by mode) |
@@ -47,7 +39,7 @@ For teams where multiple teammates might define the same data models or schemas 
 - Schemas, models, and contracts appear ONCE (owned by one teammate) — others reference by name
 ```
 
-This is used by: spawn-planning-team, spawn-research-team.
+This is used by: spawn-think (Planning and Research modes).
 
 ### Variation: Debug Team (Simplified)
 

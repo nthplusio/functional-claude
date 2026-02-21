@@ -1,5 +1,5 @@
 {
-  "version": "0.15.2",
+  "version": "0.15.3",
   "preserve": [
     ".cache/",
     ".claude-plugin/"
@@ -7,16 +7,8 @@
   "files": [
     "agents/team-architect.md",
     "commands/agent-teams.md",
-    "commands/spawn-brainstorming-team.md",
     "commands/spawn-build.md",
     "commands/spawn-create.md",
-    "commands/spawn-debug-team.md",
-    "commands/spawn-design-team.md",
-    "commands/spawn-feature-team.md",
-    "commands/spawn-planning-team.md",
-    "commands/spawn-productivity-team.md",
-    "commands/spawn-research-team.md",
-    "commands/spawn-review-team.md",
     "commands/spawn-think.md",
     "hooks/dedup-guard.js",
     "hooks/hooks.json",

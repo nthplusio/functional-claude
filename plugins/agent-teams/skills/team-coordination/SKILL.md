@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user needs guidance on managing an active agent team, coordinating tasks between teammates, handling team communication, or understanding team lifecycle. Use this skill when the user asks about "task management", "team communication", "delegate mode", "plan approval", "shutdown teammates", "team messaging", or says "how do I manage my team".
 
   Covers task management, messaging patterns, plan approval workflow, delegate mode, display modes, and graceful shutdown.
-version: 0.15.2
+version: 0.15.3
 ---
 
 # Team Coordination Patterns
@@ -342,8 +342,8 @@ Compile all interview answers into a structured `## Context` section (named for 
 
 ### Canonical Implementations
 
-- **Planning team** (`/spawn-planning-team`) — 5 core + 5 extended questions per mode (7 modes), full context compilation
-- **Brainstorming team** (`/spawn-brainstorming-team`) — 5 core + 5 extended questions, category-specific adaptation
+- **Planning team** (`/spawn-think --mode planning`) — 5 core + 5 extended questions per mode (7 modes), full context compilation
+- **Brainstorming team** (`/spawn-create --mode brainstorm`) — 5 core + 5 extended questions, category-specific adaptation
 
 ## User Feedback Gate
 
@@ -463,7 +463,7 @@ status: completed
 teammates: 4
 pipeline:
   from: null
-  to: ["/spawn-feature-team", "/spawn-design-team"]
+  to: ["/spawn-build --mode feature", "/spawn-create --mode design"]
 ---
 ```
 

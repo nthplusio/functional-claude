@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user asks about Claude Code agent teams, wants to understand team-based development workflows, or needs guidance on when and how to use agent teams. Use this skill when the user asks to "create a team", "use agent teams", "coordinate agents", "parallel development", "team workflow", or says "how do agent teams work".
 
   This skill provides an overview of agent teams, when to use them vs subagents, and routes to focused skills for team blueprints and coordination patterns.
-version: 0.15.2
+version: 0.15.3
 ---
 
 # Agent Teams for Application Development
@@ -93,14 +93,9 @@ Claude creates the team, spawns teammates, assigns tasks, and coordinates work b
 | Command | Description |
 |---------|-------------|
 | `/agent-teams` | Plugin overview and quickstart |
-| `/spawn-research-team` | Spawn a research & discovery team |
-| `/spawn-feature-team` | Spawn a feature development team |
-| `/spawn-review-team` | Spawn a code review & QA team |
-| `/spawn-debug-team` | Spawn a debugging & investigation team |
-| `/spawn-design-team` | Spawn a frontend design team |
-| `/spawn-planning-team` | Spawn a planning & roadmapping team |
-| `/spawn-productivity-team` | Spawn a productivity systems team with 5-persona loop |
-| `/spawn-brainstorming-team` | Spawn a brainstorming & ideation team with user feedback gate |
+| `/spawn-build` | Spawn a feature development or debugging team (modes: feature, debug) |
+| `/spawn-think` | Spawn a research, planning, or review team (modes: research, planning, review) |
+| `/spawn-create` | Spawn a design, brainstorming, or productivity team (modes: design, brainstorm, productivity) |
 
 ## Team Architecture
 
