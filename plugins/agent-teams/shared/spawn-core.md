@@ -149,3 +149,20 @@ Your topic suggests [MODE] mode. Proceeding with that — say "actually [OTHER-M
 ```
 
 If no keywords match, present the mode table and ask.
+
+## Project Analysis Additions
+
+During the project analysis step (before spawning), scan for shared assets in addition to the standard project structure analysis:
+
+### Mock Repository Scan
+
+Check for `docs/mocks/` in the project root. If found, report the available mocks in the team context:
+
+```
+Mock repository: Found [N] mocks in [M] domains at docs/mocks/
+Domains: [list of domain directories]
+```
+
+If `docs/mocks/` doesn't exist: `Mock repository: Not found`
+
+See `${CLAUDE_PLUGIN_ROOT}/shared/mock-repository.md` for the full mock convention.

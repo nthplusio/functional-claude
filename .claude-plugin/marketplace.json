@@ -63,7 +63,7 @@
       "name": "agent-teams",
       "source": "./plugins/agent-teams",
       "description": "Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control. Legacy commands for research, feature development, code review, debugging, design, adaptive planning (7 modes), productivity, and brainstorming",
-      "version": "0.15.0"
+      "version": "0.15.1"
     },
     {
       "name": "gemini-cli",

@@ -28,6 +28,7 @@ Follow the prerequisites check from `${CLAUDE_PLUGIN_ROOT}/shared/prerequisites-
 Extract from `$ARGUMENTS`:
 - `--mode research`, `--mode planning`, or `--mode review` (optional — auto-infer if absent)
 - `--quiet`, `--normal`, or `--verbose` (optional — default `--normal`)
+- `--min-score N` (optional — override default spec quality threshold of 50)
 - Strip flags from `$ARGUMENTS` before proceeding
 
 ### Step 3: Mode Selection
@@ -99,7 +100,17 @@ Follow the discovery interview from `${CLAUDE_PLUGIN_ROOT}/shared/discovery-inte
 | 4 | **Change context** — "What does this change do and why?" | Always |
 | 5 | **Known risk areas** — "Parts you're less confident about? Areas that feel fragile?" | Always |
 
-### Step 6: Adaptive Sizing
+### Step 6: Spec Quality Scoring
+
+Follow the scoring protocol from `${CLAUDE_PLUGIN_ROOT}/shared/spec-quality-scoring.md`.
+
+- Evaluate the compiled Context section using binary-checkable questions
+- Display the score with dimension breakdown before proceeding
+- If score is below threshold, prompt user to refine or proceed
+- Include the score in the spawn prompt's `### Spec Quality` subsection
+- Parse `--min-score N` from `$ARGUMENTS` if present (strip before passing downstream)
+
+### Step 7: Adaptive Sizing
 
 Follow the adaptive sizing rules from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`.
 
@@ -107,7 +118,7 @@ Follow the adaptive sizing rules from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.m
 - **Planning mode:** Count planning phases + stakeholder groups as subtasks
 - **Review mode:** Count review domains (security, performance, quality) as subtasks
 
-### Step 7: Optional Teammates
+### Step 8: Optional Teammates
 
 #### Research Mode
 
@@ -136,16 +147,16 @@ Follow the adaptive sizing rules from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.m
 | **Accessibility Reviewer** | WCAG compliance, keyboard navigation | Frontend PRs with UI changes |
 | **Architecture Reviewer** | Structural analysis, design pattern adherence | Large structural PRs |
 
-### Step 8: Project Analysis
+### Step 9: Project Analysis
 
 Analyze the project before spawning:
 
 **Research mode:** Project structure, tech stack, dependencies, existing documentation, ADRs, related code
-**Planning mode (technical):** Project structure, modules, architecture docs, dependency files
+**Planning mode (technical):** Project structure, modules, architecture docs, dependency files. Scan `docs/decisions/` for existing ADRs and include them in the planning context (see `${CLAUDE_PLUGIN_ROOT}/shared/system-doc-protocol.md`)
 **Planning mode (business):** Business docs, strategy docs, existing roadmaps, README
 **Review mode:** Parse review target (PR number, branch name, or module path), identify changed files
 
-### Step 9: Spawn the Team
+### Step 10: Spawn the Team
 
 Compile interview results into a `## [Mode] Context` section and spawn the mode-specific team.
 
@@ -198,6 +209,9 @@ Create these tasks:
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
 - When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
 - When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
+- Use `TaskUpdate` to record your approach before starting a task, then periodically update with progress notes (what's done, what remains, key decisions made, files modified) -- task descriptions survive compaction, conversation context does not
+- If you have partial progress on a task and your context is getting long, update the task description with a structured status: (a) completed work, (b) files modified, (c) remaining work, (d) decisions made
+- After any context reset (compaction, session resume), your FIRST action must be: call `TaskList`, then `TaskGet` on any task assigned to you that is `in_progress`, and resume from the progress notes
 
 **Output Standards -- ALL teammates MUST follow:**
 - Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
@@ -265,7 +279,11 @@ Create an agent team called "review-[target-slug]" to review [TARGET]. Spawn [3-
    [IF PERFORMANCE MODE: Lead reviewer with extra profiling tasks.]
 
 3. **Quality Reviewer** — Focus on code quality: project patterns, naming, error handling,
-   test coverage, separation of concerns.
+   test coverage, separation of concerns. Additionally, run the AI-code review checklist
+   from `${CLAUDE_PLUGIN_ROOT}/shared/ai-code-review-checklist.md` — check for 6 AI-specific
+   failure modes (over-abstraction, phantom error handling, hallucinated dependencies,
+   test theater, redundant validation, missing idiomatic patterns). Produce a
+   `### AI Pattern Findings` section in your output (present even with zero findings).
 
 Use Sonnet for all reviewers. Enable delegate mode.
 
@@ -290,6 +308,9 @@ Create these tasks:
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
 - When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
 - When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
+- Use `TaskUpdate` to record your approach before starting a task, then periodically update with progress notes (what's done, what remains, key decisions made, files modified) -- task descriptions survive compaction, conversation context does not
+- If you have partial progress on a task and your context is getting long, update the task description with a structured status: (a) completed work, (b) files modified, (c) remaining work, (d) decisions made
+- After any context reset (compaction, session resume), your FIRST action must be: call `TaskList`, then `TaskGet` on any task assigned to you that is `in_progress`, and resume from the progress notes
 
 **Output Standards -- ALL teammates MUST follow:**
 - Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
@@ -301,9 +322,15 @@ Create these tasks:
 
 **Artifact:** `review-report.md` → feeds into `/spawn-build --mode debug` (issues), `/spawn-build --mode feature` (rework)
 
-### Step 10: Output
+### Step 11: Output
 
 Follow the verbosity templates from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`.
+
+After team completion, include two prompts:
+1. `Run /after-action-review to review team process and capture improvements` (always)
+2. `Run /evaluate-spawn to assess output quality?` (only when spec scoring was used)
+
+Neither prompt blocks session end.
 
 ## Migration
 

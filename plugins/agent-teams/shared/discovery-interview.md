@@ -12,9 +12,9 @@ Every discovery interview asks up to 3 core questions. These are universal acros
 
 | # | Question | Purpose |
 |---|----------|---------|
-| 1 | **Goal** — "What specifically are we trying to achieve? What does the desired end state look like?" | Anchors the entire session — prevents scope drift and misaligned effort |
+| 1 | **Goal** — "What behavior must the system exhibit when this is done? What should the user be able to do that they can't do today?" | Anchors on observable behavior — prevents scope drift and keeps focus on outcomes, not implementation |
 | 2 | **Constraints** — "What are the non-negotiables? (timeline, budget, tech stack, team size, compliance, etc.)" | Filters out infeasible approaches early — saves teammates from wasted exploration |
-| 3 | **Success criteria** — "How will you know this succeeded? What does 'done' look like?" | Gives teammates clear targets and gives the lead clear completion criteria |
+| 3 | **Success criteria** — "How will you verify this works? What observable behavior confirms success?" | Gives teammates testable targets — focuses on what can be validated externally, not internally |
 
 ## Optional Questions
 
@@ -79,6 +79,40 @@ Compile all interview answers into a structured `## [Team-Type] Context` section
 ### Project Analysis
 [Findings from codebase/document analysis, if applicable]
 ```
+
+## Refinement Phase
+
+After compiling interview answers, run the refinement protocol from `${CLAUDE_PLUGIN_ROOT}/shared/spec-refinement.md`.
+
+This step generates 2–4 targeted follow-up questions derived from the compiled context, probing edge cases, failure modes, and boundary conditions. The output is a `### Edge Cases` subsection added to the compiled Context block.
+
+**When to include:** Same as discovery interview — if a discovery interview was run, run refinement. If the interview was skipped (all answers in `$ARGUMENTS`), refinement is still recommended but can be skipped.
+
+**Skip:** User can skip refinement by typing "skip". Skipping penalizes the edge-case dimension in quality scoring.
+
+## Quality Scoring
+
+After refinement completes (or is skipped), run the scoring protocol from `${CLAUDE_PLUGIN_ROOT}/shared/spec-quality-scoring.md`.
+
+Scoring evaluates 5 dimensions of spec completeness using binary yes/no questions (not impressionistic ratings). Each dimension is worth 20 points, producing a 0–100 score.
+
+**Gate:** If score is below threshold (default 50), the user is prompted to refine or proceed. The score is included in the spawn prompt's Context section regardless of whether the gate fired.
+
+**Flag:** Spawn commands accept `--min-score N` to override the default threshold.
+
+## Scenario Collection (Feature Mode Only)
+
+After quality scoring (or after refinement if scoring is skipped), run the scenario collection protocol from `${CLAUDE_PLUGIN_ROOT}/shared/scenario-collection.md`.
+
+This step collects behavioral acceptance scenarios — Given/When/Then descriptions of expected behavior — before any code is written. Scenarios serve as an external validation baseline: the user's definition of correct behavior, frozen before spawning.
+
+**When to include:** Feature mode spawns only. Debug mode uses bug reproduction steps instead.
+
+**Process:** Present 1 concrete example scenario derived from the Goal section, then ask the user to write at least 1 more. Minimum 2 scenarios total. Format compliance secondary to coverage.
+
+**Output:** Scenarios written to `docs/scenarios/[feature-slug].md` and included as `### Acceptance Scenarios` in the Feature Context block.
+
+**Skip:** User can type "skip". Skipping means no scenario file is created and quality scoring penalizes the acceptance criteria dimension.
 
 ## When to Include
 

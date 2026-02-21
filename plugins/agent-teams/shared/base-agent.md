@@ -9,6 +9,15 @@ Every teammate MUST follow these protocols (included verbatim in spawn prompts):
 1. **Task Blocking Protocol** — See `shared/task-blocking-protocol.md` for the canonical block
 2. **Output Standards** — See `shared/output-standard.md` for the canonical block with context-type lookup
 
+## Compaction Resilience
+
+Context compaction happens automatically during long conversations. Protect against data loss:
+
+1. **Use task descriptions as durable state** — the Task Blocking Protocol bullets cover when and how to write progress via `TaskUpdate`
+2. **Include file paths in progress notes** — so partial work can be resumed without re-exploring the codebase
+
+The Task Blocking Protocol (embedded in spawn prompts) contains the specific rules.
+
 ## Communication Defaults
 
 ### Message Discipline

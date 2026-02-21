@@ -27,6 +27,8 @@ Follow the prerequisites check from `${CLAUDE_PLUGIN_ROOT}/shared/prerequisites-
 Extract from `$ARGUMENTS`:
 - `--mode feature` or `--mode debug` (optional — auto-infer if absent)
 - `--quiet`, `--normal`, or `--verbose` (optional — default `--normal`)
+- `--min-score N` (optional — override default spec quality threshold of 50)
+- `--skip-adr` (optional — suppress ADR generation in feature mode)
 - Strip flags from `$ARGUMENTS` before proceeding
 
 ### Step 3: Mode Selection
@@ -67,14 +69,24 @@ Follow the discovery interview from `${CLAUDE_PLUGIN_ROOT}/shared/discovery-inte
 |---|----------|-------------|
 | 4 | **Reproduction** — "Can you describe the exact symptoms — what you expected vs what happened?" | When the bug description is vague (< 20 words) |
 
-### Step 5: Adaptive Sizing
+### Step 5: Spec Quality Scoring
+
+Follow the scoring protocol from `${CLAUDE_PLUGIN_ROOT}/shared/spec-quality-scoring.md`.
+
+- Evaluate the compiled Context section using binary-checkable questions
+- Display the score with dimension breakdown before proceeding
+- If score is below threshold, prompt user to refine or proceed
+- Include the score in the spawn prompt's `### Spec Quality` subsection
+- Parse `--min-score N` from `$ARGUMENTS` if present (strip before passing downstream)
+
+### Step 6: Adaptive Sizing
 
 Follow the adaptive sizing rules from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`.
 
 - **Feature mode:** Count layers (frontend, backend, tests, infra, docs) as subtasks
 - **Debug mode:** Always recommend 3 investigators (the adversarial structure is the mechanism)
 
-### Step 6: Optional Teammates (Feature Mode Only)
+### Step 7: Optional Teammates (Feature Mode Only)
 
 Ask the user if they want optional teammates:
 
@@ -83,7 +95,7 @@ Ask the user if they want optional teammates:
 | **DevOps** | Infrastructure setup — CI/CD changes, environment config, deployment | Features needing new infrastructure (databases, queues, external services) |
 | **Documentation** | User-facing docs, API docs, changelog entries | Public-facing features, API changes |
 
-### Step 7: Project Analysis
+### Step 8: Project Analysis
 
 Before spawning, analyze the project to identify:
 
@@ -100,7 +112,7 @@ Before spawning, analyze the project to identify:
 
 Include findings in the Context section of the spawn prompt.
 
-### Step 8: Spawn the Team
+### Step 9: Spawn the Team
 
 #### Feature Mode
 
@@ -109,7 +121,11 @@ Team name: `feature-[feature-slug]`
 **Spawn the following team (replacing placeholders with actual content):**
 
 ```
-Create an agent team called "feature-[feature-slug]" to implement [FEATURE]. Spawn [3-5] teammates:
+Create an agent team called "feature-[feature-slug]" to implement [FEATURE].
+
+The user is the architect. You are the implementer. Resolve ambiguity by asking, not by deciding. When the spec is unclear, surface the ambiguity to the user rather than making assumptions.
+
+Spawn [3-5] teammates:
 
 1. **Frontend** — Implement the UI layer: components, pages, and state management.
    Work in [FRONTEND_DIRS]. Follow existing component patterns in the codebase.
@@ -122,7 +138,9 @@ Create an agent team called "feature-[feature-slug]" to implement [FEATURE]. Spa
 3. **Tester** — Write comprehensive tests for both layers. Start with unit tests
    for individual components and services, then integration tests for the full flow.
    Work in [TEST_DIRS]. Wait for Frontend and Backend to define interfaces before
-   writing integration tests.
+   writing integration tests. Before creating any test fixtures, check `docs/mocks/`
+   for existing mocks. Report found mocks in your task output. After creating new
+   mocks, contribute them back to `docs/mocks/[domain]/` for future reuse.
 
 [IF DEVOPS SELECTED]
 4. **DevOps** — Set up infrastructure for the feature: database migrations, environment
@@ -132,6 +150,10 @@ Create an agent team called "feature-[feature-slug]" to implement [FEATURE]. Spa
 [IF DOCUMENTATION SELECTED]
 5. **Documentation** — Write user-facing documentation, API docs, and changelog entries.
    Work in [DOCS_DIRS]. Wait for implementation to stabilize before writing detailed docs.
+   Unless `--skip-adr` was specified, also produce an Architecture Decision Record (ADR)
+   at `docs/decisions/[feature-slug]-adr.md` following the template in
+   `${CLAUDE_PLUGIN_ROOT}/shared/system-doc-protocol.md`. Use refinement phase output
+   (edge cases, constraints) as ADR context. Include at least 1 rejected alternative.
 
 Enable delegate mode — focus on coordination and user feedback. A designated teammate handles final document compilation.
 
@@ -155,6 +177,9 @@ Enable delegate mode — focus on coordination and user feedback. A designated t
 ### Quality Priority
 [Correctness vs performance vs UX polish vs shipping speed]
 
+### Acceptance Scenarios
+[Behavioral scenarios from `docs/scenarios/[feature-slug].md` — user's pre-spawn definition of correct behavior. If scenarios were skipped, note "Scenarios not collected".]
+
 Create these tasks:
 1. [Lead] Define API contracts and data flow for the feature
 2. [Lead] USER FEEDBACK GATE — Present API contract to user. Ask user to: confirm the API design, adjust endpoints/schemas, flag missing behaviors, and approve before implementation begins
@@ -165,7 +190,8 @@ Create these tasks:
 7. [Tester] Write unit tests for backend services (blocked by task 5)
 8. [Tester] Write unit tests for frontend components (blocked by task 6)
 9. [Tester] Write integration tests for full flow (blocked by tasks 7, 8)
-10. [Backend] Compile implementation summary — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `implementation-summary.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
+10. [Tester] Validate implementation against `docs/scenarios/[feature-slug].md` — for each scenario, verify behavior matches pre-spawn intent. Produce `### Scenario Notes` with Validated/Invalidated/Partial status per scenario. (blocked by task 9; skip if scenarios were not collected)
+11. [Backend] Compile implementation summary — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `implementation-summary.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`. If Documentation teammate was not selected and `--skip-adr` was not specified, also produce an ADR at `docs/decisions/[feature-slug]-adr.md` following `${CLAUDE_PLUGIN_ROOT}/shared/system-doc-protocol.md`
 
 Important: Each teammate should only modify files in their designated directories
 to avoid conflicts. Frontend and Backend must agree on API contracts before implementation.
@@ -178,6 +204,9 @@ to avoid conflicts. Frontend and Backend must agree on API contracts before impl
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
 - When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
 - When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
+- Use `TaskUpdate` to record your approach before starting a task, then periodically update with progress notes (what's done, what remains, key decisions made, files modified) -- task descriptions survive compaction, conversation context does not
+- If you have partial progress on a task and your context is getting long, update the task description with a structured status: (a) completed work, (b) files modified, (c) remaining work, (d) decisions made
+- After any context reset (compaction, session resume), your FIRST action must be: call `TaskList`, then `TaskGet` on any task assigned to you that is `in_progress`, and resume from the progress notes
 
 **Output Standards -- ALL teammates MUST follow:**
 - Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
@@ -250,6 +279,9 @@ Require plan approval before implementing any fix.
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
 - When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
 - When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
+- Use `TaskUpdate` to record your approach before starting a task, then periodically update with progress notes (what's done, what remains, key decisions made, files modified) -- task descriptions survive compaction, conversation context does not
+- If you have partial progress on a task and your context is getting long, update the task description with a structured status: (a) completed work, (b) files modified, (c) remaining work, (d) decisions made
+- After any context reset (compaction, session resume), your FIRST action must be: call `TaskList`, then `TaskGet` on any task assigned to you that is `in_progress`, and resume from the progress notes
 
 **Output Standards -- ALL teammates MUST follow:**
 - Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
@@ -262,9 +294,15 @@ Require plan approval before implementing any fix.
 **Artifact files:** `docs/teams/[TEAM-NAME]/root-cause-analysis.md` (primary), `tasks/` (task outputs)
 **Pipeline:** feeds from `/spawn-think --mode review`, `/spawn-build --mode feature` → feeds into `/spawn-build --mode feature` (fix)
 
-### Step 9: Output
+### Step 10: Output
 
 Follow the verbosity templates from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`.
+
+After team completion, include two prompts:
+1. `Run /after-action-review to review team process and capture improvements` (always)
+2. `Run /evaluate-spawn to assess output quality?` (only when spec scoring was used)
+
+Neither prompt blocks session end.
 
 **Feature mode output:**
 - The team has been created with [3-5] teammates (Frontend, Backend, Tester + optional)

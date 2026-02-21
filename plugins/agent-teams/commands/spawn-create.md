@@ -28,6 +28,7 @@ Follow the prerequisites check from `${CLAUDE_PLUGIN_ROOT}/shared/prerequisites-
 Extract from `$ARGUMENTS`:
 - `--mode design`, `--mode brainstorm`, or `--mode productivity` (optional — auto-infer if absent)
 - `--quiet`, `--normal`, or `--verbose` (optional — default `--normal`)
+- `--min-score N` (optional — override default spec quality threshold of 50)
 - Strip flags from `$ARGUMENTS` before proceeding
 
 ### Step 3: Mode Selection
@@ -100,7 +101,17 @@ Follow the discovery interview from `${CLAUDE_PLUGIN_ROOT}/shared/discovery-inte
 | 4 | **Pain points** — "What are the biggest friction points? Where do you lose the most time?" | Always |
 | 5 | **Current tools** — "What tools, scripts, or automation do you already use?" | Always |
 
-### Step 6: Adaptive Sizing
+### Step 6: Spec Quality Scoring
+
+Follow the scoring protocol from `${CLAUDE_PLUGIN_ROOT}/shared/spec-quality-scoring.md`.
+
+- Evaluate the compiled Context section using binary-checkable questions
+- Display the score with dimension breakdown before proceeding
+- If score is below threshold, prompt user to refine or proceed
+- Include the score in the spawn prompt's `### Spec Quality` subsection
+- Parse `--min-score N` from `$ARGUMENTS` if present (strip before passing downstream)
+
+### Step 7: Adaptive Sizing
 
 Follow the adaptive sizing rules from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`.
 
@@ -108,7 +119,7 @@ Follow the adaptive sizing rules from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.m
 - **Brainstorm mode:** Always 3 core teammates; optionally add User Voice or Domain Expert.
 - **Productivity mode:** Always 5 teammates (the sequential loop is the mechanism).
 
-### Step 7: Optional Teammates
+### Step 8: Optional Teammates
 
 #### Design Mode
 
@@ -125,13 +136,13 @@ No optional teammates — the 4-person team (Product Owner, Designer, Frontend D
 
 No optional teammates — the 5-persona loop is fixed.
 
-### Step 8: Project Analysis
+### Step 9: Project Analysis
 
 **Design mode:** Component directory structure, styling approach, design system/component library, test patterns, existing implementation (redesign mode)
 **Brainstorm mode (tech category):** Technology stack, architecture, existing patterns, known pain points, integration points
 **Productivity mode:** Current workflow tooling, existing automation, known bottlenecks, project structure
 
-### Step 9: Spawn the Team
+### Step 10: Spawn the Team
 
 #### Design Mode
 
@@ -190,6 +201,9 @@ Create these tasks:
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
 - When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
 - When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
+- Use `TaskUpdate` to record your approach before starting a task, then periodically update with progress notes (what's done, what remains, key decisions made, files modified) -- task descriptions survive compaction, conversation context does not
+- If you have partial progress on a task and your context is getting long, update the task description with a structured status: (a) completed work, (b) files modified, (c) remaining work, (d) decisions made
+- After any context reset (compaction, session resume), your FIRST action must be: call `TaskList`, then `TaskGet` on any task assigned to you that is `in_progress`, and resume from the progress notes
 
 **Output Standards -- ALL teammates MUST follow:**
 - Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
@@ -256,7 +270,16 @@ Create these tasks:
 11. [Facilitator] Compile final output with ranked recommendations — write to `docs/teams/[TEAM-NAME]/`
 
 **Task Blocking Protocol -- ALL teammates MUST follow:**
-[Same protocol block]
+- Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
+- NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
+- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
+- After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
+- When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
+- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
+- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
+- Use `TaskUpdate` to record your approach before starting a task, then periodically update with progress notes (what's done, what remains, key decisions made, files modified) -- task descriptions survive compaction, conversation context does not
+- If you have partial progress on a task and your context is getting long, update the task description with a structured status: (a) completed work, (b) files modified, (c) remaining work, (d) decisions made
+- After any context reset (compaction, session resume), your FIRST action must be: call `TaskList`, then `TaskGet` on any task assigned to you that is `in_progress`, and resume from the progress notes
 
 **Output Standards -- ALL teammates MUST follow:**
 - Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
@@ -334,7 +357,16 @@ Create these tasks:
 13. [Compounder] Compile final report — write to `docs/teams/[TEAM-NAME]/`
 
 **Task Blocking Protocol -- ALL teammates MUST follow:**
-[Same protocol block]
+- Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
+- NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
+- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
+- After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
+- When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
+- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
+- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
+- Use `TaskUpdate` to record your approach before starting a task, then periodically update with progress notes (what's done, what remains, key decisions made, files modified) -- task descriptions survive compaction, conversation context does not
+- If you have partial progress on a task and your context is getting long, update the task description with a structured status: (a) completed work, (b) files modified, (c) remaining work, (d) decisions made
+- After any context reset (compaction, session resume), your FIRST action must be: call `TaskList`, then `TaskGet` on any task assigned to you that is `in_progress`, and resume from the progress notes
 
 **Output Standards -- ALL teammates MUST follow:**
 - Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
@@ -347,9 +379,15 @@ Create these tasks:
 **Artifact:** `productivity-report.md`
 **Pipeline:** feeds into `/spawn-build --mode feature` (automation); Compounder output feeds next cycle
 
-### Step 10: Output
+### Step 11: Output
 
 Follow the verbosity templates from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`.
+
+After team completion, include two prompts:
+1. `Run /after-action-review to review team process and capture improvements` (always)
+2. `Run /evaluate-spawn to assess output quality?` (only when spec scoring was used)
+
+Neither prompt blocks session end.
 
 ## Migration
 
