@@ -18,11 +18,11 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | prisma-dev | 0.1.7 | Prisma ORM development with schema analysis and migration safety |
 | shadcn-dev | 0.2.2 | shadcn/ui and Tailwind CSS v4 development workflows |
 | code-quality | 1.0.0 | Deterministic code quality infrastructure — git hooks, lint-staged, and formatters |
-| claude-plugin-dev | 0.3.6 | Plugin development with guided workflows and AI-assisted creation |
+| claude-plugin-dev | 0.4.0 | Plugin development with guided workflows and AI-assisted creation |
 | opentui-dev | 0.1.6 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
 | tabby-dev | 0.1.4 | Tabby terminal configuration, SSH connections, and plugin development |
-| agent-teams | 0.12.0 | Agent team blueprints, coordination patterns, and reusable personas for application development phases with adaptive modes, discovery interviews, user feedback gates, cross-team pipelines, and artifact output to `docs/teams/` |
+| agent-teams | 0.15.0 | Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control |
 | gemini-cli | 0.6.4 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
 | session-insights | 0.1.1 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
 
@@ -365,18 +365,18 @@ Tabby terminal configuration, SSH connections, and plugin development.
 | sources.json | - | Documentation source URLs |
 | learnings.md | Weekly | Documentation and session learnings |
 
-## agent-teams Plugin (v0.11.0)
+## agent-teams Plugin (v0.15.0)
 
-Agent team blueprints, coordination patterns, and reusable personas for application development phases. All teams feature discovery interviews for rich shared context, user feedback gates for mid-course correction, pipeline context for chaining teams together, and artifact output to `docs/teams/` for persistent, git-tracked deliverables. Most teams support adaptive modes for different use cases.
+Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control. Legacy commands for research, feature development, code review, debugging, design, adaptive planning (7 modes), productivity, and brainstorming. All teams feature discovery interviews for rich shared context, user feedback gates for mid-course correction, pipeline context for chaining teams together, and artifact output to `docs/teams/` for persistent, git-tracked deliverables.
 
 ### Skills
 
 | Skill | Purpose | Trigger Phrases |
 |-------|---------|-----------------|
 | agent-teams | Overview, concepts, when to use | "agent teams", "create a team", "coordinate agents" |
-| team-blueprints | Pre-designed team configs for 8 dev phases with design patterns | "research team", "feature team", "review team", "debug team", "design team", "planning team", "productivity team", "brainstorming team" |
+| team-blueprints | Pre-designed team configs with design patterns, unified command mapping | "research team", "feature team", "review team", "debug team", "design team", "planning team", "productivity team", "brainstorming team" |
 | team-coordination | Task management, messaging, lifecycle, discovery interviews, user feedback gates | "manage tasks", "team communication", "delegate mode" |
-| team-personas | Reusable behavioral profiles with deep methodology | "personas", "behavioral profiles", "productivity loop", "auditor persona" |
+| team-personas | Reusable behavioral profiles with deep methodology, persona registry with capability tags | "personas", "behavioral profiles", "productivity loop", "auditor persona" |
 
 ### Agents
 
@@ -384,19 +384,38 @@ Agent team blueprints, coordination patterns, and reusable personas for applicat
 |-------|---------|-----------------|
 | team-architect | Custom team design with persona support and advanced pattern awareness | "design a team", "custom team", "what team do I need" |
 
-### Commands
+### Commands — Unified (v0.15.0)
 
 | Command | Purpose |
 |---------|---------|
 | /agent-teams | Plugin overview with available commands and quickstart |
-| /spawn-research-team | Spawn research team with 3 modes (Technology Evaluation, Landscape Survey, Risk Assessment), discovery interview, feedback gate, optional teammates |
-| /spawn-feature-team | Spawn feature development team with discovery interview, feedback gate after API contract, optional DevOps/Documentation teammates |
-| /spawn-review-team | Spawn code review team with 3 modes (Security-focused, Performance-focused, Balanced), brief interview, optional Accessibility/Architecture reviewers |
-| /spawn-debug-team | Spawn debugging team with hypothesis confirmation gate, competing investigators, root cause confirmation |
-| /spawn-design-team | Spawn frontend design team with 3 modes (New Component, Page/Flow, Redesign), discovery interview, feedback gate before implementation |
-| /spawn-planning-team | Spawn adaptive planning team with 7 modes (Product Roadmap, Technical Spec, Architecture Decision, Migration Strategy, Business Case, Go-to-Market, OKR/Goals) |
-| /spawn-productivity-team | Spawn productivity systems team with pre-spawn interview, feedback gate after scored plan, 5-persona loop (Auditor, Architect, Analyst, Refiner, Compounder) |
-| /spawn-brainstorming-team | Spawn brainstorming team with category-based lenses (Tech/Product/Process/Ops), discovery interview, feedback gate, optional User Voice/Domain Expert |
+| /spawn-build | Build teams — feature development (`--mode feature`) or debugging (`--mode debug`). Adaptive sizing, verbosity control |
+| /spawn-think | Thinking teams — research (`--mode research`), planning (`--mode planning`), or review (`--mode review`). 13 submodes total |
+| /spawn-create | Creative teams — design (`--mode design`), brainstorm (`--mode brainstorm`), or productivity (`--mode productivity`). Persona-driven |
+
+### Commands — Legacy (deprecated, use unified commands)
+
+| Command | Replacement |
+|---------|-------------|
+| /spawn-feature-team | `/spawn-build --mode feature` |
+| /spawn-debug-team | `/spawn-build --mode debug` |
+| /spawn-research-team | `/spawn-think --mode research` |
+| /spawn-planning-team | `/spawn-think --mode planning` |
+| /spawn-review-team | `/spawn-think --mode review` |
+| /spawn-design-team | `/spawn-create --mode design` |
+| /spawn-brainstorming-team | `/spawn-create --mode brainstorm` |
+| /spawn-productivity-team | `/spawn-create --mode productivity` |
+
+### Shared Files (v0.15.0)
+
+| File | Purpose |
+|------|---------|
+| shared/task-blocking-protocol.md | Canonical task dependency protocol (referenced by all commands) |
+| shared/output-standard.md | Output standards with context-type lookup table |
+| shared/prerequisites-check.md | Environment variable check template |
+| shared/discovery-interview.md | 3 core + 2 optional keyword-triggered questions, adaptive skip |
+| shared/spawn-core.md | Adaptive sizing, model selection, verbosity flags, team name slugs |
+| shared/base-agent.md | Universal teammate behaviors, communication defaults, artifact defaults |
 
 ### Hooks
 
@@ -409,14 +428,15 @@ Agent team blueprints, coordination patterns, and reusable personas for applicat
 | File | Purpose |
 |------|---------|
 | references/agent-teams-reference.md | Complete API reference, tools, architecture, best practices |
-| references/auditor.md | Auditor persona: Productivity Systems Analyst |
-| references/architect.md | Architect persona: Solution Architect |
-| references/analyst.md | Analyst persona: Senior Engineering Analyst |
-| references/refiner.md | Refiner persona: Convergence Loop Specialist |
-| references/compounder.md | Compounder persona: Systems Review Partner |
-| references/facilitator.md | Facilitator persona: Session Facilitator |
-| references/visionary.md | Visionary persona: Divergent Thinker |
-| references/realist.md | Realist persona: Practical Thinker |
+| references/auditor.md | Auditor persona: Productivity Systems Analyst (`#discovery #scoring #planning`) |
+| references/architect.md | Architect persona: Solution Architect (`#design #blueprint #phased`) |
+| references/analyst.md | Analyst persona: Senior Engineering Analyst (`#review #multi-pass #scoring`) |
+| references/refiner.md | Refiner persona: Convergence Loop Specialist (`#iteration #convergence #implementation`) |
+| references/compounder.md | Compounder persona: Systems Review Partner (`#synthesis #patterns #tracking`) |
+| references/facilitator.md | Facilitator persona: Session Facilitator (`#coordination #brainstorm #convergence`) |
+| references/visionary.md | Visionary persona: Divergent Thinker (`#brainstorm #divergent #creative`) |
+| references/realist.md | Realist persona: Practical Thinker (`#brainstorm #convergent #feasibility`) |
+| skills/team-personas/registry.md | Centralized persona catalog with capability tags and matching guide |
 
 ## gemini-cli Plugin (v0.6.0)
 

@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user needs guidance on managing an active agent team, coordinating tasks between teammates, handling team communication, or understanding team lifecycle. Use this skill when the user asks about "task management", "team communication", "delegate mode", "plan approval", "shutdown teammates", "team messaging", or says "how do I manage my team".
 
   Covers task management, messaging patterns, plan approval workflow, delegate mode, display modes, and graceful shutdown.
-version: 0.12.0
+version: 0.15.0
 ---
 
 # Team Coordination Patterns
@@ -79,18 +79,7 @@ Every teammate should follow this protocol:
 
 #### Including in Spawn Prompts
 
-Since teammates don't inherit the lead's conversation or read skill files, the blocking protocol must be embedded directly in every spawn prompt. Include this standard block in the prompt text for each teammate:
-
-```
-**Task Blocking Protocol -- ALL teammates MUST follow:**
-- Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
-- NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
-- After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
-- When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
-- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
-- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
-```
+Since teammates don't inherit the lead's conversation or read skill files, the blocking protocol must be embedded directly in every spawn prompt. The canonical protocol block is defined in `${CLAUDE_PLUGIN_ROOT}/shared/task-blocking-protocol.md` — include it verbatim in every spawn prompt. See that file for the exact text, placement guidance, and rationale.
 
 ## Communication Patterns
 

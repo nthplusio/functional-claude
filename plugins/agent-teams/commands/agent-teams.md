@@ -38,7 +38,12 @@ If `$ARGUMENTS` specifies a topic, focus on that area:
 If no arguments provided, present:
 
 1. **Status** — Whether agent teams are enabled
-2. **Available Commands** — List the 9 slash commands:
+2. **Unified Commands (New)** — 3 simplified entry points with adaptive sizing, verbosity control, and auto-mode inference:
+   - `/spawn-build [--mode feature|debug] <description>` — Build features or fix bugs
+   - `/spawn-think [--mode research|planning|review] <topic>` — Research, plan, or review
+   - `/spawn-create [--mode design|brainstorm|productivity] <topic>` — Design, brainstorm, or optimize
+
+3. **Blueprint Commands** — 8 specialized commands (fully functional, equivalent to unified commands):
    - `/spawn-research-team <topic>` — Parallel research with Explorer, Analyst, Critic
    - `/spawn-feature-team <feature>` — Feature development with Frontend, Backend, Tester
    - `/spawn-review-team <target>` — Code review with Security, Performance, Quality reviewers
@@ -48,13 +53,26 @@ If no arguments provided, present:
    - `/spawn-productivity-team <workflow>` — Productivity systems with Auditor, Architect, Analyst, Refiner, Compounder
    - `/spawn-brainstorming-team <topic>` — Brainstorming with Facilitator, Visionary, Realist + optional User Voice, Domain Expert
    - `/agent-teams [topic]` — This overview command
-3. **Available Skills** — List the 4 focused skills:
+
+4. **Migration Table** — Unified commands map to blueprint commands:
+
+   | Instead of... | Use... |
+   |---|---|
+   | `/spawn-feature-team <feature>` | `/spawn-build <feature>` |
+   | `/spawn-debug-team <bug>` | `/spawn-build <bug>` |
+   | `/spawn-research-team <topic>` | `/spawn-think <topic>` |
+   | `/spawn-planning-team <topic>` | `/spawn-think <topic>` |
+   | `/spawn-review-team <target>` | `/spawn-think <target>` |
+   | `/spawn-design-team <feature>` | `/spawn-create <feature>` |
+   | `/spawn-brainstorming-team <topic>` | `/spawn-create <topic>` |
+   | `/spawn-productivity-team <workflow>` | `/spawn-create <workflow>` |
+5. **Available Skills** — List the 4 focused skills:
    - `agent-teams` — Overview and concepts
    - `team-blueprints` — Pre-designed team configurations
    - `team-coordination` — Task management and communication patterns
    - `team-personas` — Reusable behavioral profiles with deep methodology
-4. **Team Architect Agent** — Mention the team-architect agent for custom team design
-5. **Quick Start** — Show the simplest way to spawn a team
+6. **Team Architect Agent** — Mention the team-architect agent for custom team design
+7. **Quick Start** — Show the simplest way to spawn a team
 
 ## Quick Start Example
 
@@ -62,8 +80,14 @@ If no arguments provided, present:
 # Enable agent teams (one-time setup)
 Add to settings.json: { "env": { "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1" } }
 
-# Spawn a team using a command
+# Unified commands (recommended) — auto-detect mode from your description
+/spawn-build add user authentication with OAuth and JWT
+/spawn-think evaluate React state management libraries
+/spawn-create brainstorm API authentication approaches
+
+# Blueprint commands — specify the exact team type
 /spawn-research-team authentication approaches for our API
+/spawn-feature-team add OAuth login flow
 
 # Or describe what you need in natural language
 Create an agent team to review PR #42 from security and performance angles

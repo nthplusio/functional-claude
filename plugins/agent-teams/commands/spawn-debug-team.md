@@ -6,6 +6,8 @@ argument-hint: <bug description or symptoms>
 
 # Spawn Debugging & Investigation Team
 
+> **Deprecated in v0.15.0** — Use `/spawn-build --mode debug` instead. This command remains fully functional but will be removed in v1.1.0.
+
 Create an agent team for parallel bug investigation with competing hypotheses. Includes a pre-spawn hypothesis confirmation gate (to validate investigator direction before spawning) and a root cause confirmation step (to validate findings before proposing a fix).
 
 ## Prerequisites Check

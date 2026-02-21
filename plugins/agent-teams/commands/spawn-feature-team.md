@@ -6,6 +6,8 @@ argument-hint: <feature description>
 
 # Spawn Feature Development Team
 
+> **Deprecated in v0.15.0** — Use `/spawn-build --mode feature` instead. This command remains fully functional but will be removed in v1.1.0.
+
 Create an agent team for parallel feature implementation across multiple layers, with a discovery interview for rich shared context, a user feedback gate after API contract definition (the most expensive decision point), and optional teammates for infrastructure and documentation needs.
 
 ## Prerequisites Check

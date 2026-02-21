@@ -6,6 +6,8 @@ argument-hint: <PR number, branch name, or module to review>
 
 # Spawn Code Review & QA Team
 
+> **Deprecated in v0.15.0** — Use `/spawn-think --mode review` instead. This command remains fully functional but will be removed in v1.1.0.
+
 Create an agent team for parallel code review with specialized reviewers, adaptive focus modes, a brief interview for review context, and optional teammates for frontend-heavy or structurally significant changes.
 
 ## Prerequisites Check

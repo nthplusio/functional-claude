@@ -6,6 +6,8 @@ argument-hint: <UI feature or design task>
 
 # Spawn Frontend Design Team
 
+> **Deprecated in v0.15.0** — Use `/spawn-create --mode design` instead. This command remains fully functional but will be removed in v1.1.0.
+
 Create an agent team for the design-to-implementation phase of frontend work, with four distinct perspectives maintaining creative tension: product requirements, visual design, technical implementation, and user advocacy. Includes a discovery interview for rich shared context, adaptive modes for different design tasks, and a user feedback gate before implementation begins.
 
 ## Prerequisites Check

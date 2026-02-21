@@ -6,6 +6,8 @@ argument-hint: <topic to brainstorm>
 
 # Spawn Brainstorming & Ideation Team
 
+> **Deprecated in v0.15.0** — Use `/spawn-create --mode brainstorm` instead. This command remains fully functional but will be removed in v1.1.0.
+
 Create an agent team for structured brainstorming using research-backed ideation principles: independent brainwriting to prevent anchoring bias, a user feedback gate for human-in-the-loop prioritization, and a building phase to refine winning ideas.
 
 ## Prerequisites Check

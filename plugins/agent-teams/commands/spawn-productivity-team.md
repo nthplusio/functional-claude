@@ -6,6 +6,8 @@ argument-hint: <workflow or process to optimize>
 
 # Spawn Productivity Systems Team
 
+> **Deprecated in v0.15.0** — Use `/spawn-create --mode productivity` instead. This command remains fully functional but will be removed in v1.1.0.
+
 Create an agent team that runs the full productivity loop: Auditor → Architect → Analyst → Refiner → Compounder. Each persona's output feeds the next, compounding improvements over time rather than producing isolated outputs. Includes a pre-spawn interview to give the Auditor rich starting context and a user feedback gate after the scored improvement plan.
 
 ## Prerequisites Check

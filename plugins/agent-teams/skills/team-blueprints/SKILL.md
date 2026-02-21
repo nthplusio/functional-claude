@@ -4,12 +4,32 @@ description: |
   This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "design team", "planning team", "roadmap team", "team blueprint", "team template", or says "spawn a team for [development phase]".
 
   Provides 8 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, Frontend Design, Planning & Roadmapping, Productivity Systems, and Brainstorming & Ideation.
-version: 0.12.0
+version: 0.15.0
 ---
 
 # Agent Team Blueprints
 
 Pre-designed team configurations for eight application development phases. Each blueprint defines the team composition, teammate roles, task structure, and the prompt to use.
+
+## New in v0.15.0: Unified Commands
+
+Three unified commands provide simplified entry points with adaptive sizing, verbosity control, and auto-mode inference. They dispatch to the same blueprints documented below.
+
+| Unified Command | Modes | Replaces |
+|---|---|---|
+| `/spawn-build` | feature, debug | `/spawn-feature-team`, `/spawn-debug-team` |
+| `/spawn-think` | research (3 submodes), planning (7 submodes), review (3 submodes) | `/spawn-research-team`, `/spawn-planning-team`, `/spawn-review-team` |
+| `/spawn-create` | design (3 submodes), brainstorm (4 categories), productivity | `/spawn-design-team`, `/spawn-brainstorming-team`, `/spawn-productivity-team` |
+
+**What unified commands add:**
+- **Adaptive sizing** — Auto-recommends solo/pair/full team based on subtask count
+- **Verbosity control** — `--quiet`, `--normal` (default), `--verbose` flags
+- **Auto-mode inference** — Detects the right mode from your description keywords
+- **Streamlined discovery** — 3 core questions + 0-2 optional, with adaptive skip
+
+**Blueprint commands remain fully functional** — use them directly when you know exactly which team type you need.
+
+---
 
 ## Blueprint 1: Research & Discovery Team
 
@@ -614,20 +634,7 @@ Tasks:
 
 ## Task Blocking Protocol
 
-Every spawn prompt should include the standard Task Blocking Protocol block to ensure teammates respect task dependencies. Without this, teammates may start blocked tasks early, skip reading upstream deliverables, or invent unrelated work while waiting.
-
-**Include this block in the spawn prompt for each teammate:**
-
-```
-**Task Blocking Protocol -- ALL teammates MUST follow:**
-- Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
-- NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
-- After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
-- When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
-- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
-- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
-```
+Every spawn prompt must include the Task Blocking Protocol block. The canonical version is defined in `${CLAUDE_PLUGIN_ROOT}/shared/task-blocking-protocol.md` — see that file for the exact text, placement guidance, and rationale.
 
 This is especially important for blueprints with deep dependency chains (Frontend Design, Productivity Systems, Brainstorming) where later tasks depend on specific outputs from earlier ones.
 

@@ -147,14 +147,8 @@ Create an agent team called "[team-name]" to [goal]. Spawn [N] teammates:
 ### Additional Context
 [Task-specific details from extended questions and project analysis]
 
-**Task Blocking Protocol -- ALL teammates MUST follow:**
-- Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
-- NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
-- After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
-- When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
-- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
-- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
+[Include Task Blocking Protocol from ${CLAUDE_PLUGIN_ROOT}/shared/task-blocking-protocol.md]
+[Include Output Standards from ${CLAUDE_PLUGIN_ROOT}/shared/output-standard.md]
 
 Create these tasks:
 1. [Owner] Task description (dependencies if any)

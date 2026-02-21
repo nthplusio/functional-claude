@@ -6,6 +6,8 @@ argument-hint: <topic to research>
 
 # Spawn Research & Discovery Team
 
+> **Deprecated in v0.15.0** — Use `/spawn-think --mode research` instead. This command remains fully functional but will be removed in v1.1.0.
+
 Create an agent team to conduct structured research across 3 modes, each spawning a purpose-built team with distinct roles, a discovery interview for rich shared context, a user feedback gate after initial findings, and mode-specific output formats that feed into downstream team commands.
 
 ## Prerequisites Check

@@ -6,6 +6,8 @@ argument-hint: <what you need to plan>
 
 # Spawn Adaptive Planning Team
 
+> **Deprecated in v0.15.0** — Use `/spawn-think --mode planning` instead. This command remains fully functional but will be removed in v1.1.0.
+
 Create an agent team for structured planning across 7 modes. Each mode spawns a purpose-built team with distinct roles, a discovery interview for shared context, a user feedback gate after initial analysis, and output formats that feed into downstream team commands.
 
 ## Prerequisites Check
