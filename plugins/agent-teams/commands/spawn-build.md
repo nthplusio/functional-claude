@@ -27,7 +27,7 @@ Follow the prerequisites check from `${CLAUDE_PLUGIN_ROOT}/shared/prerequisites-
 Extract from `$ARGUMENTS`:
 - `--mode feature` or `--mode debug` (optional — auto-infer if absent)
 - `--quiet`, `--normal`, or `--verbose` (optional — default `--normal`)
-- `--min-score N` (optional — override default spec quality threshold of 50)
+- `--min-score N` (optional — override default spec quality threshold of 4 dimensions)
 - `--skip-adr` (optional — suppress ADR generation in feature mode)
 - Strip flags from `$ARGUMENTS` before proceeding
 
@@ -73,11 +73,11 @@ Follow the discovery interview from `${CLAUDE_PLUGIN_ROOT}/shared/discovery-inte
 
 Follow the scoring protocol from `${CLAUDE_PLUGIN_ROOT}/shared/spec-quality-scoring.md`.
 
-- Evaluate the compiled Context section using binary-checkable questions
-- Display the score with dimension breakdown before proceeding
-- If score is below threshold, prompt user to refine or proceed
+- Evaluate the compiled Context section using pass/fail dimension questions
+- Display the score as dimension count with breakdown before proceeding (e.g., `5/6 [Goal: ✓] ...`)
+- If passing dimensions are below threshold, prompt user to refine or proceed
 - Include the score in the spawn prompt's `### Spec Quality` subsection
-- Parse `--min-score N` from `$ARGUMENTS` if present (strip before passing downstream)
+- Parse `--min-score N` from `$ARGUMENTS` if present — accepts dimension count (strip before passing downstream)
 
 ### Step 6: Adaptive Sizing
 
@@ -191,7 +191,7 @@ Create these tasks:
 8. [Tester] Write unit tests for frontend components (blocked by task 6)
 9. [Tester] Write integration tests for full flow (blocked by tasks 7, 8)
 10. [Tester] Validate implementation against `docs/scenarios/[feature-slug].md` — for each scenario, verify behavior matches pre-spawn intent. Produce `### Scenario Notes` with Validated/Invalidated/Partial status per scenario. (blocked by task 9; skip if scenarios were not collected)
-11. [Backend] Compile implementation summary — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `implementation-summary.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`. If Documentation teammate was not selected and `--skip-adr` was not specified, also produce an ADR at `docs/decisions/[feature-slug]-adr.md` following `${CLAUDE_PLUGIN_ROOT}/shared/system-doc-protocol.md`
+11. [Tester] Compile implementation summary — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `implementation-summary.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`. If Documentation teammate was not selected and `--skip-adr` was not specified, also produce an ADR at `docs/decisions/[feature-slug]-adr.md` following `${CLAUDE_PLUGIN_ROOT}/shared/system-doc-protocol.md`
 
 Important: Each teammate should only modify files in their designated directories
 to avoid conflicts. Frontend and Backend must agree on API contracts before implementation.
@@ -214,6 +214,12 @@ to avoid conflicts. Frontend and Backend must agree on API contracts before impl
 - Never restate the Feature Context back — teammates already have it
 - Every sentence should add new information. Cut filler, hedging, and throat-clearing
 - Task outputs go to `docs/teams/[TEAM-NAME]/tasks/` — keep each under 500 lines
+
+**Shutdown Protocol -- Lead MUST follow when ending the team:**
+- Before shutdown, message each teammate: "Before we wrap up — answer briefly: (1) What was your understanding of the goal? (2) What went well in how the team operated? (3) What would you change?"
+- Collect all responses before sending any shutdown_request
+- After all teammates approve shutdown, run `/after-action-review [team-name]`
+- Verify AAR file exists at `docs/retrospectives/[team-name]-aar.md` before calling TeamDelete
 ```
 
 **Output format:** Implemented feature + API contract document + test report
@@ -288,6 +294,12 @@ Require plan approval before implementing any fix.
 - Lead with conclusions, then supporting evidence — not the other way around
 - Every sentence should add new information. Cut filler, hedging, and throat-clearing
 - Task outputs go to `docs/teams/[TEAM-NAME]/tasks/` — keep each under 500 lines
+
+**Shutdown Protocol -- Lead MUST follow when ending the team:**
+- Before shutdown, message each teammate: "Before we wrap up — answer briefly: (1) What was your understanding of the goal? (2) What went well in how the team operated? (3) What would you change?"
+- Collect all responses before sending any shutdown_request
+- After all teammates approve shutdown, run `/after-action-review [team-name]`
+- Verify AAR file exists at `docs/retrospectives/[team-name]-aar.md` before calling TeamDelete
 ```
 
 **Output format:** Root cause analysis + hypothesis investigation results + fix proposal
@@ -298,11 +310,12 @@ Require plan approval before implementing any fix.
 
 Follow the verbosity templates from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`.
 
-After team completion, include two prompts:
-1. `Run /after-action-review to review team process and capture improvements` (always)
-2. `Run /evaluate-spawn to assess output quality?` (only when spec scoring was used)
+The shutdown protocol ensures AAR runs before TeamDelete. If the team shut down before AAR completed, run `/after-action-review [team-name]` manually.
 
-Neither prompt blocks session end.
+After team completion, include:
+1. `Run /evaluate-spawn to assess output quality?` (only when spec scoring was used)
+
+This prompt does not block session end.
 
 **Feature mode output:**
 - The team has been created with [3-5] teammates (Frontend, Backend, Tester + optional)
@@ -310,7 +323,7 @@ Neither prompt blocks session end.
 - **Phase 2 (Your Turn):** Review the API contract before implementation begins
 - **Phase 3 (Implementation):** Frontend and Backend work in parallel
 - **Phase 4 (Testing):** Tester writes unit and integration tests
-- **Phase 5 (Summary):** Lead compiles an implementation summary
+- **Phase 5 (Summary):** Tester compiles an implementation summary
 - Artifacts written to `docs/teams/[TEAM-NAME]/`
 
 **Debug mode output:**

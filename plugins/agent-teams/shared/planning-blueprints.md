@@ -92,7 +92,7 @@ Create these tasks:
 Each phase brief should be directly usable as input to /spawn-build --mode feature or /spawn-create --mode design.
 Include: phase goal, features, dependencies, success criteria, and business rationale.
 
-[Include Task Blocking Protocol and Output Standards from shared/task-blocking-protocol.md and shared/output-standard.md]
+[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `roadmap.md` → feeds into `/spawn-build --mode feature`, `/spawn-create --mode design`
@@ -118,7 +118,7 @@ Spawn [3-4] teammates:
 2. **API Designer** — Design interfaces: API endpoints, request/response schemas, data models,
    state transitions, integration contracts. Single source of truth for all data models and
    schemas — other teammates reference by name, never redefine. Include error handling and
-   edge cases.
+   edge cases. Verify all schemas and API examples against actual library documentation before finalizing.
    Use Sonnet model.
 
 3. **Risk Analyst** — Identify technical risks, failure modes, edge cases, and security
@@ -143,7 +143,8 @@ Enable delegate mode — focus on coordination and user feedback. A designated t
 - API Designer is single source of truth for data models and schemas
 - Other teammates reference models by name — never redefine
 - Each teammate writes analysis to their task output file in `tasks/`
-- Architect compiles final `spec.md` with sections: Overview, System Architecture, API Contracts & Data Models, Risk & Security, Implementation Guide
+- API Designer compiles final `spec.md` with sections: Overview, System Architecture, API Contracts & Data Models, Risk & Security, Implementation Guide
+- Before compiling, the compiler must verify all code snippets against actual library types — check method signatures, parameter names, return types, and schema syntax against the codebase's actual imports. Do not copy API usage from memory.
 
 Create these tasks:
 1. [Architect] Analyze existing system, define high-level design — components, boundaries, data flow, codebase patterns
@@ -154,12 +155,12 @@ Create these tasks:
 6. [API Designer] Finalize contracts with error handling, edge cases, examples (blocked by 4)
 7. [Risk Analyst] Propose mitigations for accepted risks (blocked by 4)
 8. [All] Cross-review: validate spec coherence
-9. [Architect] Compile spec.md — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `spec.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by 8)
+9. [API Designer] Compile spec.md — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `spec.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by 8)
 
 The final spec should be detailed enough for implementation without further clarification.
 Feeds into /spawn-build --mode feature.
 
-[Include Task Blocking Protocol and Output Standards from shared/task-blocking-protocol.md and shared/output-standard.md]
+[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `spec.md` → feeds into `/spawn-build --mode feature`
@@ -223,7 +224,7 @@ Create these tasks:
 ADR format: Title, Status, Context, Decision, Consequences. Include comparison matrix,
 rejected options with reasons, and implementation guidance.
 
-[Include Task Blocking Protocol and Output Standards from shared/task-blocking-protocol.md and shared/output-standard.md]
+[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `adr.md` → feeds into implementation teams
@@ -288,7 +289,7 @@ Create these tasks:
 Include: current/target state analysis, migration approach, phased execution with rollback,
 risk matrix with mitigations, go/no-go criteria, and stakeholder communication plan.
 
-[Include Task Blocking Protocol and Output Standards from shared/task-blocking-protocol.md and shared/output-standard.md]
+[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `migration-plan.md` → feeds into implementation teams
@@ -357,7 +358,7 @@ Create these tasks:
 Include: executive summary, strategic context, market analysis, financial model with scenarios,
 risk assessment, and recommendation. Feeds into Product Roadmap mode.
 
-[Include Task Blocking Protocol and Output Standards from shared/task-blocking-protocol.md and shared/output-standard.md]
+[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `business-case.md` → feeds into Product Roadmap mode
@@ -426,7 +427,7 @@ Create these tasks:
 Include: positioning framework, customer personas, channel strategy with tactics,
 launch timeline, readiness criteria, and measurement plan. Feeds into Product Roadmap mode.
 
-[Include Task Blocking Protocol and Output Standards from shared/task-blocking-protocol.md and shared/output-standard.md]
+[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `gtm-plan.md` → feeds into Product Roadmap mode
@@ -495,7 +496,7 @@ Create these tasks:
 Include: objective tree, key results with baselines and targets, ownership map, measurement
 plan, and alignment notes. Feeds into Product Roadmap and/or Technical Spec modes.
 
-[Include Task Blocking Protocol and Output Standards from shared/task-blocking-protocol.md and shared/output-standard.md]
+[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `okr-tree.md` → feeds into Product Roadmap, Technical Spec modes

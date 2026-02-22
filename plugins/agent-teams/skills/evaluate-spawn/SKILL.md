@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user asks to evaluate a completed team spawn session, capture session learnings, or review how a spawn went. Use this skill when the user says "evaluate spawn", "evaluate-spawn", "how did the spawn go", "capture learnings", "review spawn session", "spawn retrospective", or at the soft prompt after a team completes its work.
 
   This is a voluntary post-spawn evaluation that captures session learnings and produces structured retrospective data. It asks exactly 3 questions (hard cap) to minimize friction while maximizing signal.
-version: 0.15.3
+version: 0.16.0
 ---
 
 # Post-Spawn Workflow Evaluation
@@ -67,7 +67,7 @@ Write evaluation results to `docs/retrospectives/[team-name].md`. Create the `do
 ---
 team: [team-name]
 date: [YYYY-MM-DD]
-spec-score: [N/100 or "not scored"]
+spec-score: [N/6 dimensions or "not scored"]
 type: [feature|debug|research|planning|review|design|brainstorm]
 ---
 

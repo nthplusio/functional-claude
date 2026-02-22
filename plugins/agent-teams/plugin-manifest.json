@@ -1,5 +1,5 @@
 {
-  "version": "0.15.3",
+  "version": "0.16.0",
   "preserve": [
     ".cache/",
     ".claude-plugin/"
@@ -24,6 +24,7 @@
     "shared/planning-blueprints.md",
     "shared/prerequisites-check.md",
     "shared/scenario-collection.md",
+    "shared/shutdown-protocol.md",
     "shared/spawn-core.md",
     "shared/spec-quality-scoring.md",
     "shared/spec-refinement.md",

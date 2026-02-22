@@ -43,6 +43,8 @@ N. [Lead] Compile deliverables
 [TASK BLOCKING PROTOCOL BLOCK HERE]
 
 [OUTPUT STANDARDS BLOCK HERE]
+
+[SHUTDOWN PROTOCOL BLOCK HERE]
 ```
 
 ## When to Include

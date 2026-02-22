@@ -98,6 +98,12 @@ When the lead is in delegate mode:
 
 ## Shutdown Compliance
 
+### Retrospective Questions
+
+When you receive retrospective questions from the lead (typically 3 questions about goal understanding, what went well, and what you'd change), answer concisely (2-3 sentences per question). Focus on team process, not output quality. Be specific — name the coordination pattern or friction point. This is your chance to influence how future teams operate.
+
+### Shutdown Requests
+
 When you receive a `shutdown_request`:
 - Approve immediately unless you are mid-write on a file
 - If mid-write, finish the write, then approve

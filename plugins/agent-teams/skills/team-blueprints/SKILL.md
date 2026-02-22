@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "design team", "planning team", "roadmap team", "team blueprint", "team template", or says "spawn a team for [development phase]".
 
   Provides 8 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, Frontend Design, Planning & Roadmapping, Productivity Systems, and Brainstorming & Ideation.
-version: 0.15.3
+version: 0.16.0
 ---
 
 # Agent Team Blueprints
@@ -130,7 +130,7 @@ Tasks:
 7. [Tester] Write unit tests for backend (blocked by 5)
 8. [Tester] Write unit tests for frontend (blocked by 6)
 9. [Tester] Write integration tests (blocked by 7, 8)
-10. [Backend] Compile implementation summary
+10. [Tester] Compile implementation summary
 ```
 
 ### Configuration Tips

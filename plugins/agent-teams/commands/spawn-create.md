@@ -28,7 +28,7 @@ Follow the prerequisites check from `${CLAUDE_PLUGIN_ROOT}/shared/prerequisites-
 Extract from `$ARGUMENTS`:
 - `--mode design`, `--mode brainstorm`, or `--mode productivity` (optional — auto-infer if absent)
 - `--quiet`, `--normal`, or `--verbose` (optional — default `--normal`)
-- `--min-score N` (optional — override default spec quality threshold of 50)
+- `--min-score N` (optional — override default spec quality threshold of 4 dimensions)
 - Strip flags from `$ARGUMENTS` before proceeding
 
 ### Step 3: Mode Selection
@@ -211,6 +211,12 @@ Create these tasks:
 - Never restate the Design Context back — teammates already have it
 - Every sentence should add new information. Cut filler, hedging, and throat-clearing
 - Task outputs go to `docs/teams/[TEAM-NAME]/tasks/` — keep each under 500 lines
+
+**Shutdown Protocol -- Lead MUST follow when ending the team:**
+- Before shutdown, message each teammate: "Before we wrap up — answer briefly: (1) What was your understanding of the goal? (2) What went well in how the team operated? (3) What would you change?"
+- Collect all responses before sending any shutdown_request
+- After all teammates approve shutdown, run `/after-action-review [team-name]`
+- Verify AAR file exists at `docs/retrospectives/[team-name]-aar.md` before calling TeamDelete
 ```
 
 **Artifact:** `component-spec.md` / `page-spec.md` / `redesign-spec.md`
@@ -287,6 +293,12 @@ Create these tasks:
 - Never restate the Brainstorming Context back — teammates already have it
 - Every sentence should add new information. Cut filler, hedging, and throat-clearing
 - Task outputs go to `docs/teams/[TEAM-NAME]/tasks/` — keep each under 500 lines
+
+**Shutdown Protocol -- Lead MUST follow when ending the team:**
+- Before shutdown, message each teammate: "Before we wrap up — answer briefly: (1) What was your understanding of the goal? (2) What went well in how the team operated? (3) What would you change?"
+- Collect all responses before sending any shutdown_request
+- After all teammates approve shutdown, run `/after-action-review [team-name]`
+- Verify AAR file exists at `docs/retrospectives/[team-name]-aar.md` before calling TeamDelete
 ```
 
 **Artifact:** `brainstorm-output.md`
@@ -374,6 +386,12 @@ Create these tasks:
 - Never restate the Productivity Context back — teammates already have it
 - Every sentence should add new information. Cut filler, hedging, and throat-clearing
 - Task outputs go to `docs/teams/[TEAM-NAME]/tasks/` — keep each under 500 lines
+
+**Shutdown Protocol -- Lead MUST follow when ending the team:**
+- Before shutdown, message each teammate: "Before we wrap up — answer briefly: (1) What was your understanding of the goal? (2) What went well in how the team operated? (3) What would you change?"
+- Collect all responses before sending any shutdown_request
+- After all teammates approve shutdown, run `/after-action-review [team-name]`
+- Verify AAR file exists at `docs/retrospectives/[team-name]-aar.md` before calling TeamDelete
 ```
 
 **Artifact:** `productivity-report.md`
@@ -383,8 +401,9 @@ Create these tasks:
 
 Follow the verbosity templates from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`.
 
-After team completion, include two prompts:
-1. `Run /after-action-review to review team process and capture improvements` (always)
-2. `Run /evaluate-spawn to assess output quality?` (only when spec scoring was used)
+The shutdown protocol ensures AAR runs before TeamDelete. If the team shut down before AAR completed, run `/after-action-review [team-name]` manually.
 
-Neither prompt blocks session end.
+After team completion, include:
+1. `Run /evaluate-spawn to assess output quality?` (only when spec scoring was used)
+
+This prompt does not block session end.
