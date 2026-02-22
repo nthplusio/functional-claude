@@ -22,7 +22,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | opentui-dev | 0.1.6 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
 | tabby-dev | 0.1.4 | Tabby terminal configuration, SSH connections, and plugin development |
-| agent-teams | 0.17.0 | Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control |
+| agent-teams | 0.17.1 | Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control |
 | gemini-cli | 0.6.4 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
 | session-insights | 0.1.1 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
 
@@ -365,7 +365,7 @@ Tabby terminal configuration, SSH connections, and plugin development.
 | sources.json | - | Documentation source URLs |
 | learnings.md | Weekly | Documentation and session learnings |
 
-## agent-teams Plugin (v0.17.0)
+## agent-teams Plugin (v0.17.1)
 
 Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control. All teams feature discovery interviews for rich shared context, user feedback gates for mid-course correction, pipeline context for chaining teams together, and artifact output to `docs/teams/` for persistent, git-tracked deliverables.
 

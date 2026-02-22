@@ -17,18 +17,26 @@ Structured process evaluation based on the military AAR format (FM 7-0, Appendix
 
 ## Phase 1: Collect Participant Input
 
-**When teammates are still alive** (shutdown protocol Phase 1 has already collected this):
+**When teammates are still alive** — message each teammate directly with the FM 7-0 questions:
 
-Use the responses collected during shutdown. Each teammate was asked:
-1. "What was your understanding of the goal?"
-2. "What went well in how the team operated?"
-3. "What would you change about how we worked together?"
+> "Before we wrap up — answer briefly:
+> 1. What was your understanding of the goal?
+> 2. What went well in how the team operated?
+> 3. What would you change about how we worked together?"
 
-These map directly to FM 7-0 core questions and give each participant a voice.
+Do NOT assume the shutdown protocol already collected this. Send the questions now, collect all responses, then proceed to Phase 2.
 
 **When teammates are already shut down** (AAR run after the fact):
 
 This is a **reduced-fidelity AAR**. The lead reconstructs from task data and conversation memory. Note this prominently in the AAR document: `⚠️ Reduced-fidelity AAR — participant input was not collected before shutdown.`
+
+> **Correct Shutdown Sequence** (reference):
+> 1. All tasks complete
+> 2. Lead messages teammates with retrospective questions (this phase)
+> 3. Collect responses
+> 4. Send `shutdown_request` to all teammates
+> 5. Run AAR (this protocol) — participant input already collected
+> 6. Verify AAR file → `TeamDelete`
 
 ## Phase 2: Lead Synthesis
 
@@ -43,6 +51,8 @@ Reconstruct the original intent:
 - Note the spec quality score if scoring was used (from spawn prompt context)
 - Identify the original goal from the team name and task descriptions
 - **Compare participant answers to "what was your understanding of the goal?"** — surface any misalignment between teammates' understanding and the actual plan
+
+**Note:** Filter out agent lifecycle tracking tasks (tasks whose subject is just a teammate name with no description) — these are auto-created by the platform and don't represent real work. Only count substantive tasks in the task total.
 
 Present a concise summary: team composition, task count, dependency depth, and stated goal.
 

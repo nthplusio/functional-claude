@@ -1,5 +1,5 @@
 {
   "name": "agent-teams",
-  "version": "0.17.0",
+  "version": "0.17.1",
   "description": "Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control"
 }

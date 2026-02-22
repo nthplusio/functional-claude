@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user asks about Claude Code agent teams, wants to understand team-based development workflows, or needs guidance on when and how to use agent teams. Use this skill when the user asks to "create a team", "use agent teams", "coordinate agents", "parallel development", "team workflow", or says "how do agent teams work".
 
   This skill provides an overview of agent teams, when to use them vs subagents, and routes to focused skills for team blueprints and coordination patterns.
-version: 0.17.0
+version: 0.17.1
 ---
 
 # Agent Teams for Application Development

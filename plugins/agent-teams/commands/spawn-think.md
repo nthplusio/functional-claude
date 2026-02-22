@@ -303,8 +303,9 @@ Create these tasks:
 4. [Performance] Review algorithmic complexity and caching opportunities
 5. [Quality] Verify adherence to project patterns and conventions
 6. [Quality] Assess test coverage and identify gaps
-7. [All] Cross-reference findings across review domains
-8. [Quality Reviewer] Compile unified review report — write to `docs/teams/[TEAM-NAME]/`
+7. [Lead] USER FEEDBACK GATE — Present top findings from each reviewer. Ask user to: prioritize findings, select deep-dive areas, adjust review scope (blocked by tasks 1, 2, 3, 4, 5, 6)
+8. [All] Cross-reference findings across review domains (blocked by task 7)
+9. [Quality Reviewer] Compile unified review report — write to `docs/teams/[TEAM-NAME]/`: primary artifact as `review-report.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 8)
 
 **Task Blocking Protocol -- ALL teammates MUST follow:**
 - Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
