@@ -313,7 +313,7 @@ Follow the verbosity templates from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`
 The shutdown protocol ensures AAR runs before TeamDelete. If the team shut down before AAR completed, run `/after-action-review [team-name]` manually.
 
 After team completion, include:
-1. `Run /evaluate-spawn to assess output quality?` (only when spec scoring was used)
+1. `Run /evaluate-spawn to capture quick feedback? (2 questions)`
 
 This prompt does not block session end.
 
