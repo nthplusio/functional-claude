@@ -11,6 +11,8 @@ Without this protocol, teammates:
 - Ignore user feedback gate decisions
 - Resist shutdown, wasting tokens on unnecessary wind-down messages
 - Lose progress during compaction because task state wasn't preserved in task descriptions
+- Serialize independent tasks instead of parallelizing them, wasting time
+- Silently work around infrastructure blockers, creating hidden technical debt
 
 ## Protocol Block
 
@@ -22,6 +24,7 @@ Spawn prompts reference this block via `[Include Task Blocking Protocol from sha
 - NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
 - If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically). Exception: always respond to direct questions from the lead (e.g., retrospective questions, clarification requests)
 - After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
+- If you have multiple unblocked tasks assigned to you, work them in parallel rather than sequentially — launch concurrent work streams where the tasks don't share output files
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
 - When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
 - When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
@@ -30,9 +33,24 @@ Spawn prompts reference this block via `[Include Task Blocking Protocol from sha
 - After any context reset (compaction, session resume), your FIRST action must be: call `TaskList`, then `TaskGet` on any task assigned to you that is `in_progress`, and resume from the progress notes
 ```
 
+## Escalation Protocol
+
+Spawn prompts reference this block via `[Include Escalation Protocol from shared/task-blocking-protocol.md]`. The lead reads this section at spawn time and embeds it alongside the Task Blocking Protocol block:
+
+```
+**Escalation Protocol -- ALL teammates MUST follow:**
+- If you encounter an infrastructure or tooling blocker (migration failures, build failures,
+  environment issues, dependency conflicts, CI/CD errors), DO NOT silently work around it
+- Instead, message the lead with: (1) what failed, (2) the error message, (3) your proposed
+  workaround and its trade-offs
+- The lead will either approve the workaround or escalate to the user
+- Code-level problems (logic bugs, test failures, API design questions) are yours to solve —
+  only escalate infrastructure issues where workarounds create hidden technical debt
+```
+
 ## Placement
 
-Place the protocol block after the task list and before any closing coordination instructions:
+Place the protocol blocks after the task list and before any closing coordination instructions:
 
 ```
 Create these tasks:
@@ -41,6 +59,8 @@ Create these tasks:
 N. [Lead] Compile deliverables
 
 [TASK BLOCKING PROTOCOL BLOCK HERE]
+
+[ESCALATION PROTOCOL BLOCK HERE]
 
 [OUTPUT STANDARDS BLOCK HERE]
 

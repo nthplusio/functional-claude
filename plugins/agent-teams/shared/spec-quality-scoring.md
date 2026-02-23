@@ -50,8 +50,16 @@ Each dimension is designed through the lens of: **"Does this spec give the build
 ## Calibration Mode
 
 For the first 10 sessions using scoring:
-- Append to the score display: `(Calibration session [N]/10 — threshold will adjust based on /evaluate-spawn data)`
-- Track session count via the retrospective corpus (Phase 2)
+- Before displaying the spec quality score, count calibration sessions:
+  1. Glob `docs/retrospectives/*.md`
+  2. For each file, read the frontmatter `spec-score:` field
+  3. Count files where `spec-score:` is present and is NOT the string "not scored"
+  4. That count is N
+- Append to the score display: `(Calibration session N/10 — threshold will adjust based on /evaluate-spawn data)`
+- If N >= 10: omit the calibration suffix — display score without calibration note
+- If `docs/retrospectives/` does not exist or contains no files: display N=0
+
+After 10+ Build profile retrospectives accumulate with score accuracy data (from R3), run `/calibrate-scoring` to aggregate patterns and receive a threshold adjustment recommendation.
 
 ## Integration with Spawn Prompt
 

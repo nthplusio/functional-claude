@@ -97,9 +97,20 @@ This is separate from writing unit tests. The Tester must:
 - **Invalidated**: Implementation contradicts the scenario (scope drift detected)
 - **Partial**: Some aspects match, others diverge — details in Notes column
 
+**If any rows are Invalidated or Partial:** The Tester adds a `### Correction Opportunities` table immediately after `### Scenario Notes`. See `shared/shutdown-protocol.md` Phase 0 for the correction loop protocol the Lead runs on this output.
+
+```markdown
+### Correction Opportunities
+
+| Scenario | Root Cause | Affected Task | Suggested Fix |
+|----------|------------|---------------|---------------|
+| [scenario name] | [brief root cause] | [task # and owner] | [specific fix description] |
+```
+
 ## Integration Points
 
 - **Discovery Interview**: Scenario collection runs after core questions, before output compilation
 - **Feature Context**: Compiled scenarios included as `### Acceptance Scenarios` subsection
 - **Spec Quality Scoring**: Missing `### Acceptance Scenarios` penalizes the acceptance criteria dimension
 - **Tester Task List**: Scenario validation appears as a distinct task, separate from unit/integration tests
+- **Shutdown Phase 0**: Tester's `### Correction Opportunities` table triggers the Scenario Invalidation Check in `shared/shutdown-protocol.md` — the Lead reads it and presents user with accept/fix/proceed options before AAR begins

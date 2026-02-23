@@ -192,18 +192,20 @@ Create these tasks:
 2. [Lead] USER FEEDBACK GATE — Present API contract to user. Ask user to: confirm the API design, adjust endpoints/schemas, flag missing behaviors, and approve before implementation begins
 3. [Backend] Implement API endpoints and services (blocked by task 2)
 4. [Frontend] Implement UI components and pages (blocked by task 2)
-5. [Backend] Add input validation and error handling (blocked by task 3)
-6. [Frontend] Implement data fetching and error states (blocked by tasks 3, 4)
-7. [Tester] Write unit tests for backend services (blocked by task 5)
-8. [Tester] Write unit tests for frontend components (blocked by task 6)
-9. [Tester] Write integration tests for full flow (blocked by tasks 7, 8)
-10. [Tester] Validate implementation against `docs/scenarios/[feature-slug].md` — for each scenario, verify behavior matches pre-spawn intent. Produce `### Scenario Notes` with Validated/Invalidated/Partial status per scenario. (blocked by task 9; skip if scenarios were not collected)
-11. [Tester] Compile implementation summary — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `implementation-summary.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`. If Documentation teammate was not selected and `--skip-adr` was not specified, also produce an ADR at `docs/decisions/[feature-slug]-adr.md` following `${CLAUDE_PLUGIN_ROOT}/shared/system-doc-protocol.md`
+5. [Tester] Write unit tests for backend services — test against the API contract and acceptance criteria, NOT the implementation. Use contract schemas for expected inputs/outputs. (blocked by task 2)
+6. [Tester] Write unit tests for frontend components — test against the API contract and component specs, NOT the implementation. (blocked by task 2)
+7. [Backend] Add input validation and error handling (blocked by task 3)
+8. [Frontend] Implement data fetching and error states (blocked by tasks 3, 4)
+9. [Tester] Reconciliation — run all tests against the actual implementation. Fix test expectations that assumed wrong contract details. Report mismatches as bugs (implementation wrong) or spec gaps (contract underspecified). (blocked by tasks 5, 6, 7, 8)
+10. [Tester] Write integration tests for full flow (blocked by task 9)
+11. [Tester] Validate implementation against `docs/scenarios/[feature-slug].md` — for each scenario, verify behavior matches pre-spawn intent. Produce `### Scenario Notes` with Validated/Invalidated/Partial status per scenario. (blocked by task 10; skip if scenarios were not collected)
+12. [Tester] Compile implementation summary — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `implementation-summary.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`. If Documentation teammate was not selected and `--skip-adr` was not specified, also produce an ADR at `docs/decisions/[feature-slug]-adr.md` following `${CLAUDE_PLUGIN_ROOT}/shared/system-doc-protocol.md`
 
 Important: Each teammate should only modify files in their designated directories
 to avoid conflicts. Frontend and Backend must agree on API contracts before implementation.
+Tester writes tests against the contract, not the code — both sides target the same contract independently.
 
-[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Output format:** Implemented feature + API contract document + test report
@@ -261,7 +263,7 @@ Have investigators actively debate. When one finds evidence, others should try t
 disprove it. The theory that survives scrutiny is most likely correct.
 Require plan approval before implementing any fix.
 
-[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Output format:** Root cause analysis + hypothesis investigation results + fix proposal

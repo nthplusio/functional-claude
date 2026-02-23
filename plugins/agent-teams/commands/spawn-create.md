@@ -197,7 +197,7 @@ Create these tasks:
 13. [Product Owner] Final acceptance review against user stories (blocked by 12)
 14. [Frontend Dev] Compile design artifacts — write to `docs/teams/[TEAM-NAME]/`
 
-[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `component-spec.md` / `page-spec.md` / `redesign-spec.md`
@@ -256,7 +256,7 @@ Create these tasks:
 10. [Facilitator] Convergence — evaluate against success criteria (blocked by 8-9)
 11. [Facilitator] Compile final output with ranked recommendations — write to `docs/teams/[TEAM-NAME]/`
 
-[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `brainstorm-output.md`
@@ -326,7 +326,7 @@ Create these tasks:
 12. [Compounder] Review all outputs — progress check, friction log, patterns (blocked by 11)
 13. [Compounder] Compile final report — write to `docs/teams/[TEAM-NAME]/`
 
-[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `productivity-report.md`

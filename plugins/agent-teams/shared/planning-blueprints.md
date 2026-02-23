@@ -93,12 +93,13 @@ Create these tasks:
 8. [Stakeholder Advocate] Feasibility review — challenge assumptions, flag risks (blocked by tasks 6, 7)
 9. [Outcomes Analyst] Refine outcomes based on feasibility feedback (blocked by task 8)
 10. [All] Cross-review: validate plan coherence across strategic, dependency, outcomes, and stakeholder perspectives
-11. [Strategist] Compile roadmap with phase briefs for implementation teams — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `roadmap.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 10)
+11. [All] Write domain sections — each teammate writes their named section: Strategist → "Strategic Vision & Phase Rationale", Prioritizer → "Dependency Map & Sequencing", Outcomes Analyst → "Success Criteria & KPIs", Stakeholder Advocate → "Constraints & Stakeholder Impact". Write ONLY your section; cross-reference others by name, do not duplicate. (blocked by task 10)
+12. [Strategist] Merge domain sections into roadmap.md with phase briefs for implementation teams — resolve cross-references, deduplicate, add executive summary — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `roadmap.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 11)
 
 Each phase brief should be directly usable as input to /spawn-build --mode feature or /spawn-create --mode design.
 Include: phase goal, features, dependencies, success criteria, and business rationale.
 
-[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `roadmap.md` → feeds into `/spawn-build --mode feature`, `/spawn-create --mode design`
@@ -165,12 +166,13 @@ Create these tasks:
 6. [API Designer] Finalize contracts with error handling, edge cases, examples (blocked by 4)
 7. [Risk Analyst] Propose mitigations for accepted risks (blocked by 4)
 8. [All] Cross-review: validate spec coherence
-9. [API Designer] Compile spec.md — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `spec.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by 8)
+9. [All] Write domain sections — each teammate writes their named section: Architect → "System Architecture & Implementation Guide", API Designer → "API Contracts & Data Models", Risk Analyst → "Risk Assessment & Mitigations". Write ONLY your section; cross-reference others by name, do not duplicate. (blocked by task 8)
+10. [API Designer] Merge domain sections into spec.md — resolve cross-references, deduplicate, add overview — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `spec.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 9)
 
 The final spec should be detailed enough for implementation without further clarification.
 Feeds into /spawn-build --mode feature.
 
-[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `spec.md` → feeds into `/spawn-build --mode feature`
@@ -229,12 +231,13 @@ Create these tasks:
 8. [Solution Architect] Draft recommendation with rationale, addressing Critic's challenges (blocked by task 7)
 9. [All] Cross-review: validate ADR coherence — does the recommendation survive all perspectives?
 10. [Critic] Final challenge — last chance to raise concerns before recording
-11. [Solution Architect] Compile ADR document — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `adr.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 10)
+11. [All] Write domain sections — each teammate writes their named section: Solution Architect → "Decision Context & Recommendation", Explorer → "Options Analysis", Trade-off Analyst → "Comparison Matrix & Trade-offs", Critic → "Risks & Rejected Options". Write ONLY your section; cross-reference others by name, do not duplicate. (blocked by task 10)
+12. [Solution Architect] Merge domain sections into adr.md — resolve cross-references, deduplicate — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `adr.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 11)
 
 ADR format: Title, Status, Context, Decision, Consequences. Include comparison matrix,
 rejected options with reasons, and implementation guidance.
 
-[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `adr.md` → feeds into implementation teams
@@ -294,12 +297,13 @@ Create these tasks:
 9. [All] Cross-review: validate migration plan coherence — each phase has clear entry/exit criteria and rollback
 10. [Risk Mitigator] Final risk assessment — pre-mortem on the full plan (blocked by task 9)
 11. [Stakeholder Advocate] Finalize stakeholder communication timeline (blocked by task 9)
-12. [Migration Planner] Compile migration plan — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `migration-plan.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 11)
+12. [All] Write domain sections — each teammate writes their named section: State Analyst → "Current/Target State Analysis", Migration Planner → "Migration Approach & Phase Plan", Risk Mitigator → "Risk Matrix & Mitigations", Stakeholder Advocate → "Communication & Training Plan". Write ONLY your section; cross-reference others by name, do not duplicate. (blocked by tasks 10, 11)
+13. [Migration Planner] Merge domain sections into migration-plan.md — resolve cross-references, deduplicate — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `migration-plan.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 12)
 
 Include: current/target state analysis, migration approach, phased execution with rollback,
 risk matrix with mitigations, go/no-go criteria, and stakeholder communication plan.
 
-[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `migration-plan.md` → feeds into implementation teams
@@ -363,12 +367,13 @@ Create these tasks:
 8. [Market Analyst] Provide supporting evidence — case studies, benchmarks, customer signals (blocked by task 4)
 9. [All] Cross-review: validate business case coherence — numbers, strategy, and risks consistent?
 10. [Risk Analyst] Sensitivity analysis — which assumptions, if wrong, break the case? (blocked by task 9)
-11. [Strategist] Compile business case — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `business-case.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 10)
+11. [All] Write domain sections — each teammate writes their named section: Market Analyst → "Market Analysis", Financial Analyst → "Financial Model & Scenarios", Strategist → "Strategic Narrative", Risk Analyst → "Risk Assessment & Sensitivity". Write ONLY your section; cross-reference others by name, do not duplicate. (blocked by task 10)
+12. [Strategist] Merge domain sections into business-case.md — resolve cross-references, deduplicate, add executive summary — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `business-case.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 11)
 
 Include: executive summary, strategic context, market analysis, financial model with scenarios,
 risk assessment, and recommendation. Feeds into Product Roadmap mode.
 
-[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `business-case.md` → feeds into Product Roadmap mode
@@ -432,12 +437,13 @@ Create these tasks:
 8. [Launch Coordinator] Create launch timeline with phases, milestones, readiness criteria (blocked by tasks 5, 6, 7)
 9. [All] Cross-review: validate GTM plan coherence — positioning, channels, and launch aligned?
 10. [Launch Coordinator] Define post-launch measurement plan and iteration triggers (blocked by task 9)
-11. [Launch Coordinator] Compile GTM plan — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `gtm-plan.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 10)
+11. [All] Write domain sections — each teammate writes their named section: Positioning Strategist → "Positioning & Messaging", Channel Planner → "Channel Strategy & Tactics", Customer Advocate → "Personas & Adoption Strategy", Launch Coordinator → "Launch Timeline & Readiness". Write ONLY your section; cross-reference others by name, do not duplicate. (blocked by task 10)
+12. [Launch Coordinator] Merge domain sections into gtm-plan.md — resolve cross-references, deduplicate — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `gtm-plan.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 11)
 
 Include: positioning framework, customer personas, channel strategy with tactics,
 launch timeline, readiness criteria, and measurement plan. Feeds into Product Roadmap mode.
 
-[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `gtm-plan.md` → feeds into Product Roadmap mode
@@ -501,12 +507,13 @@ Create these tasks:
 8. [Stakeholder Advocate] Review OKRs for ownership clarity, acceptance, and inter-team tensions (blocked by task 7)
 9. [All] Cross-review: validate OKR tree coherence — objectives, key results, ownership form clear picture?
 10. [Metrics Designer] Finalize measurement plan — data sources, tracking cadence, review schedule (blocked by task 9)
-11. [Strategic Planner] Compile OKR document — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `okr-tree.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 10)
+11. [All] Write domain sections — each teammate writes their named section: Strategic Planner → "Objective Tree & Rationale", Metrics Designer → "Key Results & Measurement Plan", Alignment Reviewer → "Alignment Analysis", Stakeholder Advocate → "Ownership & Accountability". Write ONLY your section; cross-reference others by name, do not duplicate. (blocked by task 10)
+12. [Strategic Planner] Merge domain sections into okr-tree.md — resolve cross-references, deduplicate — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `okr-tree.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 11)
 
 Include: objective tree, key results with baselines and targets, ownership map, measurement
 plan, and alignment notes. Feeds into Product Roadmap and/or Technical Spec modes.
 
-[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `okr-tree.md` → feeds into Product Roadmap, Technical Spec modes

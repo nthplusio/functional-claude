@@ -219,7 +219,7 @@ Create these tasks:
 9. [Analyst] Final recommendation with confidence levels (blocked by task 8)
 10. [Analyst] Compile evaluation report — write to `docs/teams/[TEAM-NAME]/`
 
-[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `evaluation-report.md` → feeds into `/spawn-think --mode planning`, `/spawn-build --mode feature`
@@ -298,10 +298,14 @@ Create these tasks:
 5. [Quality] Verify adherence to project patterns and conventions
 6. [Quality] Assess test coverage and identify gaps
 7. [Lead] USER FEEDBACK GATE — Present top findings from each reviewer. Ask user to: prioritize findings, select deep-dive areas, adjust review scope (blocked by tasks 1, 2, 3, 4, 5, 6)
-8. [All] Cross-reference findings across review domains (blocked by task 7)
-9. [Quality Reviewer] Compile unified review report — write to `docs/teams/[TEAM-NAME]/`: primary artifact as `review-report.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 8)
+8. [Security] Deep-dive on user-prioritized security findings (blocked by task 7)
+9. [Performance] Deep-dive on user-prioritized performance findings (blocked by task 7)
+10. [Quality] Deep-dive on user-prioritized quality findings (blocked by task 7)
+11. [All] Cross-reference findings across review domains (blocked by tasks 8, 9, 10)
+12. [All] Write domain sections — each reviewer writes their named section: Security Reviewer → "Security Findings", Performance Reviewer → "Performance Findings", Quality Reviewer → "Quality & AI Pattern Findings". Write ONLY your section; cross-reference others by name, do not duplicate. (blocked by task 11)
+13. [Quality Reviewer] Merge domain sections into review-report.md — resolve cross-references, deduplicate, add executive summary with severity counts — write to `docs/teams/[TEAM-NAME]/`: primary artifact as `review-report.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 12)
 
-[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `review-report.md` → feeds into `/spawn-build --mode debug` (issues), `/spawn-build --mode feature` (rework)
