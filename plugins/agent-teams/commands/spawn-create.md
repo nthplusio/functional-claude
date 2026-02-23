@@ -142,6 +142,10 @@ No optional teammates — the 5-persona loop is fixed.
 **Brainstorm mode (tech category):** Technology stack, architecture, existing patterns, known pain points, integration points
 **Productivity mode:** Current workflow tooling, existing automation, known bottlenecks, project structure
 
+Also run the following scans from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`:
+- Mock Repository Scan (if applicable)
+- **Retrospective Scan** — use `profile: create` for evaluate-spawn files, `type: design|brainstorm|productivity` for AAR files
+
 ### Step 10: Spawn the Team
 
 #### Design Mode
@@ -193,30 +197,7 @@ Create these tasks:
 13. [Product Owner] Final acceptance review against user stories (blocked by 12)
 14. [Frontend Dev] Compile design artifacts — write to `docs/teams/[TEAM-NAME]/`
 
-**Task Blocking Protocol -- ALL teammates MUST follow:**
-- Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
-- NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
-- After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
-- When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
-- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
-- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
-- Use `TaskUpdate` to record your approach before starting a task, then periodically update with progress notes (what's done, what remains, key decisions made, files modified) -- task descriptions survive compaction, conversation context does not
-- If you have partial progress on a task and your context is getting long, update the task description with a structured status: (a) completed work, (b) files modified, (c) remaining work, (d) decisions made
-- After any context reset (compaction, session resume), your FIRST action must be: call `TaskList`, then `TaskGet` on any task assigned to you that is `in_progress`, and resume from the progress notes
-
-**Output Standards -- ALL teammates MUST follow:**
-- Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
-- Lead with conclusions, then supporting evidence — not the other way around
-- Never restate the Design Context back — teammates already have it
-- Every sentence should add new information. Cut filler, hedging, and throat-clearing
-- Task outputs go to `docs/teams/[TEAM-NAME]/tasks/` — keep each under 500 lines
-
-**Shutdown Protocol -- Lead MUST follow when ending the team:**
-- Before shutdown, message each teammate: "Before we wrap up — answer briefly: (1) What was your understanding of the goal? (2) What went well in how the team operated? (3) What would you change?"
-- Collect all responses before sending any shutdown_request
-- After all teammates approve shutdown, run `/after-action-review [team-name]`
-- Verify AAR file exists at `docs/retrospectives/[team-name]-aar.md` before calling TeamDelete
+[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `component-spec.md` / `page-spec.md` / `redesign-spec.md`
@@ -275,30 +256,7 @@ Create these tasks:
 10. [Facilitator] Convergence — evaluate against success criteria (blocked by 8-9)
 11. [Facilitator] Compile final output with ranked recommendations — write to `docs/teams/[TEAM-NAME]/`
 
-**Task Blocking Protocol -- ALL teammates MUST follow:**
-- Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
-- NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
-- After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
-- When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
-- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
-- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
-- Use `TaskUpdate` to record your approach before starting a task, then periodically update with progress notes (what's done, what remains, key decisions made, files modified) -- task descriptions survive compaction, conversation context does not
-- If you have partial progress on a task and your context is getting long, update the task description with a structured status: (a) completed work, (b) files modified, (c) remaining work, (d) decisions made
-- After any context reset (compaction, session resume), your FIRST action must be: call `TaskList`, then `TaskGet` on any task assigned to you that is `in_progress`, and resume from the progress notes
-
-**Output Standards -- ALL teammates MUST follow:**
-- Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
-- Lead with conclusions, then supporting evidence — not the other way around
-- Never restate the Brainstorming Context back — teammates already have it
-- Every sentence should add new information. Cut filler, hedging, and throat-clearing
-- Task outputs go to `docs/teams/[TEAM-NAME]/tasks/` — keep each under 500 lines
-
-**Shutdown Protocol -- Lead MUST follow when ending the team:**
-- Before shutdown, message each teammate: "Before we wrap up — answer briefly: (1) What was your understanding of the goal? (2) What went well in how the team operated? (3) What would you change?"
-- Collect all responses before sending any shutdown_request
-- After all teammates approve shutdown, run `/after-action-review [team-name]`
-- Verify AAR file exists at `docs/retrospectives/[team-name]-aar.md` before calling TeamDelete
+[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `brainstorm-output.md`
@@ -368,30 +326,7 @@ Create these tasks:
 12. [Compounder] Review all outputs — progress check, friction log, patterns (blocked by 11)
 13. [Compounder] Compile final report — write to `docs/teams/[TEAM-NAME]/`
 
-**Task Blocking Protocol -- ALL teammates MUST follow:**
-- Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
-- NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
-- After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
-- When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
-- When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
-- When you receive a shutdown_request, approve it immediately unless you are mid-write on a file
-- Use `TaskUpdate` to record your approach before starting a task, then periodically update with progress notes (what's done, what remains, key decisions made, files modified) -- task descriptions survive compaction, conversation context does not
-- If you have partial progress on a task and your context is getting long, update the task description with a structured status: (a) completed work, (b) files modified, (c) remaining work, (d) decisions made
-- After any context reset (compaction, session resume), your FIRST action must be: call `TaskList`, then `TaskGet` on any task assigned to you that is `in_progress`, and resume from the progress notes
-
-**Output Standards -- ALL teammates MUST follow:**
-- Be concise and direct. Use bullet points, tables, and short paragraphs — not essays
-- Lead with conclusions, then supporting evidence — not the other way around
-- Never restate the Productivity Context back — teammates already have it
-- Every sentence should add new information. Cut filler, hedging, and throat-clearing
-- Task outputs go to `docs/teams/[TEAM-NAME]/tasks/` — keep each under 500 lines
-
-**Shutdown Protocol -- Lead MUST follow when ending the team:**
-- Before shutdown, message each teammate: "Before we wrap up — answer briefly: (1) What was your understanding of the goal? (2) What went well in how the team operated? (3) What would you change?"
-- Collect all responses before sending any shutdown_request
-- After all teammates approve shutdown, run `/after-action-review [team-name]`
-- Verify AAR file exists at `docs/retrospectives/[team-name]-aar.md` before calling TeamDelete
+[Include Task Blocking Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Artifact:** `productivity-report.md`

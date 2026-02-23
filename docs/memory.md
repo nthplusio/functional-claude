@@ -22,7 +22,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | opentui-dev | 0.1.6 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
 | tabby-dev | 0.1.4 | Tabby terminal configuration, SSH connections, and plugin development |
-| agent-teams | 0.17.1 | Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control |
+| agent-teams | 0.17.2 | Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control |
 | gemini-cli | 0.6.4 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
 | session-insights | 0.1.1 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
 
@@ -392,6 +392,7 @@ Agent team blueprints, coordination patterns, and reusable personas for parallel
 | /spawn-build | Build teams — feature development (`--mode feature`) or debugging (`--mode debug`). Adaptive sizing, verbosity control |
 | /spawn-think | Thinking teams — research (`--mode research`), planning (`--mode planning`), or review (`--mode review`). 13 submodes total |
 | /spawn-create | Creative teams — design (`--mode design`), brainstorm (`--mode brainstorm`), or productivity (`--mode productivity`). Persona-driven |
+| /calibrate-scoring | Aggregate Build profile retrospective data to surface spec quality threshold calibration recommendations. Requires R3+R11 data and 10+ Build retrospectives. |
 
 ### Shared Files (v0.16.0)
 
@@ -664,7 +665,8 @@ functional-claude/
         │   ├── agent-teams.md
         │   ├── spawn-build.md
         │   ├── spawn-think.md
-        │   └── spawn-create.md
+        │   ├── spawn-create.md
+        │   └── calibrate-scoring.md
         ├── skills/
         │   ├── agent-teams/           # Main skill (overview)
         │   │   └── references/

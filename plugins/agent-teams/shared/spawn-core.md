@@ -166,3 +166,39 @@ Domains: [list of domain directories]
 If `docs/mocks/` doesn't exist: `Mock repository: Not found`
 
 See `${CLAUDE_PLUGIN_ROOT}/shared/mock-repository.md` for the full mock convention.
+
+### Lead Task Assignment Behavior
+
+Tasks in spawn prompts use `[Owner]` annotations (e.g., `[Backend]`, `[Tester]`). Teammates call `TaskList` on startup and claim tasks matching their role.
+
+**Do NOT send direct messages to teammates about task assignments.** Only message about tasks when:
+- Reassigning a task mid-session
+- Adding context not in the task description
+- Responding to a teammate's question
+
+### Retrospective Scan
+
+During project analysis, scan for prior run learnings from `docs/retrospectives/`:
+
+**Step 1: Identify target files**
+- Glob `docs/retrospectives/*.md` (excludes `-aar.md` files)
+- Glob `docs/retrospectives/*-aar.md`
+- Filter evaluate-spawn files by matching `profile:` frontmatter to the current spawn command
+- Filter AAR files by matching `type:` frontmatter to the current spawn command
+- Use the mapping defined in the spawn command
+
+**Step 2: Cold-start guard**
+- Count matched files across both file types
+- If total matched count < 3: skip scan. Display: `Prior run scan: insufficient data (N/3 sessions)`
+- If total matched count >= 3: proceed to Step 3
+
+**Step 3: Extract insights from matched files (most recent 3 only)**
+- Sort matched files by `date:` frontmatter descending. Take the 3 most recent.
+- From each evaluate-spawn file: extract `## Actionable Insights` section content
+- From each AAR file: extract improvement table rows where `Scope` column = `plugin`
+- Discard rows where improvement has already been applied
+
+**Step 4: Report**
+- If insights found: surface as `Prior runs (N found): [extracted content]` in the team context
+- If step 3 yields no actionable content: display `Prior run scan: N files found, no actionable insights`
+- This output is consumed by R6 (Prior Run Insights injection) when building the Context block

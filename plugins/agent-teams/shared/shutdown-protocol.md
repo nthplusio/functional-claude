@@ -12,6 +12,60 @@ Without a shutdown protocol:
 
 ## Shutdown Sequence
 
+### Phase 0: Scenario Invalidation Check
+
+**Trigger:** Only runs for feature spawns where a Tester has produced `### Scenario Notes` output.
+
+Before initiating Phase 1, the Lead reads the Tester's task output and checks `### Scenario Notes` for any rows with status `Invalidated` or `Partial`.
+
+**If no Invalidated/Partial rows exist:** Skip Phase 0, proceed to Phase 1.
+
+**If Invalidated or Partial rows exist:**
+
+1. **Tester produces a `### Correction Opportunities` table** in their task output (added after `### Scenario Notes`):
+
+   ```markdown
+   ### Correction Opportunities
+
+   | Scenario | Root Cause | Affected Task | Suggested Fix |
+   |----------|------------|---------------|---------------|
+   | [scenario name] | [brief root cause] | [task # and owner] | [specific fix description] |
+   ```
+
+2. **Lead reads the table and presents the user with three options:**
+
+   ```
+   Tester found [N] invalidated scenario(s). How do you want to proceed?
+
+   (a) Accept — proceed to AAR and address failures in next spawn
+   (b) Fix now — I'll create targeted correction tasks for the original implementers
+       (blocks AAR until resolved or you accept)
+   (c) Proceed — skip correction, note in AAR for future reference
+   ```
+
+3. **Option (a) — Accept:** Log accepted failures in AAR improvement table. Proceed to Phase 1.
+
+4. **Option (b) — Fix now:**
+   - Lead creates one task per Invalidated scenario, assigned to the original implementer
+   - Task title format: `[Owner] Fix scenario: [scenario-name] — [one-line root cause]`
+   - Task description includes: full `### Correction Opportunities` row, original scenario file path, instruction to re-run Tester validation after fix
+   - AAR and shutdown are **blocked** until all correction tasks complete (status: completed) or user explicitly accepts remaining failures
+   - After correction tasks complete, Tester re-validates the affected scenarios
+   - If re-validation passes: proceed to Phase 1
+   - If re-validation fails again: present options (a)/(c) only (no second correction loop)
+
+5. **Option (c) — Proceed:** Skip correction. Lead records invalidated scenario names in AAR `### What Could Be Improved?` section. Proceed to Phase 1.
+
+**Inter-teammate communication flow:**
+- Tester → Lead: sends `### Correction Opportunities` table via SendMessage
+- Lead → user: presents three options
+- Lead → original implementer: sends correction task context via SendMessage (option b only)
+- Original implementer → Lead: confirms fix complete
+- Lead → Tester: requests re-validation of affected scenarios
+- Tester → Lead: sends updated `### Scenario Notes`
+
+**What "fix complete" means:** Correction task status set to `completed` AND Tester has re-validated the scenario as `Validated` or `Partial` (with user acceptance of remaining partial coverage).
+
 ### Phase 1: Participant Retrospective
 
 Before sending shutdown requests, message each teammate with these 3 questions (mapped to FM 7-0 core questions):
@@ -50,19 +104,25 @@ Before calling `TeamDelete`:
 2. If missing, prompt user: "AAR file not found. Skip AAR and delete team data? (y/n)"
 3. If user confirms skip, proceed with TeamDelete
 4. If user declines, run AAR first
+5. Check for evaluate-spawn retrospective at `docs/retrospectives/[team-name].md`
+6. If that file is absent: display — "No evaluate-spawn retrospective found for this team. Run `/evaluate-spawn` to capture learnings before session ends? (optional — press Enter to skip)"
+7. If user runs `/evaluate-spawn`: wait for completion, then proceed to TeamDelete
+8. If user skips: proceed to TeamDelete
 
 Then call `TeamDelete` to clean up team config and task directories.
 
 ## Protocol Block
 
-Include this block verbatim in spawn prompts, after the Output Standards block:
+Spawn prompts reference this block via `[Include Shutdown Protocol from shared/shutdown-protocol.md]`. The lead reads this file at spawn time and embeds the Protocol Block in the prompt text teammates receive:
 
 ```
 **Shutdown Protocol -- Lead MUST follow when ending the team:**
+- For feature spawns: before Phase 1, check Tester's `### Scenario Notes` for Invalidated rows — if found, run Scenario Invalidation Check (see `shared/shutdown-protocol.md` Phase 0) and present user with accept/fix/proceed options before continuing
 - Before shutdown, message each teammate: "Before we wrap up — answer briefly: (1) What was your understanding of the goal? (2) What went well in how the team operated? (3) What would you change?"
 - Collect all responses before sending any shutdown_request
 - After all teammates approve shutdown, run `/after-action-review [team-name]`
 - Verify AAR file exists at `docs/retrospectives/[team-name]-aar.md` before calling TeamDelete
+- After AAR is verified, check for `docs/retrospectives/[team-name].md` — if absent, display: "No evaluate-spawn retrospective found. Run `/evaluate-spawn` before deleting the team? (optional)"
 ```
 
 ## When to Include

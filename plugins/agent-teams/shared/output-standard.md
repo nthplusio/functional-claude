@@ -12,7 +12,7 @@ Without output standards, teammates:
 
 ## Protocol Block
 
-Include this block verbatim in every spawn prompt, replacing `[CONTEXT-TYPE]` with the appropriate value from the lookup table below:
+Spawn prompts reference this block via `[Include Output Standards from shared/output-standard.md]`. The lead reads this file at spawn time, replaces `[CONTEXT-TYPE]` with the appropriate value from the lookup table below, and embeds the result in the prompt text teammates receive:
 
 ```
 **Output Standards -- ALL teammates MUST follow:**

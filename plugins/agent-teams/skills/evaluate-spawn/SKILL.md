@@ -3,8 +3,8 @@ name: evaluate-spawn
 description: |
   This skill should be used when the user asks to evaluate a completed team spawn session, capture session learnings, or review how a spawn went. Use this skill when the user says "evaluate spawn", "evaluate-spawn", "how did the spawn go", "capture learnings", "review spawn session", "spawn retrospective", or at the soft prompt after a team completes its work.
 
-  This is a voluntary post-spawn evaluation with profile-based questions tailored to all spawn types (build, think, create). It asks at most 2 explicit questions per profile (hard cap: 3 including auto-derived) to minimize friction while maximizing signal.
-version: 0.17.1
+  This is a voluntary post-spawn evaluation with profile-based questions tailored to all spawn types (build, think, create). Build profile asks up to 4 questions (3 explicit + 1 conditional gate bypass); Think and Create profiles ask up to 3 questions (2 explicit + 1 gate bypass). Hard cap includes auto-derived scenario coverage for Build.
+version: 0.17.2
 ---
 
 # Post-Spawn Evaluation
@@ -35,7 +35,7 @@ Route to the matching profile below.
 
 ## Build Profile (feature, debug)
 
-Spec-driven teams that produce code. Has auto-derived scenario coverage, two asked questions, and a deferred section.
+Spec-driven teams that produce code. Has auto-derived scenario coverage, three explicit questions (plus one conditional gate bypass question), and a deferred section.
 
 ### Auto-Derived: Scenario Coverage
 
@@ -81,11 +81,35 @@ Free text answer for what was missed, followed by:
 | Scoring should have flagged it | A low score on a dimension should have prompted rework |
 | Team should have caught it during work | The spec was fine — the team missed something it covered |
 
+### Question 3: Score Accuracy
+
+**"Did the spec quality score reflect actual implementation difficulty? (A higher score should predict an easier build.)"**
+
+| Option | Value written to frontmatter |
+|---|---|
+| Matched — score reflected actual difficulty | `score-accuracy: matched` |
+| Score too optimistic — build was harder than the score suggested | `score-accuracy: too-optimistic` |
+| Score too pessimistic — build was easier than the score suggested | `score-accuracy: too-pessimistic` |
+| No spec score was used | `score-accuracy: not-scored` |
+
+### Question 4: Gate Bypass (conditional)
+
+Only ask if `spec-score:` frontmatter value is present AND the score was below the gate threshold (default: 4/6):
+
+**"The spec quality gate showed a score below threshold. Did you proceed anyway, and if so, was that the right call?"**
+
+| Option | Value written to frontmatter |
+|---|---|
+| Did not bypass — I refined the spec first | `gate-bypassed: false` |
+| Bypassed — override was correct (spec was sufficient despite score) | `gate-bypassed: true`, `bypass-verdict: correct` |
+| Bypassed — should have refined spec first | `gate-bypassed: true`, `bypass-verdict: should-have-refined` |
+
+If score met or exceeded threshold (no bypass scenario): write `gate-bypassed: false` to frontmatter without asking.
+
 ### Deferred Section
 
 These items cannot be evaluated at spawn completion. They are included as checkboxes in the retrospective file for the user to fill in during periodic rubric reviews:
 
-- [ ] **Score accuracy** — Did the spec quality score predict actual output quality? (matched / too optimistic / too pessimistic)
 - [ ] **First fix** — What was the first thing you had to fix after using the output?
 
 ---
@@ -104,6 +128,22 @@ Analysis-driven teams that produce documents, decisions, recommendations.
 | Partially — some gaps | Important questions were addressed but some areas were missed |
 | No — wrong focus | The team spent effort on the wrong areas |
 
+### Question 1a: Expected Outcomes Validation (conditional)
+
+Only ask if `### Expected Outcomes` section is present in the team's Context block (check `docs/teams/[team-name]/` artifacts):
+
+**"Did the output address the Expected Outcomes defined before spawning?"**
+
+| Option | Description |
+|---|---|
+| Yes — all outcomes addressed | The output answered the decision question / met the plan criteria at the specified confidence level |
+| Partially — some outcomes addressed | Some outcomes were met but others were not addressed |
+| No — outcomes not addressed | The output did not address the pre-spawn definition of done |
+
+Write outcome verdict to retrospective as: `outcomes-addressed: all|partial|none`
+
+If `### Expected Outcomes` section is NOT present: skip Question 1a entirely.
+
 ### Question 2: Blind Spots (conditional)
 
 Only ask if Question 1 answer is **not** "Yes":
@@ -117,6 +157,16 @@ Free text answer for what was missed, followed by:
 | Discovery interview should have scoped it | The initial framing didn't include this angle |
 | Team lead should have directed it | The lead's task breakdown missed this area |
 | Teammates should have identified it | A teammate with the right focus area should have raised this |
+
+### Question 3: Gate Bypass
+
+**"Did you override the spec quality gate (or skip it) when setting up this spawn? If so, was that the right call?"**
+
+| Option | Value written to frontmatter |
+|---|---|
+| No override — gate was not triggered or spec was not scored | `gate-bypassed: false` |
+| Bypassed — override was correct | `gate-bypassed: true`, `bypass-verdict: correct` |
+| Bypassed — should have refined spec first | `gate-bypassed: true`, `bypass-verdict: should-have-refined` |
 
 ---
 
@@ -148,6 +198,16 @@ Free text answer for what was violated, followed by:
 | Constraints were stated but ignored | The team had the information but didn't follow it |
 | Constraints conflicted — team chose wrong | The team made a reasonable tradeoff but picked the wrong side |
 
+### Question 3: Gate Bypass
+
+**"Did you override the spec quality gate (or skip it) when setting up this spawn? If so, was that the right call?"**
+
+| Option | Value written to frontmatter |
+|---|---|
+| No override — gate was not triggered or spec was not scored | `gate-bypassed: false` |
+| Bypassed — override was correct | `gate-bypassed: true`, `bypass-verdict: correct` |
+| Bypassed — should have refined spec first | `gate-bypassed: true`, `bypass-verdict: should-have-refined` |
+
 ---
 
 ## Output Format
@@ -164,6 +224,9 @@ profile: build
 type: [feature|debug]
 spec-score: [N/6 dimensions or "not scored"]
 scenario-coverage: [N validated / M total (X%) or "no table found" or "N/A"]
+score-accuracy: [matched|too-optimistic|too-pessimistic|not-scored]
+gate-bypassed: [true|false]
+bypass-verdict: [correct|should-have-refined|n/a]
 ---
 
 # Retrospective: [team-name]
@@ -177,8 +240,13 @@ scenario-coverage: [N validated / M total (X%) or "no table found" or "N/A"]
 ## Gap Identification
 [User's answer to Question 2, or "No gaps identified" if Q1 was "Yes"]
 
+## Score Accuracy
+[User's answer to Question 3]
+
+## Gate Bypass
+[User's answer to Question 4, or "Gate not triggered" if score met threshold]
+
 ## Deferred (fill in during rubric review)
-- [ ] **Score accuracy**: matched / too optimistic / too pessimistic
 - [ ] **First fix**: [describe first change needed after using output]
 
 ## Actionable Insights
@@ -195,6 +263,9 @@ profile: think
 type: [research|planning|review]
 spec-score: "not scored"
 scenario-coverage: "N/A"
+outcomes-addressed: [all|partial|none|"N/A — no Expected Outcomes defined"]
+gate-bypassed: [true|false]
+bypass-verdict: [correct|should-have-refined|n/a]
 ---
 
 # Retrospective: [team-name]
@@ -202,8 +273,14 @@ scenario-coverage: "N/A"
 ## Coverage
 [User's answer to Question 1]
 
+## Expected Outcomes Validation
+[User's answer to Question 1a, or "N/A — no Expected Outcomes section in team context" if Q1a was skipped]
+
 ## Blind Spots
 [User's answer to Question 2, or "No blind spots identified" if Q1 was "Yes"]
+
+## Gate Bypass
+[User's answer to Question 3]
 
 ## Actionable Insights
 [1-2 bullet points synthesized from the answers — what should change in discovery scoping, lead direction, or teammate focus areas. If no gaps, note what worked well.]
@@ -219,6 +296,8 @@ profile: create
 type: [design|brainstorm|productivity]
 spec-score: "not scored"
 scenario-coverage: "N/A"
+gate-bypassed: [true|false]
+bypass-verdict: [correct|should-have-refined|n/a]
 ---
 
 # Retrospective: [team-name]
@@ -228,6 +307,9 @@ scenario-coverage: "N/A"
 
 ## Constraint Adherence
 [User's answer to Question 2, or "No constraint violations" if Q1 was "Yes"]
+
+## Gate Bypass
+[User's answer to Question 3]
 
 ## Actionable Insights
 [1-2 bullet points synthesized from the answers — what should change in constraint communication, team direction, or tradeoff guidance. If no gaps, note what worked well.]
@@ -253,4 +335,4 @@ The user reads `docs/retrospectives/` periodically and updates:
 - Team instructions — Adjust based on "constraints were stated but ignored" patterns
 
 **Deferred checkboxes (Build profile):**
-After 3+ evaluations, review the deferred sections across retrospective files to identify score accuracy trends and common first-fix categories.
+After 3+ evaluations, review the deferred sections across retrospective files to identify common first-fix categories. Score accuracy is now captured immediately (Question 3) — aggregate via `/calibrate-scoring` after 10+ Build profile retrospectives exist.

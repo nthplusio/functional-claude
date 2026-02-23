@@ -1,6 +1,6 @@
 # Task Blocking Protocol
 
-Canonical protocol block that MUST be included verbatim in every spawn prompt. Teammates don't inherit the lead's conversation or read skill files, so this protocol must be embedded directly in the prompt text they receive.
+Canonical protocol block that MUST be embedded in every spawn prompt. Teammates don't inherit the lead's conversation or read skill files, so this protocol must be included directly in the prompt text they receive.
 
 ## Why This Exists
 
@@ -14,13 +14,13 @@ Without this protocol, teammates:
 
 ## Protocol Block
 
-Include this block verbatim in every spawn prompt, inside the code fence that defines the team:
+Spawn prompts reference this block via `[Include Task Blocking Protocol from shared/task-blocking-protocol.md]`. The lead reads this file at spawn time and embeds the Protocol Block in the prompt text teammates receive:
 
 ```
 **Task Blocking Protocol -- ALL teammates MUST follow:**
 - Before starting any task, call `TaskList` and verify the task's `blockedBy` list is empty
 - NEVER begin work on a blocked task -- upstream tasks may produce outputs that change your requirements
-- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically)
+- If all your assigned tasks are blocked, go idle silently -- do NOT send "standing by" or status messages (the system notifies the lead automatically). Exception: always respond to direct questions from the lead (e.g., retrospective questions, clarification requests)
 - After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
 - When a USER FEEDBACK GATE was among your blocking tasks, treat all user decisions as binding constraints -- do NOT include approaches, options, or paths the user explicitly rejected
