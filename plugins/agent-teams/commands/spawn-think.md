@@ -255,7 +255,7 @@ Each submode follows the same 5-phase flow:
 
 The spawn-think command uses the blueprint team structures with these additions:
 - Adaptive sizing from `shared/spawn-core.md`
-- Streamlined 3+2 discovery interview from `shared/discovery-interview.md`
+- Dynamic discovery interview (3 core + up to 7 follow-ups, cap 10) from `shared/discovery-interview.md`
 - Verbosity control
 
 **Artifacts by submode:** `roadmap.md`, `spec.md`, `adr.md`, `migration-plan.md`, `business-case.md`, `gtm-plan.md`, `okr-tree.md`

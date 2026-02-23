@@ -29,6 +29,12 @@ All modes use this structure (replace bracketed placeholders with actual intervi
 
 ### Project Analysis
 [Findings from codebase/document analysis]
+
+### Lessons Applied
+[If R5 retrospective scan returned plugin-scope improvements relevant to this spawn: 1–3 bullets from prior AAR improvement tables. Format: "Prior run found: [improvement description]." Omit this section entirely if R5 returned no data or R5 is not yet implemented.]
+
+### Expected Outcomes
+[From Expected Outcomes compilation step — Phase count, feasibility constraint, stakeholder success definition, out of scope. Omit section if user skipped or mode is not Research/Planning.]
 ```
 
 ---
@@ -121,7 +127,11 @@ Spawn [3-4] teammates:
    edge cases. Verify all schemas and API examples against actual library documentation before finalizing.
    Use Sonnet model.
 
-3. **Risk Analyst** — Identify technical risks, failure modes, edge cases, and security
+3. **Risk Analyst** — Before assessing risks, run a dependency grep: search the codebase for
+   files that import, reference, or configure the component under spec (use Grep tool with the
+   component name, key interfaces, and config keys as search terms). Include a "Dependency
+   Surface" table in your task output listing affected files and their coupling type (import,
+   config, test, docs). Then identify technical risks, failure modes, edge cases, and security
    implications (OWASP, auth, data protection, compliance). Assess likelihood and impact.
    Propose mitigations or design alternatives. Challenge optimistic assumptions about
    performance, scalability, and complexity.
@@ -149,7 +159,7 @@ Enable delegate mode — focus on coordination and user feedback. A designated t
 Create these tasks:
 1. [Architect] Analyze existing system, define high-level design — components, boundaries, data flow, codebase patterns
 2. [API Designer] Draft API contracts, data models, and integration interfaces
-3. [Risk Analyst] Identify technical risks, security implications, and failure modes (NO blockers — start from Planning Context)
+3. [Risk Analyst] Run dependency grep on the component under spec, then identify technical risks, security implications, and failure modes (NO blockers — start from Planning Context)
 4. [Lead] USER FEEDBACK GATE — Present design, contracts, and risks to user (blocked by 1, 2, 3)
 5. [Architect] Refine architecture, write implementation guide with examples (blocked by 4)
 6. [API Designer] Finalize contracts with error handling, edge cases, examples (blocked by 4)

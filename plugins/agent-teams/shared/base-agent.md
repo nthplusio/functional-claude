@@ -4,7 +4,7 @@ Universal teammate behaviors that apply to ALL teammates in ALL team types. Refe
 
 ## Protocol References
 
-Every teammate MUST follow these protocols (included verbatim in spawn prompts):
+Every teammate MUST follow these protocols (embedded in spawn prompts via reference directives):
 
 1. **Task Blocking Protocol** — See `shared/task-blocking-protocol.md` for the canonical block
 2. **Output Standards** — See `shared/output-standard.md` for the canonical block with context-type lookup
@@ -49,8 +49,8 @@ docs/teams/[TEAM-NAME]/
 ├── README.md                    # Team metadata, artifact list, pipeline links
 ├── [primary-artifact].md        # Main deliverable with YAML frontmatter
 └── tasks/
-    ├── 01-[task-slug].md        # Task-level output
-    ├── 02-[task-slug].md
+    ├── task-1-[role-slug].md    # Task-level output
+    ├── task-2-[role-slug].md
     └── ...
 ```
 

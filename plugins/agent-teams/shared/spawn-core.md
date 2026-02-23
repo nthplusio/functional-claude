@@ -176,6 +176,16 @@ Tasks in spawn prompts use `[Owner]` annotations (e.g., `[Backend]`, `[Tester]`)
 - Adding context not in the task description
 - Responding to a teammate's question
 
+**Task output filenames:** When writing task descriptions in the spawn prompt, include the expected output filename using the `task-{N}-{role-slug}.md` convention. Example:
+
+```
+1. [Architect] Analyze existing system, define high-level design — write to `docs/teams/[TEAM-NAME]/tasks/task-1-architect.md`
+2. [API Designer] Draft API contracts and data models — write to `docs/teams/[TEAM-NAME]/tasks/task-2-api-designer.md`
+3. [Risk Analyst] Run dependency grep, identify technical risks (NO blockers) — write to `docs/teams/[TEAM-NAME]/tasks/task-3-risk-analyst.md`
+```
+
+USER FEEDBACK GATE and `[All]` cross-review tasks produce no file — omit the filename from those lines.
+
 ### Retrospective Scan
 
 During project analysis, scan for prior run learnings from `docs/retrospectives/`:

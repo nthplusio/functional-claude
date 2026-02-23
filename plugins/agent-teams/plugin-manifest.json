@@ -1,5 +1,5 @@
 {
-  "version": "0.17.0",
+  "version": "0.18.0",
   "preserve": [
     ".cache/",
     ".claude-plugin/"
@@ -7,6 +7,7 @@
   "files": [
     "agents/team-architect.md",
     "commands/agent-teams.md",
+    "commands/calibrate-scoring.md",
     "commands/spawn-build.md",
     "commands/spawn-create.md",
     "commands/spawn-think.md",
@@ -27,7 +28,6 @@
     "shared/shutdown-protocol.md",
     "shared/spawn-core.md",
     "shared/spec-quality-scoring.md",
-    "shared/spec-refinement.md",
     "shared/system-doc-protocol.md",
     "shared/task-blocking-protocol.md",
     "skills/after-action-review/SKILL.md",

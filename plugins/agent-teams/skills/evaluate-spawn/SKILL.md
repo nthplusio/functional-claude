@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user asks to evaluate a completed team spawn session, capture session learnings, or review how a spawn went. Use this skill when the user says "evaluate spawn", "evaluate-spawn", "how did the spawn go", "capture learnings", "review spawn session", "spawn retrospective", or at the soft prompt after a team completes its work.
 
   This is a voluntary post-spawn evaluation with profile-based questions tailored to all spawn types (build, think, create). Build profile asks up to 4 questions (3 explicit + 1 conditional gate bypass); Think and Create profiles ask up to 3 questions (2 explicit + 1 gate bypass). Hard cap includes auto-derived scenario coverage for Build.
-version: 0.17.2
+version: 0.18.0
 ---
 
 # Post-Spawn Evaluation
@@ -323,7 +323,7 @@ The user reads `docs/retrospectives/` periodically and updates:
 
 **Build profile inputs:**
 - `shared/spec-quality-scoring.md` — Adjust dimensions or thresholds based on deferred score accuracy data
-- `shared/spec-refinement.md` — Add question categories based on recurring "spec refinement should have surfaced it" patterns
+- `shared/discovery-interview.md` § Feature-Characteristic Heuristics — Add heuristic rows based on recurring "spec should have surfaced it" patterns. Each new row needs: Feature Characteristic, Trigger Signal, Follow-Up Question.
 - `shared/discovery-interview.md` — Adjust core questions based on recurring "discovery interview should have asked" patterns
 
 **Think profile inputs:**
