@@ -81,7 +81,7 @@ Follow the scoring protocol from `${CLAUDE_PLUGIN_ROOT}/shared/spec-quality-scor
 
 ### Step 6: Adaptive Sizing
 
-Follow the adaptive sizing rules from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`.
+Follow the adaptive sizing rules from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-shared.md`.
 
 - **Feature mode:** Count layers (frontend, backend, tests, infra, docs) as subtasks
 - **Debug mode:** Always recommend 3 investigators (the adversarial structure is the mechanism)
@@ -112,11 +112,18 @@ Before spawning, analyze the project to identify:
 
 Include findings in the Context section of the spawn prompt.
 
-Also run the following scans from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`:
+Also run the following scans from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-shared.md`:
 - Mock Repository Scan
 - **Retrospective Scan** — use `profile: build` for evaluate-spawn files, `type: feature|debug` for AAR files
 
 ### Step 9: Spawn the Team
+
+**Team name slug rules:** `[command-prefix]-[mode-slug]-[topic-slug]` — lowercase, hyphen-separated, max 30 chars, strip "the/a/an/for/with/and", first 3-4 meaningful words.
+
+| Mode | Prefix | Example |
+|---|---|---|
+| feature | `feature` | `feature-user-auth` |
+| debug | `debug` | `debug-login-timeout` |
 
 #### Feature Mode
 
@@ -126,6 +133,13 @@ Team name: `feature-[feature-slug]`
 
 ```
 Create an agent team called "feature-[feature-slug]" to implement [FEATURE].
+
+## Behavioral Rules (read first)
+- Call TaskList before starting any task. Never start a blocked task.
+- Go idle when all tasks are blocked — the system notifies the lead. Do NOT send status messages.
+- Answer retrospective questions immediately when the lead asks. Answer before approving shutdown.
+- Use TaskUpdate to preserve progress notes — they survive compaction, conversation does not.
+- Task outputs go to docs/teams/[TEAM-NAME]/tasks/task-{N}-{role-slug}.md (under 500 lines).
 
 The user is the architect. You are the implementer. Resolve ambiguity by asking, not by deciding. When the spec is unclear, surface the ambiguity to the user rather than making assumptions.
 
@@ -161,6 +175,8 @@ Spawn [3-5] teammates:
 
 Enable delegate mode — focus on coordination and user feedback. A designated teammate handles final document compilation.
 
+After resolving a USER FEEDBACK GATE, broadcast a brief unblock notification (e.g., "Gate resolved — check TaskList for your next tasks") rather than sending per-teammate assignment messages. Teammates already have owners set and will check TaskList.
+
 ## Feature Context
 
 ### Goal
@@ -187,25 +203,28 @@ Enable delegate mode — focus on coordination and user feedback. A designated t
 ### Lessons Applied
 [If R5 retrospective scan returned plugin-scope improvements relevant to this feature spawn: 1–3 bullets from prior AAR improvement tables. Format: "Prior run found: [improvement description]." Omit this section entirely if R5 returned no data or R5 is not yet implemented.]
 
+Effort budgets: implementation tasks ~20-40 tool calls, testing tasks ~15-25 tool calls, coordination tasks ~5-10 tool calls.
+Scale up if the task is larger than expected; scale down and flag if it's smaller.
+
 Create these tasks:
-1. [Lead] Define API contracts and data flow for the feature
-2. [Lead] USER FEEDBACK GATE — Present API contract to user. Ask user to: confirm the API design, adjust endpoints/schemas, flag missing behaviors, and approve before implementation begins
-3. [Backend] Implement API endpoints and services (blocked by task 2)
-4. [Frontend] Implement UI components and pages (blocked by task 2)
-5. [Tester] Write unit tests for backend services — test against the API contract and acceptance criteria, NOT the implementation. Use contract schemas for expected inputs/outputs. (blocked by task 2)
-6. [Tester] Write unit tests for frontend components — test against the API contract and component specs, NOT the implementation. (blocked by task 2)
-7. [Backend] Add input validation and error handling (blocked by task 3)
-8. [Frontend] Implement data fetching and error states (blocked by tasks 3, 4)
-9. [Tester] Reconciliation — run all tests against the actual implementation. Fix test expectations that assumed wrong contract details. Report mismatches as bugs (implementation wrong) or spec gaps (contract underspecified). (blocked by tasks 5, 6, 7, 8)
-10. [Tester] Write integration tests for full flow (blocked by task 9)
-11. [Tester] Validate implementation against `docs/scenarios/[feature-slug].md` — for each scenario, verify behavior matches pre-spawn intent. Produce `### Scenario Notes` with Validated/Invalidated/Partial status per scenario. (blocked by task 10; skip if scenarios were not collected)
-12. [Tester] Compile implementation summary — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `implementation-summary.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`. If Documentation teammate was not selected and `--skip-adr` was not specified, also produce an ADR at `docs/decisions/[feature-slug]-adr.md` following `${CLAUDE_PLUGIN_ROOT}/shared/system-doc-protocol.md`
+1. [Lead] (~5-10 tool calls) Define API contracts and data flow for the feature
+2. [Lead] (~3-5 tool calls) USER FEEDBACK GATE — Present API contract to user. Ask user to: confirm the API design, adjust endpoints/schemas, flag missing behaviors, and approve before implementation begins
+3. [Backend] (~20-40 tool calls) Implement API endpoints and services (blocked by task 2)
+4. [Frontend] (~20-40 tool calls) Implement UI components and pages (blocked by task 2)
+5. [Tester] (~15-25 tool calls) Write unit tests for backend services — test against the API contract and acceptance criteria, NOT the implementation. Use contract schemas for expected inputs/outputs. (blocked by task 2)
+6. [Tester] (~15-25 tool calls) Write unit tests for frontend components — test against the API contract and component specs, NOT the implementation. (blocked by task 2)
+7. [Backend] (~10-20 tool calls) Add input validation and error handling (blocked by task 3)
+8. [Frontend] (~10-20 tool calls) Implement data fetching and error states (blocked by tasks 3, 4)
+9. [Tester] (~10-20 tool calls) Reconciliation — run all tests against the actual implementation. Fix test expectations that assumed wrong contract details. Report mismatches as bugs (implementation wrong) or spec gaps (contract underspecified). (blocked by tasks 5, 6, 7, 8)
+10. [Tester] (~15-25 tool calls) Write integration tests for full flow (blocked by task 9)
+11. [Tester] (~10-15 tool calls) Validate implementation against `docs/scenarios/[feature-slug].md` — for each scenario, verify behavior matches pre-spawn intent. Produce `### Scenario Notes` with Validated/Invalidated/Partial status per scenario. (blocked by task 10; skip if scenarios were not collected)
+12. [Tester] (~5-10 tool calls) Compile implementation summary (scope: tasks 1-11) — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `implementation-summary.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`. If Documentation teammate was not selected and `--skip-adr` was not specified, also produce an ADR at `docs/decisions/[feature-slug]-adr.md` following `${CLAUDE_PLUGIN_ROOT}/shared/system-doc-protocol.md`
+
+[Include Output Standards variant and Shutdown Protocol from shared/output-standard.md and shared/shutdown-protocol.md]
 
 Important: Each teammate should only modify files in their designated directories
 to avoid conflicts. Frontend and Backend must agree on API contracts before implementation.
 Tester writes tests against the contract, not the code — both sides target the same contract independently.
-
-[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Output format:** Implemented feature + API contract document + test report
@@ -234,6 +253,13 @@ Does this cover the right ground? Should I adjust any hypothesis?
 ```
 Create an agent team called "debug-[bug-slug]" to investigate: [BUG DESCRIPTION].
 
+## Behavioral Rules (read first)
+- Call TaskList before starting any task. Never start a blocked task.
+- Go idle when all tasks are blocked — the system notifies the lead. Do NOT send status messages.
+- Answer retrospective questions immediately when the lead asks. Answer before approving shutdown.
+- Use TaskUpdate to preserve progress notes — they survive compaction, conversation does not.
+- Task outputs go to docs/teams/[TEAM-NAME]/tasks/task-{N}-{role-slug}.md (under 500 lines).
+
 Spawn 3 investigator teammates, each pursuing a different hypothesis:
 
 1. **[Hypothesis-A-Name]** — Investigate whether [CONCRETE THEORY 1 based on symptoms].
@@ -249,21 +275,24 @@ Spawn 3 investigator teammates, each pursuing a different hypothesis:
    Look at [EDGE CASES, EXTERNAL DEPS, CONFIG]. Your job is also to challenge the other
    investigators' conclusions — if they find something, try to disprove it.
 
+Effort budgets: investigation tasks ~10-20 tool calls, coordination tasks ~5-10 tool calls.
+Scale up if the task is larger than expected; scale down and flag if it's smaller.
+
 Create these tasks:
-1. [All] Read error logs and reproduce the issue
-2. [[Hypothesis-A]] Trace code path for [theory 1]
-3. [[Hypothesis-B]] Check recent changes related to [theory 2]
-4. [[Hypothesis-C]] Examine edge cases for [theory 3]
-5. [All] Share findings and challenge each other's theories
-6. [Lead] Identify root cause from surviving theory
-7. [Lead] ROOT CAUSE CONFIRMATION — Present the identified root cause and supporting evidence to user. Ask user to: confirm the root cause makes sense, provide additional context, and approve before proposing a fix (blocked by task 6)
-8. [Lead] Propose fix based on confirmed root cause (blocked by task 7) — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `root-cause-analysis.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
+1. [All] (~10-15 tool calls) Read error logs and reproduce the issue
+2. [[Hypothesis-A]] (~10-20 tool calls) Trace code path for [theory 1]
+3. [[Hypothesis-B]] (~10-20 tool calls) Check recent changes related to [theory 2]
+4. [[Hypothesis-C]] (~10-20 tool calls) Examine edge cases for [theory 3]
+5. [All] (~5-10 tool calls) Share findings and challenge each other's theories
+6. [Lead] (~5-10 tool calls) Identify root cause from surviving theory
+7. [Lead] (~3-5 tool calls) ROOT CAUSE CONFIRMATION — Present the identified root cause and supporting evidence to user. Ask user to: confirm the root cause makes sense, provide additional context, and approve before proposing a fix (blocked by task 6)
+8. [Lead] (~5-10 tool calls) Propose fix based on confirmed root cause (scope: tasks 1-7) (blocked by task 7) — write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `root-cause-analysis.md` with frontmatter, task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`
+
+[Include Output Standards variant and Shutdown Protocol from shared/output-standard.md and shared/shutdown-protocol.md]
 
 Have investigators actively debate. When one finds evidence, others should try to
 disprove it. The theory that survives scrutiny is most likely correct.
 Require plan approval before implementing any fix.
-
-[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
 ```
 
 **Output format:** Root cause analysis + hypothesis investigation results + fix proposal
@@ -272,7 +301,44 @@ Require plan approval before implementing any fix.
 
 ### Step 10: Output
 
-Follow the verbosity templates from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`.
+Use the verbosity level parsed in Step 2 to format post-spawn output:
+
+| Flag | Behavior |
+|---|---|
+| `--quiet` | Suppress narrative. Show only: team name, teammate count, and "Team spawned." |
+| `--normal` (default) | Team summary, phase overview, key shortcuts, pipeline context |
+| `--verbose` | Everything in normal + detailed task list, dependency graph, model assignments, token budget |
+
+**Quiet mode:**
+```
+Team "[TEAM-NAME]" spawned with [N] teammates. Use Shift+Up/Down to interact.
+```
+
+**Normal mode (default):**
+```
+Team "[TEAM-NAME]" created with [N] teammates:
+- [Role 1], [Role 2], [Role 3]
+
+**Phases:**
+1. [Phase description]
+2. [Phase description — YOUR TURN: feedback gate]
+3. [Phase description]
+
+Shortcuts: Shift+Up/Down (teammates), Ctrl+T (task list)
+Pipeline: [downstream commands]
+Artifacts: docs/teams/[TEAM-NAME]/
+```
+
+**Verbose mode** (everything in normal, plus):
+```
+**Tasks:**
+1. [Owner] Task description
+2. [Owner] Task description (blocked by 1)
+...
+**Dependencies:** [visual graph or description]
+**Models:** [per-teammate model assignments]
+**Token budget:** discovery 10% | analysis 30% | feedback 10% | execution 40% | synthesis 10%
+```
 
 The shutdown protocol ensures AAR runs before TeamDelete. If the team shut down before AAR completed, run `/after-action-review [team-name]` manually.
 
@@ -281,7 +347,7 @@ After team completion, include:
 
 This prompt does not block session end.
 
-**Feature mode output:**
+**Feature mode normal output:**
 - The team has been created with [3-5] teammates (Frontend, Backend, Tester + optional)
 - **Phase 1 (API Contract):** The lead defines the API contract and data flow
 - **Phase 2 (Your Turn):** Review the API contract before implementation begins
@@ -290,7 +356,7 @@ This prompt does not block session end.
 - **Phase 5 (Summary):** Tester compiles an implementation summary
 - Artifacts written to `docs/teams/[TEAM-NAME]/`
 
-**Debug mode output:**
+**Debug mode normal output:**
 - The team has been created with 3 investigators pursuing confirmed hypotheses
 - The adversarial structure ensures theories are challenged, not just confirmed
 - Root cause confirmation before fix proposal

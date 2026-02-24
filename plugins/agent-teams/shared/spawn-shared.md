@@ -1,6 +1,6 @@
-# Spawn Core
+# Spawn Shared
 
-Shared logic for the unified spawn commands (`spawn-build`, `spawn-think`, `spawn-create`). Defines adaptive team sizing, model selection, verbosity control, and team name conventions.
+Shared logic for the unified spawn commands (`spawn-build`, `spawn-think`, `spawn-create`). Defines adaptive team sizing and model selection.
 
 ## Adaptive Sizing
 
@@ -55,100 +55,6 @@ Some blueprints have specific model requirements documented in their spawn promp
 - **Productivity team:** Refiner uses default model (iterative refinement)
 - **Design team:** Frontend Dev uses default model (implementation)
 - **All planning modes:** All teammates use Sonnet (analysis and writing)
-
-## Verbosity Control
-
-Three verbosity levels control post-spawn output:
-
-| Flag | Behavior | When to Use |
-|---|---|---|
-| `--quiet` | Suppress post-spawn narrative. Show only: team name, teammate count, and "Team spawned." | Experienced users, scripted workflows, chaining commands |
-| `--normal` (default) | Standard output: team summary, phase overview, key shortcuts, pipeline context | Most interactive use |
-| `--verbose` | Full output: everything in normal + detailed task list, dependency graph, model assignments, token budget | Debugging, learning, first-time users |
-
-### Detecting Verbosity
-
-1. Check `$ARGUMENTS` for `--quiet`, `--normal`, or `--verbose` flags
-2. Strip the flag from `$ARGUMENTS` before passing to the discovery interview
-3. Default to `--normal` if no flag is present
-
-### Output Templates
-
-#### Quiet Mode
-```
-Team "[TEAM-NAME]" spawned with [N] teammates. Use Shift+Up/Down to interact.
-```
-
-#### Normal Mode (default)
-```
-Team "[TEAM-NAME]" created with [N] teammates:
-- [Role 1], [Role 2], [Role 3]
-
-**Phases:**
-1. [Phase description]
-2. [Phase description — YOUR TURN: feedback gate]
-3. [Phase description]
-
-Shortcuts: Shift+Up/Down (teammates), Ctrl+T (task list)
-Pipeline: [downstream commands]
-Artifacts: docs/teams/[TEAM-NAME]/
-```
-
-#### Verbose Mode
-```
-[Everything in normal mode, plus:]
-
-**Tasks:**
-1. [Owner] Task description
-2. [Owner] Task description (blocked by 1)
-...
-
-**Dependencies:** [visual graph or description]
-**Models:** [per-teammate model assignments]
-**Token budget:** discovery 10% | analysis 30% | feedback 10% | execution 40% | synthesis 10%
-```
-
-## Team Name Conventions
-
-Generate team names using this pattern: `[command-prefix]-[mode-slug]-[topic-slug]`
-
-| Command | Prefix | Example |
-|---|---|---|
-| spawn-build --mode feature | `feature` | `feature-user-auth` |
-| spawn-build --mode debug | `debug` | `debug-login-timeout` |
-| spawn-think --mode research | `research-[submode]` | `research-eval-auth-libs` |
-| spawn-think --mode planning | `plan-[submode]` | `plan-roadmap-myapp` |
-| spawn-think --mode review | `review` | `review-pr-142` |
-| spawn-create --mode design | `design` | `design-settings-page` |
-| spawn-create --mode brainstorm | `brainstorm` | `brainstorm-api-auth` |
-| spawn-create --mode productivity | `productivity` | `productivity-ci-pipeline` |
-
-### Slug Generation
-
-- Lowercase, hyphen-separated
-- Max 30 characters for the topic slug
-- Strip common words: "the", "a", "an", "for", "with", "and"
-- Use first 3-4 meaningful words from the topic
-
-## Dispatch Pattern
-
-The unified commands are thin wrappers that:
-
-1. Run prerequisites check (from `shared/prerequisites-check.md`)
-2. Parse `--mode` flag or auto-infer mode from keywords
-3. Run discovery interview (from `shared/discovery-interview.md` + command-specific extended questions)
-4. Apply adaptive sizing (this file)
-5. Dispatch to the appropriate legacy spawn command with compiled context
-
-### Auto-Inference
-
-Each unified command defines mode-specific keywords. If `$ARGUMENTS` contains a keyword match, auto-select the mode and confirm rather than asking:
-
-```
-Your topic suggests [MODE] mode. Proceeding with that — say "actually [OTHER-MODE]" to switch.
-```
-
-If no keywords match, present the mode table and ask.
 
 ## Project Analysis Additions
 

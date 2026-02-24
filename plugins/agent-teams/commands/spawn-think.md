@@ -112,7 +112,7 @@ Follow the scoring protocol from `${CLAUDE_PLUGIN_ROOT}/shared/spec-quality-scor
 
 ### Step 7: Adaptive Sizing
 
-Follow the adaptive sizing rules from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`.
+Follow the adaptive sizing rules from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-shared.md`.
 
 - **Research mode:** Count candidate options + analysis dimensions as subtasks
 - **Planning mode:** Count planning phases + stakeholder groups as subtasks
@@ -156,15 +156,27 @@ Analyze the project before spawning:
 **Planning mode (business):** Business docs, strategy docs, existing roadmaps, README
 **Review mode:** Parse review target (PR number, branch name, or module path), identify changed files
 
-Also run the following scans from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`:
+Also run the following scans from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-shared.md`:
 - Mock Repository Scan (if applicable)
 - **Retrospective Scan** — use `profile: think` for evaluate-spawn files, `type: research|planning|review` for AAR files
 
 ### Step 10: Spawn the Team
 
+**Team name slug rules:** `[command-prefix]-[mode-slug]-[topic-slug]` — lowercase, hyphen-separated, max 30 chars, strip "the/a/an/for/with/and", first 3-4 meaningful words.
+
+| Mode | Prefix | Example |
+|---|---|---|
+| research (eval) | `research-eval` | `research-eval-auth-libs` |
+| research (landscape) | `research-landscape` | `research-landscape-ml-tools` |
+| research (risk) | `research-risk` | `research-risk-migration` |
+| planning | `plan-[submode]` | `plan-roadmap-myapp` |
+| review | `review` | `review-pr-142` |
+
 Compile interview results into a `## [Mode] Context` section and spawn the mode-specific team.
 
 All teammates use Sonnet (analysis and writing, not code generation). Enable delegate mode. A designated teammate handles final document compilation.
+
+After resolving a USER FEEDBACK GATE, broadcast a brief unblock notification (e.g., "Gate resolved — check TaskList for your next tasks") rather than sending per-teammate assignment messages. Teammates already have owners set and will check TaskList.
 
 #### Research — Technology Evaluation
 
@@ -172,6 +184,13 @@ Team name: `research-eval-[topic-slug]`
 
 ```
 Create an agent team called "research-eval-[topic-slug]" to evaluate [TOPIC].
+
+## Behavioral Rules (read first)
+- Call TaskList before starting any task. Never start a blocked task.
+- Go idle when all tasks are blocked — the system notifies the lead. Do NOT send status messages.
+- Answer retrospective questions immediately when the lead asks. Answer before approving shutdown.
+- Use TaskUpdate to preserve progress notes — they survive compaction, conversation does not.
+- Task outputs go to docs/teams/[TEAM-NAME]/tasks/task-{N}-{role-slug}.md (under 500 lines).
 
 Spawn [3-5] teammates:
 
@@ -207,19 +226,22 @@ Enable delegate mode.
 ### Expected Outcomes
 [From Expected Outcomes compilation step — Decision question, options, confidence threshold, out of scope. Omit section if user skipped.]
 
-Create these tasks:
-1. [Explorer] Research each candidate option in depth
-2. [Analyst] Define evaluation criteria and build initial comparison framework
-3. [Critic] Identify risks, failure modes, and hidden costs (blocked by task 1)
-4. [Lead] USER FEEDBACK GATE — Present initial profiles and comparison (blocked by tasks 2, 3)
-5. [Explorer] Deep-dive on remaining options per user direction (blocked by task 4)
-6. [Analyst] Finalize comparison matrix with quantified trade-offs (blocked by tasks 4, 5)
-7. [Critic] Challenge the leading option (blocked by task 6)
-8. [All] Cross-review findings
-9. [Analyst] Final recommendation with confidence levels (blocked by task 8)
-10. [Analyst] Compile evaluation report — write to `docs/teams/[TEAM-NAME]/`
+[Include Output Standards variant and Shutdown Protocol from shared/output-standard.md and shared/shutdown-protocol.md]
 
-[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+Effort budgets: research tasks ~15-25 tool calls, analysis tasks ~10-20 tool calls, coordination tasks ~3-5 tool calls.
+Scale up if the task is larger than expected; scale down and flag if it's smaller.
+
+Create these tasks:
+1. [Explorer] (~15-25 tool calls) Research each candidate option in depth
+2. [Analyst] (~10-20 tool calls) Define evaluation criteria and build initial comparison framework
+3. [Critic] (~10-20 tool calls) Identify risks, failure modes, and hidden costs (blocked by task 1)
+4. [Lead] (~3-5 tool calls) USER FEEDBACK GATE — Present initial profiles and comparison (blocked by tasks 2, 3)
+5. [Explorer] (~15-25 tool calls) Deep-dive on remaining options per user direction (blocked by task 4)
+6. [Analyst] (~10-20 tool calls) Finalize comparison matrix with quantified trade-offs (blocked by tasks 4, 5)
+7. [Critic] (~10-20 tool calls) Challenge the leading option (blocked by task 6)
+8. [All] (~5-10 tool calls) Cross-review findings
+9. [Analyst] (~5-10 tool calls) Final recommendation with confidence levels (blocked by task 8)
+10. [Analyst] (~5-10 tool calls) Compile evaluation report (scope: tasks 1-9) — write to `docs/teams/[TEAM-NAME]/`
 ```
 
 **Artifact:** `evaluation-report.md` → feeds into `/spawn-think --mode planning`, `/spawn-build --mode feature`
@@ -244,7 +266,19 @@ Spawn Risk Analyst, System Analyst, Mitigator. Same protocol blocks (Task Blocki
 
 Team names follow: `plan-[submode]-[project-slug]`
 
-For the full team composition, Planning Context template, task lists, and spawn prompts for each of the 7 planning submodes, read the planning blueprints at `${CLAUDE_PLUGIN_ROOT}/shared/planning-blueprints.md`.
+For the selected planning submode, read the mode-specific blueprint:
+
+| Submode | Blueprint file |
+|---------|---------------|
+| roadmap | `${CLAUDE_PLUGIN_ROOT}/shared/planning-blueprints/roadmap.md` |
+| spec | `${CLAUDE_PLUGIN_ROOT}/shared/planning-blueprints/spec.md` |
+| adr | `${CLAUDE_PLUGIN_ROOT}/shared/planning-blueprints/adr.md` |
+| migration | `${CLAUDE_PLUGIN_ROOT}/shared/planning-blueprints/migration.md` |
+| bizcase | `${CLAUDE_PLUGIN_ROOT}/shared/planning-blueprints/bizcase.md` |
+| gtm | `${CLAUDE_PLUGIN_ROOT}/shared/planning-blueprints/gtm.md` |
+| okr | `${CLAUDE_PLUGIN_ROOT}/shared/planning-blueprints/okr.md` |
+
+The Planning Context Template is in `${CLAUDE_PLUGIN_ROOT}/shared/planning-blueprints/_context-template.md` — embed it in the Planning Context section of the spawn prompt.
 
 Each submode follows the same 5-phase flow:
 1. **Initial Analysis** — Parallel exploration from each teammate's perspective
@@ -254,7 +288,7 @@ Each submode follows the same 5-phase flow:
 5. **Compilation** — Designated teammate compiles final document
 
 The spawn-think command uses the blueprint team structures with these additions:
-- Adaptive sizing from `shared/spawn-core.md`
+- Adaptive sizing from `shared/spawn-shared.md`
 - Dynamic discovery interview (3 core + up to 7 follow-ups, cap 10) from `shared/discovery-interview.md`
 - Verbosity control
 
@@ -267,7 +301,16 @@ The spawn-think command uses the blueprint team structures with these additions:
 Team name: `review-[target-slug]`
 
 ```
-Create an agent team called "review-[target-slug]" to review [TARGET]. Spawn [3-5] reviewers:
+Create an agent team called "review-[target-slug]" to review [TARGET].
+
+## Behavioral Rules (read first)
+- Call TaskList before starting any task. Never start a blocked task.
+- Go idle when all tasks are blocked — the system notifies the lead. Do NOT send status messages.
+- Answer retrospective questions immediately when the lead asks. Answer before approving shutdown.
+- Use TaskUpdate to preserve progress notes — they survive compaction, conversation does not.
+- Task outputs go to docs/teams/[TEAM-NAME]/tasks/task-{N}-{role-slug}.md (under 500 lines).
+
+Spawn [3-5] reviewers:
 
 1. **Security Reviewer** — Focus on security implications: authentication, authorization,
    injection risks, data exposure, CSRF, dependency vulnerabilities.
@@ -290,29 +333,69 @@ Use Sonnet for all reviewers. Enable delegate mode.
 ## Review Context
 [Compiled interview results]
 
-Create these tasks:
-1. [Security] Audit authentication and authorization paths
-2. [Security] Check for injection vulnerabilities and data exposure
-3. [Performance] Profile database queries and identify N+1 patterns
-4. [Performance] Review algorithmic complexity and caching opportunities
-5. [Quality] Verify adherence to project patterns and conventions
-6. [Quality] Assess test coverage and identify gaps
-7. [Lead] USER FEEDBACK GATE — Present top findings from each reviewer. Ask user to: prioritize findings, select deep-dive areas, adjust review scope (blocked by tasks 1, 2, 3, 4, 5, 6)
-8. [Security] Deep-dive on user-prioritized security findings (blocked by task 7)
-9. [Performance] Deep-dive on user-prioritized performance findings (blocked by task 7)
-10. [Quality] Deep-dive on user-prioritized quality findings (blocked by task 7)
-11. [All] Cross-reference findings across review domains (blocked by tasks 8, 9, 10)
-12. [All] Write domain sections — each reviewer writes their named section: Security Reviewer → "Security Findings", Performance Reviewer → "Performance Findings", Quality Reviewer → "Quality & AI Pattern Findings". Write ONLY your section; cross-reference others by name, do not duplicate. (blocked by task 11)
-13. [Quality Reviewer] Merge domain sections into review-report.md — resolve cross-references, deduplicate, add executive summary with severity counts — write to `docs/teams/[TEAM-NAME]/`: primary artifact as `review-report.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 12)
+[Include Output Standards variant and Shutdown Protocol from shared/output-standard.md and shared/shutdown-protocol.md]
 
-[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+Effort budgets: security/performance review tasks ~15-25 tool calls, quality review tasks ~10-20 tool calls, coordination tasks ~3-10 tool calls.
+Scale up if the task is larger than expected; scale down and flag if it's smaller.
+
+Create these tasks:
+1. [Security] (~15-25 tool calls) Audit authentication and authorization paths
+2. [Security] (~15-25 tool calls) Check for injection vulnerabilities and data exposure
+3. [Performance] (~15-25 tool calls) Profile database queries and identify N+1 patterns
+4. [Performance] (~15-25 tool calls) Review algorithmic complexity and caching opportunities
+5. [Quality] (~10-20 tool calls) Verify adherence to project patterns and conventions
+6. [Quality] (~10-20 tool calls) Assess test coverage and identify gaps
+7. [Lead] (~3-5 tool calls) USER FEEDBACK GATE — Present top findings from each reviewer. Ask user to: prioritize findings, select deep-dive areas, adjust review scope (blocked by tasks 1, 2, 3, 4, 5, 6)
+8. [Security] (~15-25 tool calls) Deep-dive on user-prioritized security findings (blocked by task 7)
+9. [Performance] (~15-25 tool calls) Deep-dive on user-prioritized performance findings (blocked by task 7)
+10. [Quality] (~10-20 tool calls) Deep-dive on user-prioritized quality findings (blocked by task 7)
+11. [All] (~5-10 tool calls) Cross-reference findings across review domains (blocked by tasks 8, 9, 10)
+12. [All] (~5-10 tool calls) Write domain sections — each reviewer writes their named section: Security Reviewer → "Security Findings", Performance Reviewer → "Performance Findings", Quality Reviewer → "Quality & AI Pattern Findings". Write ONLY your section; cross-reference others by name, do not duplicate. (blocked by task 11)
+13. [Quality Reviewer] (~5-10 tool calls) Merge domain sections into review-report.md (scope: tasks 1-12) — resolve cross-references, deduplicate, add executive summary with severity counts — write to `docs/teams/[TEAM-NAME]/`: primary artifact as `review-report.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 12)
 ```
 
 **Artifact:** `review-report.md` → feeds into `/spawn-build --mode debug` (issues), `/spawn-build --mode feature` (rework)
 
 ### Step 11: Output
 
-Follow the verbosity templates from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`.
+Use the verbosity level parsed in Step 2 to format post-spawn output:
+
+| Flag | Behavior |
+|---|---|
+| `--quiet` | Suppress narrative. Show only: team name, teammate count, and "Team spawned." |
+| `--normal` (default) | Team summary, phase overview, key shortcuts, pipeline context |
+| `--verbose` | Everything in normal + detailed task list, dependency graph, model assignments, token budget |
+
+**Quiet mode:**
+```
+Team "[TEAM-NAME]" spawned with [N] teammates. Use Shift+Up/Down to interact.
+```
+
+**Normal mode (default):**
+```
+Team "[TEAM-NAME]" created with [N] teammates:
+- [Role 1], [Role 2], [Role 3]
+
+**Phases:**
+1. [Phase description]
+2. [Phase description — YOUR TURN: feedback gate]
+3. [Phase description]
+
+Shortcuts: Shift+Up/Down (teammates), Ctrl+T (task list)
+Pipeline: [downstream commands]
+Artifacts: docs/teams/[TEAM-NAME]/
+```
+
+**Verbose mode** (everything in normal, plus):
+```
+**Tasks:**
+1. [Owner] Task description
+2. [Owner] Task description (blocked by 1)
+...
+**Dependencies:** [visual graph or description]
+**Models:** [per-teammate model assignments]
+**Token budget:** discovery 10% | analysis 30% | feedback 10% | execution 40% | synthesis 10%
+```
 
 The shutdown protocol ensures AAR runs before TeamDelete. If the team shut down before AAR completed, run `/after-action-review [team-name]` manually.
 

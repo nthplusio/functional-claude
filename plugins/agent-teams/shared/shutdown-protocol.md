@@ -1,14 +1,8 @@
 # Shutdown Protocol
 
-Structured team shutdown sequence that ensures participant retrospective input is collected and AAR runs before team data is destroyed. Without this, TeamDelete destroys config and task data before AAR can analyze it, teammates aren't asked for process feedback, and the AAR is skipped or runs with incomplete data.
+Structured team shutdown sequence that ensures participant retrospective input is collected and AAR runs before team data is destroyed.
 
-## Why This Exists
-
-Without a shutdown protocol:
-- `TeamDelete` destroys team config and task lists before AAR can read them
-- Teammates are never asked for their perspective on what went well or poorly
-- AAR is skipped entirely or treated as optional post-hoc activity
-- Process improvements are lost because no structured retrospective happens
+> Prevents: TeamDelete destroying task data before AAR runs, retrospective input being skipped, and process improvements being lost.
 
 ## Shutdown Sequence
 
@@ -68,18 +62,20 @@ Before initiating Phase 1, the Lead reads the Tester's task output and checks `#
 
 ### Phase 1: Participant Retrospective
 
-Before sending shutdown requests, message each teammate with these 3 questions (mapped to FM 7-0 core questions):
+Before sending shutdown requests, message each teammate with this exact header so they recognize it as a retrospective (not a task or standing-by message):
 
 ```
-Before we wrap up — answer briefly:
+**RETROSPECTIVE — please answer before going idle:**
 1. What was your understanding of the goal?
 2. What went well in how the team operated?
 3. What would you change about how we worked together?
 ```
 
+Wait for all responses. If a teammate does not respond after one cycle, send a follow-up: "@[name] — retrospective questions above, please answer before I send shutdown."
+
 Collect all responses. These become primary data for the AAR's "What Went Well?" and "What Could Be Improved?" sections.
 
-**If a teammate doesn't respond** (idle timeout, compaction): proceed without their input. Note the gap in the AAR.
+**If a teammate doesn't respond** after the follow-up (idle timeout, compaction): proceed without their input. Note the non-response in the AAR.
 
 ### Phase 2: Shutdown Teammates
 
@@ -118,8 +114,13 @@ Spawn prompts reference this block via `[Include Shutdown Protocol from shared/s
 ```
 **Shutdown Protocol -- Lead MUST follow when ending the team:**
 - For feature spawns: before Phase 1, check Tester's `### Scenario Notes` for Invalidated rows — if found, run Scenario Invalidation Check (see `shared/shutdown-protocol.md` Phase 0) and present user with accept/fix/proceed options before continuing
-- Before shutdown, message each teammate: "Before we wrap up — answer briefly: (1) What was your understanding of the goal? (2) What went well in how the team operated? (3) What would you change?"
-- Collect all responses before sending any shutdown_request
+- Before sending shutdown requests, message each teammate with this exact header so they recognize it as a retrospective:
+  "**RETROSPECTIVE — please answer before going idle:**
+  1. What was your understanding of the goal?
+  2. What went well in how the team operated?
+  3. What would you change about how we worked together?"
+- Wait for all responses. If a teammate does not respond after one cycle, send a follow-up: "@[name] — retrospective questions above, please answer before I send shutdown."
+- After collecting all responses (or noting non-responses for the AAR), send shutdown_request to each teammate
 - After all teammates approve shutdown, run `/after-action-review [team-name]`
 - Verify AAR file exists at `docs/retrospectives/[team-name]-aar.md` before calling TeamDelete
 - After AAR is verified, check for `docs/retrospectives/[team-name].md` — if absent, display: "No evaluate-spawn retrospective found. Run `/evaluate-spawn` before deleting the team? (optional)"
@@ -131,17 +132,17 @@ Spawn prompts reference this block via `[Include Shutdown Protocol from shared/s
 
 ## Placement
 
-Place immediately after the Output Standards block, inside the spawn prompt code fence:
+Place immediately after the Output Standards block, BEFORE the task list:
 
 ```
-Create these tasks:
-1. [Owner] Task description
-...
-N. [Lead] Compile deliverables
-
 [TASK BLOCKING PROTOCOL BLOCK HERE]
 
 [OUTPUT STANDARDS BLOCK HERE]
 
 [SHUTDOWN PROTOCOL BLOCK HERE]
+
+Create these tasks:
+1. [Owner] Task description
+...
+N. [Lead] Compile deliverables
 ```

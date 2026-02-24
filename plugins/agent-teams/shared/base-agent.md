@@ -40,54 +40,11 @@ The Task Blocking Protocol (embedded in spawn prompts) contains the specific rul
 
 ## Artifact Defaults
 
-### Directory Structure
+Team deliverables go to `docs/teams/[TEAM-NAME]/` with a primary artifact, `tasks/` subdirectory for task outputs, and a team README. Every artifact includes YAML frontmatter (`artifact`, `team`, `type`, `date` for primaries; `task`, `title`, `owner`, `team`, `date` for task outputs). The designated compiler updates the root index at `docs/teams/README.md`.
 
-All team deliverables go to `docs/teams/[TEAM-NAME]/`:
+Write artifacts for analysis, reports, plans, and recommendations. Skip for code implementation, infrastructure tasks, and in-context-only outputs.
 
-```
-docs/teams/[TEAM-NAME]/
-├── README.md                    # Team metadata, artifact list, pipeline links
-├── [primary-artifact].md        # Main deliverable with YAML frontmatter
-└── tasks/
-    ├── task-1-[role-slug].md    # Task-level output
-    ├── task-2-[role-slug].md
-    └── ...
-```
-
-### Frontmatter
-
-Every artifact file includes YAML frontmatter:
-
-```yaml
-# Primary deliverable
----
-artifact: [artifact-name]
-team: [team-name]
-type: [team-type]
-date: [YYYY-MM-DD]
----
-
-# Task output
----
-task: [task-number]
-title: "[task-title]"
-owner: [teammate-name]
-team: [team-name]
-date: [YYYY-MM-DD]
----
-```
-
-### Root Index
-
-The designated compiler teammate updates `docs/teams/README.md` with a row for this team run.
-
-### When to Write Artifacts
-
-| Write | Skip |
-|---|---|
-| Analysis, reports, recommendations | Code implementation (the code IS the artifact) |
-| Plans, roadmaps, strategies | Infrastructure or configuration tasks |
-| Evaluation criteria and scoring | Tasks that only produce in-context messages |
+Full schemas and artifact mapping: `team-coordination` skill → Artifact Output Protocol.
 
 ## Delegate Mode Compliance
 
@@ -98,13 +55,6 @@ When the lead is in delegate mode:
 
 ## Shutdown Compliance
 
-### Retrospective Questions
+When asked retrospective questions (goal, what went well, what to change): answer in 2-3 sentences per question. Focus on team process and coordination patterns, not output quality.
 
-When you receive retrospective questions from the lead (typically 3 questions about goal understanding, what went well, and what you'd change), answer concisely (2-3 sentences per question). Focus on team process, not output quality. Be specific — name the coordination pattern or friction point. This is your chance to influence how future teams operate.
-
-### Shutdown Requests
-
-When you receive a `shutdown_request`:
-- Approve immediately unless you are mid-write on a file
-- If mid-write, finish the write, then approve
-- Do NOT reject to "finish up" analysis or messages — those can be resumed later
+Shutdown requests: approve immediately unless mid-write on a file (finish the write, then approve). Do NOT reject to "finish up" — work can resume later.

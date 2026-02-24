@@ -2,13 +2,7 @@
 
 Canonical output standards block included in every spawn prompt. Controls verbosity, prevents restating shared context, and directs task output to the standard artifact directory.
 
-## Why This Exists
-
-Without output standards, teammates:
-- Write essay-length responses when bullet points suffice
-- Restate the entire shared context section back, wasting tokens
-- Bury conclusions under preamble and throat-clearing
-- Write task outputs to inconsistent or missing locations
+> Prevents: essay-length responses, restated context, buried conclusions, and task outputs at inconsistent locations.
 
 ## Protocol Block
 

@@ -127,7 +127,7 @@ Compile all interview answers into a structured `## [Team-Type] Context` section
 [Findings from codebase/document analysis, if applicable]
 
 ### Prior Run Insights
-[Populated from Retrospective Scan (see spawn-core.md). Include only if scan returned actionable content. Hard limit: max 3 bullets, max 100 words total. If cold-start guard fired (fewer than 3 matching retrospectives), omit this subsection entirely — do not add an empty placeholder.]
+[Populated from Retrospective Scan (see spawn-shared.md). Include only if scan returned actionable content. Hard limit: max 3 bullets, max 100 words total. If cold-start guard fired (fewer than 3 matching retrospectives), omit this subsection entirely — do not add an empty placeholder.]
 ```
 
 ## Edge Cases Output

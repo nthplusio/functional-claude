@@ -9,3 +9,5 @@
 | research-eval-agent-teams-loop | research | eval | Agent-teams plugin feedback loop evaluation and improvement roadmap | 2026-02-22 | completed | [evaluation-report.md](research-eval-agent-teams-loop/evaluation-report.md) |
 | plan-spec-agent-teams-feedback | planning | spec | Agent-teams feedback loop implementation specs (R1–R11) | 2026-02-22 | completed | [spec.md](plan-spec-agent-teams-feedback/spec.md) |
 | feature-agent-teams-feedback-loop | feature | — | Agent-teams feedback loop implementation (R1–R11) | 2026-02-22 | completed | [implementation-summary.md](feature-agent-teams-feedback-loop/implementation-summary.md) |
+| review-agent-teams-plugin | review | balanced | Agent teams plugin quality review — duplication, adherence, architecture, best practices | 2026-02-23 | completed | [review-report.md](review-agent-teams-plugin/review-report.md) |
+| feature-review-roadmap-impl | feature | — | Agent-teams plugin review roadmap implementation | 2026-02-23 | completed | [implementation-summary.md](feature-review-roadmap-impl/implementation-summary.md) |

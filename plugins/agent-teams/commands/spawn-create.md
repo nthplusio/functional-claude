@@ -113,7 +113,7 @@ Follow the scoring protocol from `${CLAUDE_PLUGIN_ROOT}/shared/spec-quality-scor
 
 ### Step 7: Adaptive Sizing
 
-Follow the adaptive sizing rules from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`.
+Follow the adaptive sizing rules from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-shared.md`.
 
 - **Design mode:** Count design deliverables as subtasks. Always 4 core teammates.
 - **Brainstorm mode:** Always 3 core teammates; optionally add User Voice or Domain Expert.
@@ -142,11 +142,19 @@ No optional teammates — the 5-persona loop is fixed.
 **Brainstorm mode (tech category):** Technology stack, architecture, existing patterns, known pain points, integration points
 **Productivity mode:** Current workflow tooling, existing automation, known bottlenecks, project structure
 
-Also run the following scans from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`:
+Also run the following scans from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-shared.md`:
 - Mock Repository Scan (if applicable)
 - **Retrospective Scan** — use `profile: create` for evaluate-spawn files, `type: design|brainstorm|productivity` for AAR files
 
 ### Step 10: Spawn the Team
+
+**Team name slug rules:** `[command-prefix]-[mode-slug]-[topic-slug]` — lowercase, hyphen-separated, max 30 chars, strip "the/a/an/for/with/and", first 3-4 meaningful words.
+
+| Mode | Prefix | Example |
+|---|---|---|
+| design | `design` | `design-settings-page` |
+| brainstorm | `brainstorm` | `brainstorm-api-auth` |
+| productivity | `productivity` | `productivity-ci-pipeline` |
 
 #### Design Mode
 
@@ -154,6 +162,13 @@ Team name: `design-[feature-slug]`
 
 ```
 Create an agent team called "design-[feature-slug]" to design and implement [UI FEATURE].
+
+## Behavioral Rules (read first)
+- Call TaskList before starting any task. Never start a blocked task.
+- Go idle when all tasks are blocked — the system notifies the lead. Do NOT send status messages.
+- Answer retrospective questions immediately when the lead asks. Answer before approving shutdown.
+- Use TaskUpdate to preserve progress notes — they survive compaction, conversation does not.
+- Task outputs go to docs/teams/[TEAM-NAME]/tasks/task-{N}-{role-slug}.md (under 500 lines).
 
 Spawn 4 teammates:
 
@@ -178,26 +193,31 @@ Spawn 4 teammates:
 
 Enable delegate mode.
 
+After resolving a USER FEEDBACK GATE, broadcast a brief unblock notification (e.g., "Gate resolved — check TaskList for your next tasks") rather than sending per-teammate assignment messages. Teammates already have owners set and will check TaskList.
+
 ## Design Context
 [Compiled interview results]
 
-Create these tasks:
-1. [Product Owner] Define user stories and acceptance criteria
-2. [Product Owner] Define scope boundaries — v1 vs deferred
-3. [Designer] Audit existing components and design patterns for reuse (blocked by 1)
-4. [User Advocate] Define accessibility requirements and testing criteria (blocked by 1)
-5. [Designer] Create component specs: layout, states, responsive breakpoints (blocked by 2, 3)
-6. [User Advocate] Review design specs for accessibility compliance (blocked by 4, 5)
-7. [Lead] USER FEEDBACK GATE — Present design specs + accessibility review (blocked by 6)
-8. [Frontend Dev] Implement components following design specs (blocked by 7)
-9. [Frontend Dev] Implement interactive states and error handling (blocked by 8)
-10. [Designer] Visual review of implementation against specs (blocked by 9)
-11. [User Advocate] Accessibility review of implementation (blocked by 9)
-12. [Frontend Dev] Address feedback from Designer and User Advocate (blocked by 10, 11)
-13. [Product Owner] Final acceptance review against user stories (blocked by 12)
-14. [Frontend Dev] Compile design artifacts — write to `docs/teams/[TEAM-NAME]/`
+[Include Output Standards variant and Shutdown Protocol from shared/output-standard.md and shared/shutdown-protocol.md]
 
-[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+Effort budgets: implementation tasks ~20-35 tool calls, design/analysis tasks ~10-20 tool calls, writing/coordination tasks ~5-10 tool calls.
+Scale up if the task is larger than expected; scale down and flag if it's smaller.
+
+Create these tasks:
+1. [Product Owner] (~5-10 tool calls) Define user stories and acceptance criteria
+2. [Product Owner] (~5-10 tool calls) Define scope boundaries — v1 vs deferred
+3. [Designer] (~10-20 tool calls) Audit existing components and design patterns for reuse (blocked by 1)
+4. [User Advocate] (~5-10 tool calls) Define accessibility requirements and testing criteria (blocked by 1)
+5. [Designer] (~10-20 tool calls) Create component specs: layout, states, responsive breakpoints (blocked by 2, 3)
+6. [User Advocate] (~10-15 tool calls) Review design specs for accessibility compliance (blocked by 4, 5)
+7. [Lead] (~3-5 tool calls) USER FEEDBACK GATE — Present design specs + accessibility review (blocked by 6)
+8. [Frontend Dev] (~20-35 tool calls) Implement components following design specs (blocked by 7)
+9. [Frontend Dev] (~15-25 tool calls) Implement interactive states and error handling (blocked by 8)
+10. [Designer] (~10-15 tool calls) Visual review of implementation against specs (blocked by 9)
+11. [User Advocate] (~10-15 tool calls) Accessibility review of implementation (blocked by 9)
+12. [Frontend Dev] (~10-20 tool calls) Address feedback from Designer and User Advocate (blocked by 10, 11)
+13. [Product Owner] (~5-10 tool calls) Final acceptance review against user stories (blocked by 12)
+14. [Frontend Dev] (~5-10 tool calls) Compile design artifacts (scope: tasks 1-13) — write to `docs/teams/[TEAM-NAME]/`
 ```
 
 **Artifact:** `component-spec.md` / `page-spec.md` / `redesign-spec.md`
@@ -209,6 +229,13 @@ Team name: `brainstorm-[topic-slug]`
 
 ```
 Create an agent team called "brainstorm-[topic-slug]" to brainstorm: [TOPIC].
+
+## Behavioral Rules (read first)
+- Call TaskList before starting any task. Never start a blocked task.
+- Go idle when all tasks are blocked — the system notifies the lead. Do NOT send status messages.
+- Answer retrospective questions immediately when the lead asks. Answer before approving shutdown.
+- Use TaskUpdate to preserve progress notes — they survive compaction, conversation does not.
+- Task outputs go to docs/teams/[TEAM-NAME]/tasks/task-{N}-{role-slug}.md (under 500 lines).
 
 Spawn [3-5] teammates:
 
@@ -243,20 +270,23 @@ Spawn [3-5] teammates:
 ## Brainstorming Context
 [Compiled interview results]
 
-Create these tasks:
-1. [Facilitator] Define brainstorming parameters, communicate rules of engagement
-2. [Visionary] Brainwriting: Generate 8-10 ideas independently (blocked by 1)
-3. [Realist] Brainwriting: Generate 8-10 ideas independently (blocked by 1)
-[IF USER VOICE] 4. [User Voice] Brainwriting: Generate 8-10 ideas (blocked by 1)
-[IF DOMAIN EXPERT] 5. [Domain Expert] Brainwriting: Generate 8-10 ideas (blocked by 1)
-6. [Facilitator] Collect all ideas, remove duplicates, cluster by theme (blocked by 2-5)
-7. [Lead] USER FEEDBACK GATE — Present clusters, ask user to prioritize/decline (blocked by 6)
-8. [Visionary] Build on prioritized ideas — combine, enhance, amplify (blocked by 7)
-9. [Realist] Add implementation details, stepping stones, effort estimates (blocked by 7)
-10. [Facilitator] Convergence — evaluate against success criteria (blocked by 8-9)
-11. [Facilitator] Compile final output with ranked recommendations — write to `docs/teams/[TEAM-NAME]/`
+[Include Output Standards variant and Shutdown Protocol from shared/output-standard.md and shared/shutdown-protocol.md]
 
-[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+Effort budgets: ideation tasks ~5-10 tool calls, analysis/convergence tasks ~10-15 tool calls, coordination tasks ~3-5 tool calls.
+Scale up if the task is larger than expected; scale down and flag if it's smaller.
+
+Create these tasks:
+1. [Facilitator] (~3-5 tool calls) Define brainstorming parameters, communicate rules of engagement
+2. [Visionary] (~5-10 tool calls) Brainwriting: Generate 8-10 ideas independently (blocked by 1)
+3. [Realist] (~5-10 tool calls) Brainwriting: Generate 8-10 ideas independently (blocked by 1)
+[IF USER VOICE] 4. [User Voice] (~5-10 tool calls) Brainwriting: Generate 8-10 ideas (blocked by 1)
+[IF DOMAIN EXPERT] 5. [Domain Expert] (~5-10 tool calls) Brainwriting: Generate 8-10 ideas (blocked by 1)
+6. [Facilitator] (~5-10 tool calls) Collect all ideas, remove duplicates, cluster by theme (blocked by 2-5)
+7. [Lead] (~3-5 tool calls) USER FEEDBACK GATE — Present clusters, ask user to prioritize/decline (blocked by 6)
+8. [Visionary] (~5-10 tool calls) Build on prioritized ideas — combine, enhance, amplify (blocked by 7)
+9. [Realist] (~5-10 tool calls) Add implementation details, stepping stones, effort estimates (blocked by 7)
+10. [Facilitator] (~5-10 tool calls) Convergence — evaluate against success criteria (blocked by 8-9)
+11. [Facilitator] (~5-10 tool calls) Compile final output with ranked recommendations (scope: tasks 1-10) — write to `docs/teams/[TEAM-NAME]/`
 ```
 
 **Artifact:** `brainstorm-output.md`
@@ -268,6 +298,13 @@ Team name: `productivity-[project-slug]`
 
 ```
 Create an agent team called "productivity-[project-slug]" to optimize [WORKFLOW / PROCESS].
+
+## Behavioral Rules (read first)
+- Call TaskList before starting any task. Never start a blocked task.
+- Go idle when all tasks are blocked — the system notifies the lead. Do NOT send status messages.
+- Answer retrospective questions immediately when the lead asks. Answer before approving shutdown.
+- Use TaskUpdate to preserve progress notes — they survive compaction, conversation does not.
+- Task outputs go to docs/teams/[TEAM-NAME]/tasks/task-{N}-{role-slug}.md (under 500 lines).
 
 Spawn 5 teammates:
 
@@ -308,25 +345,30 @@ Spawn 5 teammates:
 
 Enable delegate mode.
 
+After resolving a USER FEEDBACK GATE, broadcast a brief unblock notification (e.g., "Gate resolved — check TaskList for your next tasks") rather than sending per-teammate assignment messages. Teammates already have owners set and will check TaskList.
+
 ## Productivity Context
 [Compiled interview results]
 
-Create these tasks:
-1. [Auditor] Discover bottlenecks — analyze the workflow
-2. [Auditor] Score all tasks on Time Cost, Energy Drain, and Feasibility (blocked by 1)
-3. [Auditor] Produce prioritized 4-week improvement plan (blocked by 2)
-4. [Lead] USER FEEDBACK GATE — Present scored plan to user (blocked by 3)
-5. [Architect] Restate top problems from the approved plan (blocked by 4)
-6. [Architect] Map 2-3 approaches per problem, ranked by simplicity (blocked by 5)
-7. [Architect] Create phased blueprint with rollback points (blocked by 6)
-8. [Analyst] Pass 1-2: Architecture and Code Quality review (blocked by 7)
-9. [Analyst] Pass 3-4: Reliability and Performance review (blocked by 8)
-10. [Refiner] Generate initial implementation addressing Critical findings (blocked by 9)
-11. [Refiner] Run convergence loop until quality bar met (blocked by 10)
-12. [Compounder] Review all outputs — progress check, friction log, patterns (blocked by 11)
-13. [Compounder] Compile final report — write to `docs/teams/[TEAM-NAME]/`
+[Include Output Standards variant and Shutdown Protocol from shared/output-standard.md and shared/shutdown-protocol.md]
 
-[Include Task Blocking Protocol, Escalation Protocol, Output Standards, and Shutdown Protocol from shared/task-blocking-protocol.md, shared/output-standard.md, and shared/shutdown-protocol.md]
+Effort budgets: analysis/implementation tasks ~10-20 tool calls, writing/review tasks ~5-15 tool calls, coordination tasks ~3-5 tool calls.
+Scale up if the task is larger than expected; scale down and flag if it's smaller.
+
+Create these tasks:
+1. [Auditor] (~10-20 tool calls) Discover bottlenecks — analyze the workflow
+2. [Auditor] (~10-15 tool calls) Score all tasks on Time Cost, Energy Drain, and Feasibility (blocked by 1)
+3. [Auditor] (~5-10 tool calls) Produce prioritized 4-week improvement plan (blocked by 2)
+4. [Lead] (~3-5 tool calls) USER FEEDBACK GATE — Present scored plan to user (blocked by 3)
+5. [Architect] (~5-10 tool calls) Restate top problems from the approved plan (blocked by 4)
+6. [Architect] (~10-15 tool calls) Map 2-3 approaches per problem, ranked by simplicity (blocked by 5)
+7. [Architect] (~10-15 tool calls) Create phased blueprint with rollback points (blocked by 6)
+8. [Analyst] (~10-20 tool calls) Pass 1-2: Architecture and Code Quality review (blocked by 7)
+9. [Analyst] (~10-20 tool calls) Pass 3-4: Reliability and Performance review (blocked by 8)
+10. [Refiner] (~15-25 tool calls) Generate initial implementation addressing Critical findings (blocked by 9)
+11. [Refiner] (~10-20 tool calls) Run convergence loop until quality bar met (blocked by 10)
+12. [Compounder] (~5-10 tool calls) Review all outputs — progress check, friction log, patterns (blocked by 11)
+13. [Compounder] (~5-10 tool calls) Compile final report (scope: tasks 1-12) — write to `docs/teams/[TEAM-NAME]/`
 ```
 
 **Artifact:** `productivity-report.md`
@@ -334,7 +376,44 @@ Create these tasks:
 
 ### Step 11: Output
 
-Follow the verbosity templates from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-core.md`.
+Use the verbosity level parsed in Step 2 to format post-spawn output:
+
+| Flag | Behavior |
+|---|---|
+| `--quiet` | Suppress narrative. Show only: team name, teammate count, and "Team spawned." |
+| `--normal` (default) | Team summary, phase overview, key shortcuts, pipeline context |
+| `--verbose` | Everything in normal + detailed task list, dependency graph, model assignments, token budget |
+
+**Quiet mode:**
+```
+Team "[TEAM-NAME]" spawned with [N] teammates. Use Shift+Up/Down to interact.
+```
+
+**Normal mode (default):**
+```
+Team "[TEAM-NAME]" created with [N] teammates:
+- [Role 1], [Role 2], [Role 3]
+
+**Phases:**
+1. [Phase description]
+2. [Phase description — YOUR TURN: feedback gate]
+3. [Phase description]
+
+Shortcuts: Shift+Up/Down (teammates), Ctrl+T (task list)
+Pipeline: [downstream commands]
+Artifacts: docs/teams/[TEAM-NAME]/
+```
+
+**Verbose mode** (everything in normal, plus):
+```
+**Tasks:**
+1. [Owner] Task description
+2. [Owner] Task description (blocked by 1)
+...
+**Dependencies:** [visual graph or description]
+**Models:** [per-teammate model assignments]
+**Token budget:** discovery 10% | analysis 30% | feedback 10% | execution 40% | synthesis 10%
+```
 
 The shutdown protocol ensures AAR runs before TeamDelete. If the team shut down before AAR completed, run `/after-action-review [team-name]` manually.
 
