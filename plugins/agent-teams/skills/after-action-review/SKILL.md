@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user asks to review a completed team's process, run an after-action review, or evaluate team effectiveness. Use this skill when the user says "after action review", "AAR", "process review", "team retrospective", "review team process", "how did the team work", or at the prompt after a team completes its work.
 
   Distinct from `/evaluate-spawn` (output quality). AAR evaluates team process. Both can run in the same session.
-version: 0.21.0
+version: 0.21.1
 ---
 
 # After-Action Review (AAR)

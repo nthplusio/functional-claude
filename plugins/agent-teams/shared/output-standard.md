@@ -71,6 +71,16 @@ The debug team uses a 4-line variant without the "Never restate" line (investiga
 - Task outputs go to `docs/teams/[TEAM-NAME]/tasks/task-{N}-{role-slug}.md` — keep each under 500 lines. Filename is specified in your task description.
 ```
 
+### Variation: External Artifact Discipline
+
+For teams where multiple teammates create artifacts in external systems (Linear issues, GitHub PRs, documents, database records), add this line to the protocol block:
+
+```
+- Before creating artifacts in external systems, check the target system for existing items in the same scope. If items already exist, coordinate with the lead before creating new ones.
+```
+
+This is used by: spawn-think (Planning modes with external artifact creation tasks), spawn-build (Feature mode when tasks involve issue trackers or PRs).
+
 ## Placement
 
 Place immediately after the Task Blocking Protocol block, inside the spawn prompt code fence.
