@@ -1,10 +1,11 @@
 {
-  "version": "0.18.0",
+  "version": "0.21.0",
   "preserve": [
     ".cache/",
     ".claude-plugin/"
   ],
   "files": [
+    "CLAUDE.md",
     "agents/team-architect.md",
     "commands/agent-teams.md",
     "commands/calibrate-scoring.md",
@@ -22,7 +23,14 @@
     "shared/discovery-interview.md",
     "shared/mock-repository.md",
     "shared/output-standard.md",
-    "shared/planning-blueprints/",
+    "shared/planning-blueprints/_context-template.md",
+    "shared/planning-blueprints/adr.md",
+    "shared/planning-blueprints/bizcase.md",
+    "shared/planning-blueprints/gtm.md",
+    "shared/planning-blueprints/migration.md",
+    "shared/planning-blueprints/okr.md",
+    "shared/planning-blueprints/roadmap.md",
+    "shared/planning-blueprints/spec.md",
     "shared/prerequisites-check.md",
     "shared/scenario-collection.md",
     "shared/shutdown-protocol.md",

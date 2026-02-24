@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user asks about personas for agent teams, wants to understand how to apply deep behavioral profiles to teammates, or needs guidance on the productivity loop. Use this skill when the user asks about "personas", "behavioral profiles", "productivity loop", "auditor persona", "architect persona", "analyst persona", "refiner persona", "compounder persona", or says "what personas are available" or "how do personas work".
 
   Provides 8 reusable persona definitions that add deep methodology, scoring criteria, and interaction patterns to agent team teammates.
-version: 0.20.0
+version: 0.21.0
 ---
 
 # Team Personas
