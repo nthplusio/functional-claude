@@ -339,22 +339,24 @@ Effort budgets: security/performance review tasks ~15-25 tool calls, quality rev
 Scale up if the task is larger than expected; scale down and flag if it's smaller.
 
 Create these tasks:
-1. [Security] (~15-25 tool calls) Audit authentication and authorization paths
-2. [Security] (~15-25 tool calls) Check for injection vulnerabilities and data exposure
-3. [Performance] (~15-25 tool calls) Profile database queries and identify N+1 patterns
-4. [Performance] (~15-25 tool calls) Review algorithmic complexity and caching opportunities
-5. [Quality] (~10-20 tool calls) Verify adherence to project patterns and conventions
-6. [Quality] (~10-20 tool calls) Assess test coverage and identify gaps
-7. [Lead] (~3-5 tool calls) USER FEEDBACK GATE — Present top findings from each reviewer. Ask user to: prioritize findings, select deep-dive areas, adjust review scope (blocked by tasks 1, 2, 3, 4, 5, 6)
-8. [Security] (~15-25 tool calls) Deep-dive on user-prioritized security findings (blocked by task 7)
-9. [Performance] (~15-25 tool calls) Deep-dive on user-prioritized performance findings (blocked by task 7)
-10. [Quality] (~10-20 tool calls) Deep-dive on user-prioritized quality findings (blocked by task 7)
-11. [All] (~5-10 tool calls) Cross-reference findings across review domains (blocked by tasks 8, 9, 10)
-12. [All] (~5-10 tool calls) Write domain sections — each reviewer writes their named section: Security Reviewer → "Security Findings", Performance Reviewer → "Performance Findings", Quality Reviewer → "Quality & AI Pattern Findings". Write ONLY your section; cross-reference others by name, do not duplicate. (blocked by task 11)
-13. [Quality Reviewer] (~5-10 tool calls) Merge domain sections into review-report.md (scope: tasks 1-12) — resolve cross-references, deduplicate, add executive summary with severity counts — write to `docs/teams/[TEAM-NAME]/`: primary artifact as `review-report.md` with frontmatter, task outputs to `tasks/`, team README, and update root index at `docs/teams/README.md` (blocked by task 12)
+1. [Security] (~15-25 tool calls) Audit authentication and authorization paths — write to `docs/teams/[TEAM-NAME]/tasks/task-1-security.md`
+2. [Security] (~15-25 tool calls) Check for injection vulnerabilities and data exposure — write to `docs/teams/[TEAM-NAME]/tasks/task-2-security.md`
+3. [Performance] (~15-25 tool calls) Profile database queries and identify N+1 patterns — write to `docs/teams/[TEAM-NAME]/tasks/task-3-performance.md`
+4. [Performance] (~15-25 tool calls) Review algorithmic complexity and caching opportunities — write to `docs/teams/[TEAM-NAME]/tasks/task-4-performance.md`
+5. [Quality] (~10-20 tool calls) Verify adherence to project patterns and conventions — write to `docs/teams/[TEAM-NAME]/tasks/task-5-quality.md`
+6. [Quality] (~10-20 tool calls) Assess test coverage and identify gaps — write to `docs/teams/[TEAM-NAME]/tasks/task-6-quality.md`
+7. [Lead] (~5-8 tool calls) USER FEEDBACK GATE — Present all findings as a summary table (ID, domain, severity, one-line description). Ask user: (1) provide context on any findings (dismissals, severity changes, immediate fixes triggered), (2) prioritize for deep-dive, (3) adjust scope. Record all feedback as User Insights (see `${CLAUDE_PLUGIN_ROOT}/shared/review-report-template.md`) and broadcast to reviewers before unblocking deep-dives. (blocked by tasks 1, 2, 3, 4, 5, 6)
+8. [Security] (~15-25 tool calls) Deep-dive on user-prioritized security findings (blocked by task 7) — write to `docs/teams/[TEAM-NAME]/tasks/task-8-security-deepdive.md`
+9. [Performance] (~15-25 tool calls) Deep-dive on user-prioritized performance findings (blocked by task 7) — write to `docs/teams/[TEAM-NAME]/tasks/task-9-performance-deepdive.md`
+10. [Quality] (~10-20 tool calls) Deep-dive on user-prioritized quality findings (blocked by task 7) — write to `docs/teams/[TEAM-NAME]/tasks/task-10-quality-deepdive.md`
+11. [All] (~5-10 tool calls) Cross-reference findings across review domains — no written output (blocked by tasks 8, 9, 10)
+12. [Security] (~5-10 tool calls) Write "Security Findings" domain section — one `### [ID] — [SEVERITY]: [Title]` block per finding with `#### User Insight` populated from gate feedback (use `_Awaiting user review_` if none received); follow template at `${CLAUDE_PLUGIN_ROOT}/shared/review-report-template.md` (blocked by task 11) — write to `docs/teams/[TEAM-NAME]/tasks/task-12-security-findings.md`
+13. [Performance] (~5-10 tool calls) Write "Performance Findings" domain section — same format as task 12 (blocked by task 11) — write to `docs/teams/[TEAM-NAME]/tasks/task-13-performance-findings.md`
+14. [Quality] (~5-10 tool calls) Write "Quality & AI Pattern Findings" domain section — include `### AI Pattern Findings` table; same format as task 12 (blocked by task 11) — write to `docs/teams/[TEAM-NAME]/tasks/task-14-quality-findings.md`
+15. [Quality Reviewer] (~5-10 tool calls) Compile `review-report.md` following `${CLAUDE_PLUGIN_ROOT}/shared/review-report-template.md` — add executive summary with severity counts, fix sequencing, cross-domain interactions section, and finding index appendix — write to `docs/teams/[TEAM-NAME]/`: primary artifact as `review-report.md` with frontmatter, task outputs to `tasks/`, team README, update root index at `docs/teams/README.md` (blocked by tasks 12, 13, 14)
 ```
 
-**Artifact:** `review-report.md` → feeds into `/spawn-build --mode debug` (issues), `/spawn-build --mode feature` (rework)
+**Artifact:** `review-report.md` (template: `shared/review-report-template.md`) → feeds into `/spawn-build --mode debug` (issues), `/spawn-build --mode feature` (rework)
 
 ### Step 11: Output
 
