@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user asks to evaluate a completed team spawn session, capture session learnings, or review how a spawn went. Use this skill when the user says "evaluate spawn", "evaluate-spawn", "how did the spawn go", "capture learnings", "review spawn session", "spawn retrospective", or at the soft prompt after a team completes its work.
 
   This is a voluntary post-spawn evaluation with profile-based questions tailored to all spawn types (build, think, create). Build profile asks up to 4 questions (3 explicit + 1 conditional gate bypass); Think and Create profiles ask up to 3 questions (2 explicit + 1 gate bypass). Hard cap includes auto-derived scenario coverage for Build.
-version: 0.21.1
+version: 0.21.2
 ---
 
 # Post-Spawn Evaluation
