@@ -1,7 +1,7 @@
 ---
 name: gemini-images
 description: This skill should be used when the user asks to "generate image with gemini", "create icon", "nano-banana", "gemini image", "generate pattern", "create diagram with gemini", "app icon", "generate favicon", or wants to use the nano-banana Gemini CLI extension for image generation, icon creation, pattern design, or visual content.
-version: 0.6.4
+version: 0.6.5
 ---
 
 # Gemini Image Generation (nano-banana)
@@ -29,14 +29,14 @@ Generate images, icons, patterns, diagrams, and visual stories using the nano-ba
 
 | Model | Role | Quality |
 |-------|------|---------|
-| `gemini-3-pro-image-preview` | **Default** — all image generation | Highest quality |
+| `gemini-3.1-pro-image-preview` | **Default** — all image generation | Highest quality |
 | `gemini-2.5-flash-image` | **Fallback** — on error or if user requests speed | Good quality, faster |
 
 When invoking gemini for image tasks, **always prepend the model env var** to ensure the pro model is used:
 
 ```bash
 # Default: pro model (always use this unless it fails)
-NANOBANANA_MODEL=gemini-3-pro-image-preview gemini --yolo -p '/generate "your prompt"'
+NANOBANANA_MODEL=gemini-3.1-pro-image-preview gemini --yolo -p '/generate "your prompt"'
 
 # Fallback: flash model (only on error or explicit user request)
 NANOBANANA_MODEL=gemini-2.5-flash-image gemini --yolo -p '/generate "your prompt"'
@@ -51,7 +51,7 @@ If `NANOBANANA_MODEL` is already set in the environment, respect the user's choi
 nano-banana tools require explicit permission in headless mode. Use `--yolo` to auto-approve image generation tool calls:
 
 ```bash
-NANOBANANA_MODEL=gemini-3-pro-image-preview gemini --yolo -p '/generate "your prompt here"'
+NANOBANANA_MODEL=gemini-3.1-pro-image-preview gemini --yolo -p '/generate "your prompt here"'
 ```
 
 **Note:** `--yolo` is ONLY permitted for image generation via nano-banana. Never use `--yolo` for code reviews or text analysis — use `--sandbox` instead. Gemini's role outside of image creation is strictly advisory.
@@ -62,7 +62,7 @@ All nano-banana commands run inside a Gemini CLI session. From Claude Code, invo
 
 **Important:** When executing any command below from Claude Code, always prepend the model and permissions:
 ```bash
-NANOBANANA_MODEL=gemini-3-pro-image-preview gemini --yolo -p '<command>'
+NANOBANANA_MODEL=gemini-3.1-pro-image-preview gemini --yolo -p '<command>'
 ```
 The examples below show the command portion only for brevity.
 
@@ -283,4 +283,4 @@ Generated files typically appear in:
 - **Iterate**: Use `/edit` to refine generated images
 - **Batch sizes**: `/icon` with multiple `--sizes` is more efficient than separate calls
 - **Consistent style**: For sets, use `--seed` to maintain visual consistency
-- **Pro model**: Set `NANOBANANA_MODEL=gemini-3-pro-image-preview` for highest quality output
+- **Pro model**: Set `NANOBANANA_MODEL=gemini-3.1-pro-image-preview` for highest quality output
