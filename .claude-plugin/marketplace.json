@@ -76,6 +76,12 @@
       "source": "./plugins/session-insights",
       "description": "Interactive session analysis, deep drill-down into Claude Code conversation history, and workflow improvement generation with programmatic JSONL parsing",
       "version": "0.1.1"
+    },
+    {
+      "name": "obsidian-dev",
+      "source": "./plugins/obsidian-dev",
+      "description": "Obsidian plugin development workflows covering setup, the Plugin API, commands, settings, vault operations, UI components, and editor integration",
+      "version": "0.1.0"
     }
   ]
 }

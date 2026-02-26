@@ -1,0 +1,5 @@
+{
+  "name": "obsidian-dev",
+  "version": "0.1.0",
+  "description": "Obsidian plugin development workflows covering setup, the Plugin API, commands, settings, vault operations, UI components, and editor integration"
+}
