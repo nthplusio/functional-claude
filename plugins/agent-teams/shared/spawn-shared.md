@@ -92,6 +92,14 @@ Tasks in spawn prompts use `[Owner]` annotations (e.g., `[Backend]`, `[Tester]`)
 
 USER FEEDBACK GATE and `[All]` cross-review tasks produce no file — omit the filename from those lines.
 
+**`[All]` tasks must never produce written output.** Use `[All]` only for coordination tasks with no deliverable (e.g., "review the compiled output", "approve the final report"). If a task requires domain-specific written output from each teammate, split it into per-role subtasks with explicit owners:
+
+```
+12a. [Security] Write security domain section — write to `docs/teams/[TEAM-NAME]/tasks/task-12a-security.md`
+12b. [Performance] Write performance domain section — write to `docs/teams/[TEAM-NAME]/tasks/task-12b-performance.md`
+12c. [Quality] Write quality domain section — write to `docs/teams/[TEAM-NAME]/tasks/task-12c-quality.md`
+```
+
 ### Retrospective Scan
 
 During project analysis, scan for prior run learnings from `docs/retrospectives/`:

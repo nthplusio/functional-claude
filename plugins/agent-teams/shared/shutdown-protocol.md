@@ -60,28 +60,27 @@ Before initiating Phase 1, the Lead reads the Tester's task output and checks `#
 
 **What "fix complete" means:** Correction task status set to `completed` AND Tester has re-validated the scenario as `Validated` or `Partial` (with user acceptance of remaining partial coverage).
 
-### Phase 1: Participant Retrospective
+### Phase 1: Retrospective + Shutdown
 
-Before sending shutdown requests, message each teammate with this exact header so they recognize it as a retrospective (not a task or standing-by message):
+Send each teammate a **single combined message** containing both the retrospective questions and the `shutdown_request`. Combining them prevents the race condition where a teammate approves shutdown before answering a separate question message:
 
 ```
-**RETROSPECTIVE — please answer before going idle:**
+**RETROSPECTIVE + SHUTDOWN — answer all questions, then approve:**
 1. What was your understanding of the goal?
 2. What went well in how the team operated?
 3. What would you change about how we worked together?
+shutdown_request
 ```
 
-Wait for all responses. If a teammate does not respond after one cycle, send a follow-up: "@[name] — retrospective questions above, please answer before I send shutdown."
+If a teammate does not respond after one cycle, re-send the combined message: "@[name] — please answer the three questions above, then approve shutdown."
 
-Collect all responses. These become primary data for the AAR's "What Went Well?" and "What Could Be Improved?" sections.
+**If a teammate doesn't respond** after the re-send (idle timeout, compaction): proceed without their input. Note the non-response in the AAR.
 
-**If a teammate doesn't respond** after the follow-up (idle timeout, compaction): proceed without their input. Note the non-response in the AAR.
+Collect retrospective answers from each response. These become primary data for the AAR's "What Went Well?" and "What Could Be Improved?" sections.
 
-### Phase 2: Shutdown Teammates
+### Phase 2: Wait for Approvals
 
-Send `shutdown_request` to all teammates. Wait for approvals.
-
-If a teammate rejects (mid-write on a file): wait for them to finish, then re-send.
+Wait for all teammates to approve the `shutdown_request`. If a teammate rejects (mid-write on a file): wait for them to finish, then check for their retrospective answers before re-sending the combined message.
 
 ### Phase 3: Run AAR
 
@@ -114,14 +113,14 @@ Spawn prompts reference this block via `[Include Shutdown Protocol from shared/s
 ```
 **Shutdown Protocol -- Lead MUST follow when ending the team:**
 - For feature spawns: before Phase 1, check Tester's `### Scenario Notes` for Invalidated rows — if found, run Scenario Invalidation Check (see `shared/shutdown-protocol.md` Phase 0) and present user with accept/fix/proceed options before continuing
-- Before sending shutdown requests, message each teammate with this exact header so they recognize it as a retrospective:
-  "**RETROSPECTIVE — please answer before going idle:**
+- Send each teammate a single combined message with retrospective questions AND shutdown_request — do NOT send them as separate messages:
+  "**RETROSPECTIVE + SHUTDOWN — answer all questions, then approve:**
   1. What was your understanding of the goal?
   2. What went well in how the team operated?
-  3. What would you change about how we worked together?"
-- Wait for all responses. If a teammate does not respond after one cycle, send a follow-up: "@[name] — retrospective questions above, please answer before I send shutdown."
-- After collecting all responses (or noting non-responses for the AAR), send shutdown_request to each teammate
-- After all teammates approve shutdown, run `/after-action-review [team-name]`
+  3. What would you change about how we worked together?
+  shutdown_request"
+- If a teammate does not respond after one cycle, re-send the combined message: "@[name] — please answer the three questions above, then approve shutdown."
+- After all teammates have answered and approved, run `/after-action-review [team-name]`
 - Verify AAR file exists at `docs/retrospectives/[team-name]-aar.md` before calling TeamDelete
 - After AAR is verified, check for `docs/retrospectives/[team-name].md` — if absent, display: "No evaluate-spawn retrospective found. Run `/evaluate-spawn` before deleting the team? (optional)"
 ```

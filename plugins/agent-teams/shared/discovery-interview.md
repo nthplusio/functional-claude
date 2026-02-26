@@ -80,6 +80,7 @@ Stop generating questions when ANY of the following is true:
 2. If the user's initial prompt answers 2+ core questions, skip those and present only unanswered ones
 3. If `$ARGUMENTS` answers all 3 core questions, skip the interview entirely and proceed to the next step
 4. Always confirm understanding before spawning: "Based on your description, here's what I understand: [summary]. Anything to adjust?"
+5. **After context compaction or session resume:** Always run the 3 core questions regardless of whether prior context suggests they were answered. Compacted context loses nuance — a brief re-run is cheap insurance against misaligned spawning. You may skip mode-specific extended questions and heuristic follow-ups that were clearly addressed before compaction, but never skip the core three.
 
 ## Token Budget Block
 

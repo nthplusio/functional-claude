@@ -32,11 +32,10 @@ This is a **reduced-fidelity AAR**. The lead reconstructs from task data and con
 
 > **Correct Shutdown Sequence** (reference):
 > 1. All tasks complete
-> 2. Lead messages teammates with retrospective questions (this phase)
-> 3. Collect responses
-> 4. Send `shutdown_request` to all teammates
-> 5. Run AAR (this protocol) — participant input already collected
-> 6. Verify AAR file → `TeamDelete`
+> 2. Lead sends each teammate a single combined message containing retrospective questions AND `shutdown_request`
+> 3. Teammates answer all three questions, then approve shutdown
+> 4. Run AAR (this protocol) — participant input already collected
+> 5. Verify AAR file → `TeamDelete`
 
 ## Phase 2: Lead Synthesis
 
@@ -95,6 +94,11 @@ Present findings as a table:
 **Scope definitions:**
 - **plugin** — fix requires changing plugin files (protocols, blueprints, hooks, team composition, task structure, discovery interview, scoring)
 - **project** — fix is specific to this project/codebase (invocation patterns, config, conventions)
+
+**Format constraints — do not deviate:**
+- Use exactly these 5 columns in this order: `#`, `Issue`, `Impact`, `Fix`, `Scope` — do not rename, reorder, add, or remove columns
+- `Scope` must be exactly `plugin` or `project` — no other values (not `session`, `codebase`, `team`, `infra`, etc.)
+- Number rows sequentially starting from 1
 
 ## Usage Summary Collection
 

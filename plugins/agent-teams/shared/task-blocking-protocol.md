@@ -16,10 +16,10 @@ Spawn prompts reference this block via `[Include Task Blocking Protocol from sha
   WRONG:   TaskGet shows blockedBy: [3] → start anyway with "I'll make reasonable assumptions"
   WRONG:   TaskGet shows blockedBy: [3] → message lead asking if you can start early
 - If all your assigned tasks are blocked or complete, go idle — do NOT send "standing by" or status messages. The system notifies the lead automatically when you stop responding.
-- **RETROSPECTIVE EXCEPTION — When the lead messages you with questions about the goal, what went well, or what you'd change: respond immediately. Do not treat these as idle triggers. These questions arrive after all tasks complete, when you would otherwise stay idle. Answer before approving any shutdown_request.**
-  ✓ CORRECT: All tasks complete. Lead sends retrospective questions. You answer all 3 questions, then approve the shutdown_request.
-  ✗ WRONG: All tasks complete. Lead sends retrospective questions. You go idle without responding. Lead nudges. You then answer.
-  ✗ WRONG: You approve shutdown_request before answering retrospective questions.
+- **RETROSPECTIVE EXCEPTION — The lead will send you a combined message containing retrospective questions AND a `shutdown_request`. Answer all three questions in your response, then approve the shutdown. Do NOT approve before answering.**
+  ✓ CORRECT: Lead sends combined retro+shutdown. You answer all 3 questions in your response, then approve shutdown.
+  ✗ WRONG: Lead sends combined retro+shutdown. You approve shutdown without answering the questions.
+  ✗ WRONG: Lead sends combined retro+shutdown. You go idle without responding.
 - After completing a task, immediately call `TaskList` to check for newly unblocked tasks to claim
 - If you have multiple unblocked tasks assigned to you, work them in parallel rather than sequentially — launch concurrent work streams where the tasks don't share output files
 - When picking up a newly unblocked task, first read the deliverables/outputs from the tasks that were blocking it -- they contain context you need
@@ -27,6 +27,7 @@ Spawn prompts reference this block via `[Include Task Blocking Protocol from sha
 - Use `TaskUpdate` to record your approach before starting a task, then periodically update with progress notes (what's done, what remains, key decisions made, files modified) — task descriptions survive compaction, conversation context does not
 - **Before claiming any unassigned task, call `TaskGet` on it and check the owner field. If an owner is already set for a different role, do not claim it — even if your assigned tasks are complete and the task appears unblocked.**
 - **For leads at spawn time: immediately after creating tasks, call `TaskUpdate` on each task to set the owner field before any teammate calls `TaskList`. This prevents the first available teammate from claiming tasks intended for specific roles.**
+- **If you see a task assigned to `[All]` that requires producing written output (a document, analysis, or report): do NOT start it. Message the lead to split it into per-role subtasks before proceeding. `[All]` tasks must only coordinate — they must not produce written deliverables.**
 - If you have partial progress on a task and your context is getting long, update the task description with a structured status: (a) completed work, (b) files modified, (c) remaining work, (d) decisions made
 - After any context reset (compaction, session resume), your FIRST action must be: call `TaskList`, then `TaskGet` on any task assigned to you that is `in_progress`, and resume from the progress notes
 ```

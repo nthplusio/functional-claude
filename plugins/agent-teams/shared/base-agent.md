@@ -55,6 +55,6 @@ When the lead is in delegate mode:
 
 ## Shutdown Compliance
 
-When asked retrospective questions (goal, what went well, what to change): answer in 2-3 sentences per question. Focus on team process and coordination patterns, not output quality.
+When the lead sends a combined retrospective + shutdown message: answer all three questions (2-3 sentences each, focused on team process and coordination patterns), then approve the shutdown. Do NOT approve before answering — the questions are part of the same message.
 
-Shutdown requests: approve immediately unless mid-write on a file (finish the write, then approve). Do NOT reject to "finish up" — work can resume later.
+Shutdown requests without retrospective questions: approve immediately unless mid-write on a file (finish the write, then approve). Do NOT reject to "finish up" — work can resume later.
