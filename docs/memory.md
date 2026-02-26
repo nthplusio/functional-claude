@@ -22,7 +22,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | opentui-dev | 0.1.6 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.1 | Development workflow validation and planning tools |
 | tabby-dev | 0.1.4 | Tabby terminal configuration, SSH connections, and plugin development |
-| agent-teams | 0.22.1 | Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control |
+| agent-teams | 0.22.2 | Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control |
 | gemini-cli | 0.6.4 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
 | session-insights | 0.1.1 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
 | obsidian-dev | 0.1.0 | Obsidian plugin development workflows covering setup, Plugin API, commands, settings, vault operations, UI components, and editor integration |

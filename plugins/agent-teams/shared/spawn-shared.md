@@ -90,9 +90,29 @@ Tasks in spawn prompts use `[Owner]` annotations (e.g., `[Backend]`, `[Tester]`)
 3. [Risk Analyst] Run dependency grep, identify technical risks (NO blockers) — write to `docs/teams/[TEAM-NAME]/tasks/task-3-risk-analyst.md`
 ```
 
+**Domain-section tasks must include an explicit "read peer outputs" instruction.** When multiple teammates each write a section of a shared document, each task description must name the peer output paths to read before writing. Without this, teammates write their sections in isolation and produce redundant or contradictory content:
+
+```
+✓ CORRECT:
+4a. [Security] Write security domain section — first read Architect output at task-1-architect.md and Risk Analyst output at task-3-risk-analyst.md, then write your section to task-4a-security.md
+4b. [Performance] Write performance domain section — first read task-1-architect.md and task-3-risk-analyst.md, then write to task-4b-performance.md
+
+✗ WRONG:
+4a. [Security] Write security domain section — write to task-4a-security.md
+4b. [Performance] Write performance domain section — write to task-4b-performance.md
+```
+
 USER FEEDBACK GATE and `[All]` cross-review tasks produce no file — omit the filename from those lines.
 
 **`[All]` tasks must never produce written output.** Use `[All]` only for coordination tasks with no deliverable (e.g., "review the compiled output", "approve the final report"). If a task requires domain-specific written output from each teammate, split it into per-role subtasks with explicit owners:
+
+**Cross-review tasks must have unambiguous ownership.** Assign to all teammates explicitly if every teammate contributes, or name a single owner and state what the others' roles are (reviewer, optional contributor, etc.). Never write a cross-review task that leaves ownership ambiguous — teammates will either all claim it or all skip it:
+
+```
+✓ CORRECT: 10. [All] Cross-review compiled report and add inline comments — each teammate reads the report at docs/teams/[TEAM-NAME]/report.md and appends their section's review notes
+✓ CORRECT: 10. [Architect] Cross-review all domain outputs and produce a consolidated gaps list — other teammates may add notes but Architect owns the deliverable
+✗ WRONG:   10. [All] Cross-review each other's work   ← ambiguous, no deliverable spec, no clear owner
+```
 
 ```
 12a. [Security] Write security domain section — write to `docs/teams/[TEAM-NAME]/tasks/task-12a-security.md`
