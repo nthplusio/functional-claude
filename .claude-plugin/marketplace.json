@@ -82,6 +82,12 @@
       "source": "./plugins/obsidian-dev",
       "description": "Obsidian plugin development workflows covering setup, the Plugin API, commands, settings, vault operations, UI components, and editor integration",
       "version": "0.1.0"
+    },
+    {
+      "name": "repo-sme",
+      "source": "./plugins/repo-sme",
+      "description": "Repository Subject Matter Expert — register GitHub repos as local SME sources and query them via background agent while you work",
+      "version": "0.1.0"
     }
   ]
 }
