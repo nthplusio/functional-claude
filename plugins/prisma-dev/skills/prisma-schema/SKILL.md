@@ -1,12 +1,22 @@
 ---
 name: prisma-schema
-description: This skill should be used when the user asks about "prisma model", "schema.prisma", "prisma relations", "@@index", "prisma attributes", "@id", "@unique", "prisma enum", "prisma types", or mentions schema design and model definitions in Prisma.
-version: 0.1.7
+description: This skill should be used when the user asks about "prisma model", "schema.prisma", "prisma relations", "@@index", "prisma attributes", "@id", "@unique", "prisma enum", "prisma types", "add field", "add column", "add model", "new model", "add table", "update model", "change model", "modify schema", "rename field", "foreign key", "prisma index", or mentions schema design, model definitions, or any structural change to a Prisma schema file.
+version: 0.1.8
 ---
 
 # Prisma Schema
 
 Design and configure Prisma schema files with models, relations, and attributes.
+
+## After Every Schema Change → Run a Migration
+
+Any change to `schema.prisma` (adding fields, models, indexes, relations, enums) requires a migration to take effect across environments:
+
+```bash
+npx prisma migrate dev --name describe_what_changed
+```
+
+**Never use `prisma db push`** on a project with existing migrations — it bypasses the migration system and causes schema drift in Docker, CI/CD, and other environments.
 
 ## Schema File Location
 

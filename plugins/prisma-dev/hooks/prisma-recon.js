@@ -281,7 +281,11 @@ process.stdin.on('end', async () => {
     const relationCount = recon.relations.length;
     const migrationCount = recon.migrations?.count || 0;
 
-    const summary = `Prisma schema analyzed: ${modelCount} models, ${enumCount} enums, ${relationCount} relations, ${migrationCount} migrations. Database: ${recon.datasource?.provider || 'unknown'}. Schema: ${recon.schemaPath}`;
+    const migrationPolicy = migrationCount > 0
+      ? `MIGRATION-FIRST PROJECT: ${migrationCount} migration(s) exist. ALWAYS use \`prisma migrate dev\` for schema changes — NEVER \`prisma db push\`. Commit migration files alongside schema.prisma.`
+      : `No migrations found. Use \`prisma migrate dev --name init\` to create the first migration rather than \`prisma db push\`.`;
+
+    const summary = `Prisma schema analyzed: ${modelCount} models, ${enumCount} enums, ${relationCount} relations, ${migrationCount} migrations. Database: ${recon.datasource?.provider || 'unknown'}. Schema: ${recon.schemaPath}. ${migrationPolicy}`;
 
     console.log(JSON.stringify({
       continue: true,

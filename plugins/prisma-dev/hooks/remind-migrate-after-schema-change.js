@@ -31,9 +31,10 @@ process.stdin.on('end', () => {
         hookEventName: "PostToolUse",
         additionalContext: [
           "[prisma-dev] schema.prisma was modified.",
-          "Run `npx prisma migrate dev --name <description>` to generate the migration SQL file.",
-          "IMPORTANT: In Docker deployments, the migration file must be committed to the repo.",
-          "`prisma migrate deploy` only runs existing migration files — it does not generate new ones."
+          "NEXT STEP: Run `npx prisma migrate dev --name <description>` to create a versioned migration file.",
+          "Do NOT use `prisma db push` — it bypasses the migration system and causes schema drift.",
+          "Docker/CI/CD uses `prisma migrate deploy` which only runs committed migration files.",
+          "The generated migration file must be committed to the repository alongside schema.prisma."
         ].join(" ")
       }
     }));

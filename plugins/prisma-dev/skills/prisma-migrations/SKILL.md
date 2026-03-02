@@ -1,22 +1,35 @@
 ---
 name: prisma-migrations
-description: This skill should be used when the user asks about "prisma migrate", "database migration", "schema migration", "migrate dev", "migrate deploy", "migration history", "prisma db push", "rollback migration", or mentions database schema changes and versioning with Prisma.
-version: 0.1.7
+description: This skill should be used when the user is working with Prisma schema changes or database migrations — including "prisma migrate", "migrate dev", "migrate deploy", "migration history", "rollback migration", "schema migration", "database migration", "db push", "prisma db push", "schema change", "schema update", "schema evolution", "add field", "add column", "add model", "rename field", "drop column", "change schema", "update schema", "alter table", "schema drift", "migration file", "pending migration", "apply migration", "create migration", "new table", "schema version", or any time a schema.prisma file is modified or the database structure needs to change.
+version: 0.1.8
 ---
 
 # Prisma Migrations
 
 Manage database schema changes with Prisma Migrate for version-controlled, reproducible migrations.
 
+## CRITICAL: Migration-First Policy
+
+**Every schema change must go through `prisma migrate dev`. Do NOT use `prisma db push` on projects with existing migration history.**
+
+`db push` bypasses the migration system entirely. When `migrate deploy` runs in Docker, CI/CD, or staging, it only executes existing migration files — it does not apply any schema that was pushed with `db push`. This causes schema drift across environments.
+
+| Scenario | Use |
+|----------|-----|
+| Any schema change (add field, model, index, enum, etc.) | `prisma migrate dev` |
+| Production/CI/CD/Docker deployment | `prisma migrate deploy` |
+| Initial prototyping with zero data (disposable DB) | `prisma db push` is acceptable |
+| Schema experimentation before committing | `prisma migrate dev --create-only` |
+
 ## Migration Commands
 
 | Command | Environment | Purpose |
 |---------|-------------|---------|
-| `prisma migrate dev` | Development | Create and apply migrations |
-| `prisma migrate deploy` | Production | Apply pending migrations |
-| `prisma migrate reset` | Development | Reset database and apply all migrations |
-| `prisma migrate status` | Any | Show migration status |
-| `prisma db push` | Development | Push schema without migration history |
+| `prisma migrate dev` | Development | Create and apply migrations — **default for all schema changes** |
+| `prisma migrate deploy` | Production/CI | Apply pending migrations only |
+| `prisma migrate reset` | Development | Reset database and replay all migrations |
+| `prisma migrate status` | Any | Show migration status and drift |
+| `prisma db push` | Prototyping only | Push schema without migration (avoid on established projects) |
 
 ## Development Workflow
 
@@ -223,19 +236,20 @@ npx prisma migrate dev (on empty database)
 |---------|-----------|---------------|
 | Creates migration files | No | Yes |
 | Version control | No | Yes |
-| Production safe | No | Yes |
-| Faster iteration | Yes | No |
+| Works with `migrate deploy` | No | Yes |
+| Safe for team use | No | Yes |
+| Safe for Docker/CI/CD | **No — causes drift** | Yes |
 | Data loss warning | Yes | Yes |
 
-**Use `db push` for:**
-- Rapid prototyping
-- Schema experimentation
-- Local development without history
+**`db push` is ONLY acceptable when:**
+- No `prisma/migrations/` directory exists yet (initial schema exploration)
+- The database is completely disposable (no shared state, no CI/CD)
 
-**Use `migrate dev` for:**
+**Use `migrate dev` for everything else:**
+- Any project with existing migrations
 - Team collaboration
-- Production deployment
-- Audit trail requirements
+- Projects deployed via Docker, CI/CD, or any environment other than your local machine
+- Any change you want to persist across environments
 
 ## Baseline Existing Database
 

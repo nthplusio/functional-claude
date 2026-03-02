@@ -1,12 +1,18 @@
 ---
 name: prisma-dev
 description: This skill should be used when the user asks to "configure prisma", "prisma config", "set up prisma", "prisma orm", "work with prisma", or mentions general Prisma ORM questions. For specific topics, focused skills may be more appropriate.
-version: 0.1.7
+version: 0.1.8
 ---
 
 # Prisma Development
 
 Configure and work with Prisma ORM in Node.js/TypeScript projects, focusing on schema design, migrations, and query patterns.
+
+## Migration-First Policy
+
+**Always use `prisma migrate dev` for schema changes. Never use `prisma db push` on projects with existing migration history.**
+
+`db push` bypasses the migration system — `migrate deploy` (used in Docker/CI/CD) will not see those changes. Use `migrate dev` for every schema edit, commit the generated migration files alongside `schema.prisma`.
 
 ## First Actions
 
@@ -87,11 +93,10 @@ npx prisma init
 # Configure datasource in schema.prisma
 # Add models to schema.prisma
 
-# Generate client
-npx prisma generate
+# Create the initial migration and apply it
+npx prisma migrate dev --name init
 
-# Push to development database
-npx prisma db push
+# Prisma Client is regenerated automatically
 ```
 
 ### Schema Changes

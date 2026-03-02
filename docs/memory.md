@@ -15,7 +15,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 |--------|---------|-------------|
 | wezterm-dev | 0.7.13 | WezTerm terminal configuration and customization |
 | hyper-dev | 0.3.8 | Hyper terminal configuration and plugin development |
-| prisma-dev | 0.1.7 | Prisma ORM development with schema analysis and migration safety |
+| prisma-dev | 0.1.8 | Prisma ORM development with schema analysis and migration safety |
 | shadcn-dev | 0.2.2 | shadcn/ui and Tailwind CSS v4 development workflows |
 | code-quality | 1.0.0 | Deterministic code quality infrastructure — git hooks, lint-staged, and formatters |
 | claude-plugin-dev | 0.4.1 | Plugin development with guided workflows and AI-assisted creation |
@@ -117,15 +117,15 @@ plugins/<plugin-name>/
 | plugin-ecosystem.json | Weekly | Top 25 popular plugins |
 | learnings.md | Daily | Documentation and session learnings |
 
-## Prisma Plugin (v0.1.4)
+## Prisma Plugin (v0.1.8)
 
 ### Skills
 
 | Skill | Purpose | Trigger Phrases |
 |-------|---------|-----------------|
 | prisma-dev | Overview, general guidance | "configure prisma", "prisma orm" |
-| prisma-schema | Schema design and syntax | "prisma model", "schema.prisma", "relations" |
-| prisma-migrations | Migration workflows | "prisma migrate", "migration" |
+| prisma-schema | Schema design and syntax | "prisma model", "schema.prisma", "relations", "add field", "add model" |
+| prisma-migrations | Migration workflows | "prisma migrate", "migration", "schema change", "add field", "db push" |
 | prisma-queries | Query patterns and CRUD | "prisma client", "findMany", "create" |
 | prisma-recon | Repository analysis | "analyze prisma", "schema recon" |
 
@@ -135,13 +135,20 @@ plugins/<plugin-name>/
 |-------|---------|-----------------|
 | prisma-troubleshoot | Autonomous debugging | "prisma not working", "prisma error", "P2002" |
 
+### Commands
+
+| Command | Purpose |
+|---------|---------|
+| update-prisma-claude-md | Injects Prisma migration-first best practices into project CLAUDE.md |
+
 ### Hooks
 
 | Hook | Event | Purpose |
 |------|-------|---------|
-| block-manual-migration | PreToolUse | Blocks manual .sql creation in migrations/ |
+| block-manual-migration | PreToolUse (Write/Edit) | Blocks manual .sql creation in migrations/ |
+| block-db-push | PreToolUse (Bash) | Blocks `prisma db push` on projects with existing migrations |
 | remind-migrate-after-schema-change | PostToolUse | Reminds to run prisma migrate dev after schema.prisma edits |
-| prisma-recon | SessionStart | Analyzes schema and caches findings |
+| prisma-recon | SessionStart | Analyzes schema, caches findings, emits migration policy |
 
 ## shadcn-dev Plugin (v0.1.6)
 
@@ -567,6 +574,8 @@ functional-claude/
     │   │   └── prisma-recon/
     │   ├── agents/
     │   │   └── prisma-troubleshoot.md
+    │   ├── commands/
+    │   │   └── update-prisma-claude-md.md
     │   └── .cache/
     ├── shadcn-dev/
     │   ├── .claude-plugin/plugin.json
