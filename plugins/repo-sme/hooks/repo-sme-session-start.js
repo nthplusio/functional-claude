@@ -82,12 +82,7 @@ function main() {
     // Ignore write failures
   }
 
-  const names = repos.map(r => r.name).join(', ');
-  const count = repos.length;
-  const word = count === 1 ? 'repo' : 'repos';
-
-  console.log(JSON.stringify({
-    continue: true,
-    systemMessage: `[repo-sme] ${count} ${word} registered as SME sources: ${names}. Use /repo-sme ask <name> <question> to query, or I will auto-spawn the repo-sme-expert agent when you ask about these libraries.`
-  }));
+  // Pull ran, timestamps updated — no startup message needed.
+  // The skill reads the registry on-demand when API questions arise.
+  console.log(JSON.stringify({ continue: true }));
 }
