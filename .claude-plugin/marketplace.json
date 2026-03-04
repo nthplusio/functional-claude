@@ -86,8 +86,8 @@
     {
       "name": "repo-sme",
       "source": "./plugins/repo-sme",
-      "description": "Repository Subject Matter Expert — register GitHub repos as local SME sources and query them via background agent while you work",
-      "version": "0.1.1"
+      "description": "Repository Subject Matter Expert — register GitHub repos, browse branches, query architecture and APIs, and create GitHub issues via read-only analysis",
+      "version": "0.2.0"
     },
     {
       "name": "project-manager",

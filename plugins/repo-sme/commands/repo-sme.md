@@ -1,7 +1,7 @@
 ---
 name: repo-sme
-description: Manage GitHub repository SME sources — add, list, remove repos and query them directly
-argument-hint: add <github-url> | list | remove <name> | ask <name> <question>
+description: Manage GitHub repository SME sources — add, list, remove, query, and switch branches
+argument-hint: add <url> | list | remove <name> | ask <name> <question> | branches <name> | checkout <name> <branch>
 ---
 
 # /repo-sme
@@ -20,6 +20,8 @@ Parse `$ARGUMENTS` to dispatch on the first word.
 | `list` | Show all registered repos |
 | `remove` | Remove a repo from registry |
 | `ask` | Query a repo via the SME agent |
+| `branches` | List all branches for a repo |
+| `checkout` | Switch a repo to a different branch |
 | *(none)* | Show usage help |
 
 ---
@@ -55,14 +57,20 @@ REPOS_DIR     = ~/.claude/repo-sme/repos/
    - Use `repoName` as the default (e.g., `obsidian-api` from the URL)
    - If that name is already taken in the registry, append `-2`, `-3`, etc.
 
-5. **Clone the repository**
+5. **Clone the repository** (full clone — no `--depth`, to support branch switching)
    ```bash
    mkdir -p ~/.claude/repo-sme/repos/<owner>/
-   git clone --depth 50 <url> ~/.claude/repo-sme/repos/<owner>/<repoName>/
+   git clone <url> ~/.claude/repo-sme/repos/<owner>/<repoName>/
    ```
    Show progress. If clone fails, report the error and stop.
 
-6. **Write to registry**
+6. **Detect default branch**
+   ```bash
+   git -C <localPath> symbolic-ref refs/remotes/origin/HEAD | sed 's|refs/remotes/origin/||'
+   ```
+   Store as `defaultBranch`. If command fails, fall back to `"main"`.
+
+7. **Write to registry**
    Add entry:
    ```json
    {
@@ -70,14 +78,16 @@ REPOS_DIR     = ~/.claude/repo-sme/repos/
      "url": "<url>",
      "localPath": "/home/user/.claude/repo-sme/repos/<owner>/<repoName>",
      "addedAt": "<ISO timestamp>",
-     "lastPulledAt": "<ISO timestamp>"
+     "lastPulledAt": "<ISO timestamp>",
+     "currentBranch": "<defaultBranch>",
+     "defaultBranch": "<defaultBranch>"
    }
    ```
    Save `registry.json` with pretty-print (2 spaces).
 
-7. **Confirm**
+8. **Confirm**
    ```
-   ✓ Registered obsidian-api
+   ✓ Registered obsidian-api (branch: main)
      Clone: ~/.claude/repo-sme/repos/obsidianmd/obsidian-api
      Tip: Ask questions with /repo-sme ask obsidian-api <question>
           or just ask me about the Obsidian API — I'll query the SME automatically.
@@ -181,6 +191,61 @@ REPOS_DIR     = ~/.claude/repo-sme/repos/
 
 ---
 
+## `branches <name>`
+
+**Arguments:** `$ARGUMENTS` = `branches obsidian-api`
+
+### Steps
+
+1. Parse: first word after `branches` = `name`
+
+2. Read registry. If `name` not found, show error with available repos.
+
+3. Check that `localPath` exists on disk.
+
+4. Run:
+   ```bash
+   git -C <localPath> branch -a
+   ```
+
+5. Format output as a clean list, marking the current branch with `*`:
+   ```
+   Branches for obsidian-api
+
+     * main
+       develop
+       remotes/origin/feature/v2
+       remotes/origin/release/1.0
+   ```
+
+---
+
+## `checkout <name> <branch>`
+
+**Arguments:** `$ARGUMENTS` = `checkout obsidian-api develop`
+
+### Steps
+
+1. Parse: first word after `checkout` = `name`, second word = `branch`
+
+2. Read registry. If `name` not found, show error with available repos.
+
+3. Check that `localPath` exists on disk.
+
+4. **Switch branch:**
+   - If `branch` exists locally: `git -C <localPath> checkout <branch>`
+   - If `branch` exists as a remote tracking branch: `git -C <localPath> checkout -t origin/<branch>`
+   - If neither: show error with available branches (suggest `/repo-sme branches <name>`)
+
+5. **Update registry** — set `currentBranch` to the checked-out branch name. Save `registry.json`.
+
+6. Confirm:
+   ```
+   ✓ obsidian-api switched to branch: develop
+   ```
+
+---
+
 ## No Subcommand (usage help)
 
 If `$ARGUMENTS` is empty or unrecognized, show:
@@ -188,28 +253,34 @@ If `$ARGUMENTS` is empty or unrecognized, show:
 ```
 /repo-sme — Repository Subject Matter Expert
 
-Register GitHub repositories as local SME sources and query them for
-grounded, citation-backed answers about external library APIs.
+Register GitHub repositories as local SME sources. Query them for
+grounded answers about APIs, architecture, and conventions. Browse
+branches and create GitHub issues for suggested changes.
 
 COMMANDS
 
-  /repo-sme add <github-url>         Clone and register a repo
-  /repo-sme list                      Show all registered repos
-  /repo-sme remove <name>             Remove a repo from registry
-  /repo-sme ask <name> <question>     Query a repo directly
+  /repo-sme add <github-url>              Clone and register a repo
+  /repo-sme list                           Show all registered repos
+  /repo-sme remove <name>                  Remove a repo from registry
+  /repo-sme ask <name> <question>          Query a repo directly
+  /repo-sme branches <name>               List all branches
+  /repo-sme checkout <name> <branch>      Switch to a different branch
 
 EXAMPLES
 
   /repo-sme add https://github.com/obsidianmd/obsidian-api
   /repo-sme list
   /repo-sme ask obsidian-api What is the TFile interface?
+  /repo-sme ask obsidian-api How does the plugin lifecycle work?
+  /repo-sme branches obsidian-api
+  /repo-sme checkout obsidian-api develop
   /repo-sme remove obsidian-api
 
 AUTO-TRIGGERING
 
   Once a repo is registered, I will automatically query it when you ask
-  about that library's API during your session. No need to use /repo-sme ask
-  explicitly — just ask your question naturally.
+  about that library — APIs, architecture, patterns, or conventions.
+  No need to use /repo-sme ask explicitly — just ask naturally.
 
 DATA STORAGE
 

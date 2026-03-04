@@ -73,9 +73,28 @@ function main() {
     } catch (_e) {
       // Ignore pull failures (offline, no remote, etc.)
     }
+
+    // Fetch all remote branches (best-effort)
+    try {
+      execFileSync('git', ['-C', repo.localPath, 'fetch', '--all', '--prune'], {
+        encoding: 'utf8', timeout: 30000, stdio: ['pipe', 'pipe', 'pipe']
+      });
+    } catch (_e) {
+      // Ignore fetch failures
+    }
+
+    // Sync currentBranch from actual git state
+    try {
+      const branch = execFileSync('git', ['-C', repo.localPath, 'branch', '--show-current'], {
+        encoding: 'utf8', timeout: 5000
+      }).trim();
+      if (branch) repo.currentBranch = branch;
+    } catch (_e) {
+      // Ignore branch detection failures
+    }
   }
 
-  // Persist updated timestamps
+  // Persist updated timestamps and branch info
   try {
     fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2), 'utf8');
   } catch (_e) {

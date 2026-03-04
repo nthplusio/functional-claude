@@ -26,7 +26,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | gemini-cli | 0.6.5 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
 | session-insights | 0.1.1 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
 | obsidian-dev | 0.1.0 | Obsidian plugin development workflows covering setup, Plugin API, commands, settings, vault operations, UI components, and editor integration |
-| repo-sme | 0.1.1 | Repository Subject Matter Expert — register GitHub repos as local SME sources and query them via background agent while you work |
+| repo-sme | 0.2.0 | Repository Subject Matter Expert — register GitHub repos, browse branches, query architecture and APIs, and create GitHub issues via read-only analysis |
 | project-manager | 0.5.0 | Project manager for multi-project workflows — per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings |
 
 ## Architecture Overview
