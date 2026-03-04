@@ -1,7 +1,7 @@
 ---
 name: pm-issues
 description: Use this skill when creating, updating, or closing a Linear issue; when the user describes untracked work that should be a Linear issue; when drafting issue content; or when the user says "create an issue", "log this in Linear", "add this to Linear", "update the issue", "close out the issue", "mark it done".
-version: 0.3.0
+version: 0.4.0
 ---
 
 # PM Issue Management
@@ -60,6 +60,9 @@ Fill in the template based on the user's description. Ask clarifying questions o
 - [ ] Problem statement is one sentence, specific, and includes impact
 - [ ] Acceptance criteria are testable and unambiguous
 - [ ] No vague language ("improve", "enhance", "handle edge cases" without specifics)
+- [ ] Issue is scoped to one PR's worth of work — if it needs 2+ PRs, decompose into a parent with sub-issues
+
+**Scoping rule:** Each issue should be completable in a single PR. If the user describes a large feature (e.g., "add auth system"), suggest decomposing it into a parent issue with sub-issues (e.g., "add middleware", "add token refresh", "add logout"). The parent issue needs no PR — it closes when all sub-issues close.
 
 ### Step 3: Confirm and create
 Show the draft to the user for quick review, then create:

@@ -1,7 +1,7 @@
 ---
 name: project-manager
 description: Use this skill when the user says "project manager", "pm", "where are we", "what's in progress", "what should I work on next", "let's work on this project", "project status", "open issues", "what's next", or asks about Linear issues, GitHub PRs, or issue tracking for the current project. Also use proactively when the user describes work that doesn't appear to be tracked in Linear.
-version: 0.3.0
+version: 0.4.0
 ---
 
 # Project Manager
@@ -44,3 +44,13 @@ When the user describes work they're about to do, check whether it maps to an op
 > "I don't see a Linear issue for this. Want me to create one?"
 
 Then use the `pm-issues` skill to draft it with the appropriate template.
+
+## Proactive PR Scope Awareness
+
+During implementation, be aware of the growing diff size and scope. Proactively check in with the user at these points:
+
+- **After completing the core change** — confirm the approach before continuing with tests and cleanup
+- **When the diff crosses ~300 lines** — quick scope check, suggest splitting if warranted
+- **When unexpected complexity appears** — ask whether to update the issue scope or split into sub-issues
+
+These check-ins are gentle nudges, not blockers. The goal is to catch scope drift early rather than discovering it at PR review time. See the `pm-branches` skill for full sizing guidance.

@@ -27,7 +27,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | session-insights | 0.1.1 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
 | obsidian-dev | 0.1.0 | Obsidian plugin development workflows covering setup, Plugin API, commands, settings, vault operations, UI components, and editor integration |
 | repo-sme | 0.1.0 | Repository Subject Matter Expert — register GitHub repos as local SME sources and query them via background agent while you work |
-| project-manager | 0.3.0 | Project manager for multi-project workflows — per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings |
+| project-manager | 0.4.0 | Project manager for multi-project workflows — per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings |
 
 ## Architecture Overview
 
@@ -519,7 +519,7 @@ Interactive session analysis, deep drill-down into Claude Code conversation hist
 | extract-history.js | Parse history.jsonl with project/date filters |
 | aggregate-stats.js | Cross-session aggregate statistics with sampling |
 
-## project-manager Plugin (v0.3.0)
+## project-manager Plugin (v0.4.0)
 
 Project manager for multi-project workflows. Per-repo GitHub credential switching, Linear issue lifecycle management, consistent branch naming (`feat/ENG-42-description`), PR linking with auto-close (`Closes ENG-42`), and session briefings. Configured via `~/.claude/project-manager/projects.json`.
 
