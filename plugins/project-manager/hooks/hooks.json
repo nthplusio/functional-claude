@@ -1,5 +1,5 @@
 {
-  "description": "project-manager hooks — detect repo on session start, switch GitHub credentials, validate Linear MCP",
+  "description": "project-manager hooks — detect repo on session start, switch GitHub credentials, validate Linear MCP, prompt session wrap-up on stop",
   "hooks": {
     "SessionStart": [
       {
@@ -8,6 +8,17 @@
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/pm-session-start.js\"",
             "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/pm-session-end.js\"",
+            "timeout": 10
           }
         ]
       }
