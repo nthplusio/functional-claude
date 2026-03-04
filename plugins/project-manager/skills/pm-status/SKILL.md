@@ -1,7 +1,7 @@
 ---
 name: pm-status
 description: Use this skill when the user asks "where are we", "what's in progress", "what should I work on next", "project status", "catch me up", or "what's open". Provides a concise session briefing with in-progress issues and next suggested work. Do NOT include past session history unless the user explicitly asks.
-version: 0.2.0
+version: 0.3.0
 ---
 
 # PM Status Briefing
@@ -10,7 +10,7 @@ Deliver a concise, actionable briefing of current project state.
 
 ## Step 1: Confirm Project Context
 
-Check the injected **Active Project** context for repo, Linear team key, and gh user. If missing, prompt the user to run `/pm-setup`.
+Check the injected **Active Project** context for repo, Linear team key, Linear project (if set), and gh user. If missing, prompt the user to run `/pm-setup`.
 
 ## Step 2: Query Linear for Current State
 
@@ -21,14 +21,24 @@ Use the Linear MCP to fetch issues assigned to the current user:
    linear_get_viewer → { id, name, email }
    ```
 
-2. Fetch in-progress issues assigned to me:
+2. Fetch in-progress issues assigned to me (scoped to project if configured):
    ```
-   linear_get_issues with filter: { assignee: { id: { eq: <my_id> } }, state: { type: { eq: "started" } } }
+   linear_get_issues with filter: {
+     assignee: { id: { eq: <my_id> } },
+     state: { type: { eq: "started" } },
+     project: { id: { eq: <project_id> } }   // only if linear_project_id is set
+   }
    ```
+   If no `linear_project_id` is configured, omit the project filter — query is team-scoped.
 
-3. Fetch the top suggested next issues (unstarted, assigned to me or unassigned in the team, ordered by priority):
+3. Fetch the top suggested next issues (unstarted, assigned to me or unassigned, ordered by priority):
    ```
-   linear_get_issues with filter: { team: { key: { eq: <team_key> } }, state: { type: { eq: "unstarted" } }, priority: { gte: 1 } }, orderBy: priority, first: 3
+   linear_get_issues with filter: {
+     team: { key: { eq: <team_key> } },
+     state: { type: { eq: "unstarted" } },
+     priority: { gte: 1 },
+     project: { id: { eq: <project_id> } }   // only if linear_project_id is set
+   }, orderBy: priority, first: 3
    ```
 
 If Linear MCP fails: warn and display cached state from `~/.claude/project-manager/cache/<slug>/context.json`.
@@ -38,7 +48,7 @@ If Linear MCP fails: warn and display cached state from `~/.claude/project-manag
 Output format (keep it tight — no padding, no extra explanation):
 
 ```
-Project: <displayName> · <org/repo> · gh: <gh_user>
+Project: <displayName> · <org/repo> · gh: <gh_user> · <linear_project_name if set>
 
 IN PROGRESS
   <ID> · <title> (<priority label>)

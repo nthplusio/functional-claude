@@ -1,7 +1,7 @@
 ---
 name: pm-issues
 description: Use this skill when creating, updating, or closing a Linear issue; when the user describes untracked work that should be a Linear issue; when drafting issue content; or when the user says "create an issue", "log this in Linear", "add this to Linear", "update the issue", "close out the issue", "mark it done".
-version: 0.2.0
+version: 0.3.0
 ---
 
 # PM Issue Management
@@ -70,9 +70,12 @@ linear_create_issue {
   title: "<concise title>",
   description: "<template content>",
   priority: <1-4>,  // 1=urgent, 2=high, 3=medium, 4=low
-  assigneeId: <user_id if self-assigned>
+  assigneeId: <user_id if self-assigned>,
+  projectId: <project_id>  // only if linear_project_id is set in project config
 }
 ```
+
+If a `linear_project_id` is configured, always attach new issues to that project. If not set, create issues at the team level only.
 
 ### Step 4: Cache the new issue
 Update `~/.claude/project-manager/cache/<slug>/context.json` with the new issue ID and title.
@@ -105,6 +108,7 @@ To get the done state ID: `linear_get_workflow_states { teamId }` → find state
 ## Proactive Issue Detection
 
 When the user describes work, check if it matches an open issue:
-1. Search: `linear_search_issues { query: "<keywords from user description>", teamId }`
+1. Search: `linear_search_issues { query: "<keywords from user description>", teamId, projectId? }`
+   Include `projectId` in the search if `linear_project_id` is configured, to avoid matching issues from other projects.
 2. If no match found → suggest creating one
 3. If a match found → confirm: "Is this related to [ENG-42 · Auth refactor]?"

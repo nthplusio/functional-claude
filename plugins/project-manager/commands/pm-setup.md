@@ -53,7 +53,18 @@ linear_get_teams
 ```
 Find the team matching the key. If not found: "Team key not found in Linear. Available teams: [list]. Please check and re-enter."
 
-**d) Issue tracker confirmation**
+**d) Linear project (optional)**
+> "Is this work part of a specific Linear project? (optional — press Enter to skip)"
+
+If the user provides a project name, validate it:
+```
+linear_list_projects with filter: { team: { key: { eq: <team_key> } } }
+```
+Match by name (case-insensitive). If not found: "Project not found. Available projects for this team: [list]. Enter a name, or press Enter to skip."
+
+Store the project ID and name if provided. This can be updated later via `/pm-setup` (re-running on an existing project) or by editing `~/.claude/project-manager/projects.json` directly.
+
+**e) Issue tracker confirmation**
 Default is `linear`. Ask only if relevant:
 > "Issue tracker: Linear (default). Is that correct?"
 
@@ -70,7 +81,9 @@ Load or initialize `~/.claude/project-manager/projects.json`:
       "gh_user": "<chosen github user>",
       "issue_tracker": "linear",
       "linear_team_key": "<team key>",
-      "linear_team_id": "<team id from MCP validation>"
+      "linear_team_id": "<team id from MCP validation>",
+      "linear_project_id": "<project id if provided, or null>",
+      "linear_project_name": "<project name if provided, or null>"
     }
   }
 }
@@ -97,6 +110,8 @@ Output a confirmation:
   Repo:         <org/repo>
   GitHub user:  <gh_user>
   Linear team:  <team_key> (<team_id>)
+  Linear project: <project_name> (or "none — issues will be team-scoped")
 
 Run /pm to get your first project briefing.
+To update the project later, run /pm-setup again in this repo.
 ```

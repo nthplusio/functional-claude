@@ -145,6 +145,9 @@ function main() {
   if (project.linear_team_key) {
     lines.push(`- **Linear team:** ${project.linear_team_key}`);
   }
+  if (project.linear_project_name) {
+    lines.push(`- **Linear project:** ${project.linear_project_name}`);
+  }
   if (currentBranch) {
     lines.push(`- **Current branch:** ${currentBranch}`);
   }
