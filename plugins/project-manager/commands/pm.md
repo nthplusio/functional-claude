@@ -23,7 +23,7 @@ If no project context is loaded:
 
 Run a quick ping to confirm Linear MCP is available:
 ```
-linear_get_viewer
+get_user { query: "me" }
 ```
 
 If this fails:

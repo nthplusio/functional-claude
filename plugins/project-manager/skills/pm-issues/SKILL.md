@@ -1,7 +1,7 @@
 ---
 name: pm-issues
 description: Use this skill when creating, updating, or closing a Linear issue; when the user describes untracked work that should be a Linear issue; when drafting issue content; or when the user says "create an issue", "log this in Linear", "add this to Linear", "update the issue", "close out the issue", "mark it done".
-version: 0.4.0
+version: 0.5.0
 ---
 
 # PM Issue Management
@@ -68,13 +68,13 @@ Fill in the template based on the user's description. Ask clarifying questions o
 Show the draft to the user for quick review, then create:
 
 ```
-linear_create_issue {
-  teamId: <team_id>,
+save_issue {
+  team: "<team_key>",
   title: "<concise title>",
   description: "<template content>",
-  priority: <1-4>,  // 1=urgent, 2=high, 3=medium, 4=low
-  assigneeId: <user_id if self-assigned>,
-  projectId: <project_id>  // only if linear_project_id is set in project config
+  priority: <1-4>,  // 1=urgent, 2=high, 3=normal, 4=low
+  assignee: "me",
+  project: "<project_name>"  // only if linear_project_id is set in project config
 }
 ```
 
@@ -89,10 +89,10 @@ Update `~/.claude/project-manager/cache/<slug>/context.json` with the new issue 
 
 When work in progress diverges from the issue description:
 
-1. Fetch current issue: `linear_get_issue { id: <issue_id> }`
+1. Fetch current issue: `get_issue { id: "<issue_id>" }`
 2. Draft updated description or title
 3. Show diff to user: "Here's what I'd update..."
-4. Apply: `linear_update_issue { id, title?, description?, stateId? }`
+4. Apply: `save_issue { id: "<issue_id>", title?, description?, state? }`
 
 ---
 
@@ -102,16 +102,16 @@ Linear auto-closes issues via PR descriptions when using the `Closes <ID>` forma
 - The work was abandoned
 - It was resolved without a PR
 
-To manually close: `linear_update_issue { id, stateId: <done_state_id> }`
+To manually close: `save_issue { id: "<issue_id>", state: "completed" }`
 
-To get the done state ID: `linear_get_workflow_states { teamId }` → find state with `type: "completed"`.
+To find available states: `list_issue_statuses { team: "<team_key>" }`.
 
 ---
 
 ## Proactive Issue Detection
 
 When the user describes work, check if it matches an open issue:
-1. Search: `linear_search_issues { query: "<keywords from user description>", teamId, projectId? }`
-   Include `projectId` in the search if `linear_project_id` is configured, to avoid matching issues from other projects.
+1. Search: `list_issues { query: "<keywords>", team: "<team_key>", project: "<project_name>" }`
+   Include `project` in the search if `linear_project_id` is configured, to avoid matching issues from other projects.
 2. If no match found → suggest creating one
 3. If a match found → confirm: "Is this related to [ENG-42 · Auth refactor]?"

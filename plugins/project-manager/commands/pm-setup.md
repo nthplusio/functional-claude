@@ -49,7 +49,7 @@ gh auth switch --user <chosen_user> && gh api user --jq '.login'
 
 Validate by querying Linear MCP:
 ```
-linear_get_teams
+list_teams
 ```
 Find the team matching the key. If not found: "Team key not found in Linear. Available teams: [list]. Please check and re-enter."
 
@@ -58,7 +58,7 @@ Find the team matching the key. If not found: "Team key not found in Linear. Ava
 
 If the user provides a project name, validate it:
 ```
-linear_list_projects with filter: { team: { key: { eq: <team_key> } } }
+list_projects { team: "<team_key>" }
 ```
 Match by name (case-insensitive). If not found: "Project not found. Available projects for this team: [list]. Enter a name, or press Enter to skip."
 

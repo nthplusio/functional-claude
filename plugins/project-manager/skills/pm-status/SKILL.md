@@ -1,7 +1,7 @@
 ---
 name: pm-status
 description: Use this skill when the user asks "where are we", "what's in progress", "what should I work on next", "project status", "catch me up", or "what's open". Provides a concise session briefing with in-progress issues and next suggested work. Do NOT include past session history unless the user explicitly asks.
-version: 0.4.0
+version: 0.5.0
 ---
 
 # PM Status Briefing
@@ -16,29 +16,30 @@ Check the injected **Active Project** context for repo, Linear team key, Linear 
 
 Use the Linear MCP to fetch issues assigned to the current user:
 
-1. Get the current user's Linear ID:
+1. Get the current user:
    ```
-   linear_get_viewer → { id, name, email }
+   get_user { query: "me" }
    ```
 
 2. Fetch in-progress issues assigned to me (scoped to project if configured):
    ```
-   linear_get_issues with filter: {
-     assignee: { id: { eq: <my_id> } },
-     state: { type: { eq: "started" } },
-     project: { id: { eq: <project_id> } }   // only if linear_project_id is set
+   list_issues {
+     assignee: "me",
+     state: "started",
+     team: "<team_key>",
+     project: "<project_name>"   // only if linear_project_id is set
    }
    ```
    If no `linear_project_id` is configured, omit the project filter — query is team-scoped.
 
-3. Fetch the top suggested next issues (unstarted, assigned to me or unassigned, ordered by priority):
+3. Fetch the top suggested next issues (unstarted, ordered by priority):
    ```
-   linear_get_issues with filter: {
-     team: { key: { eq: <team_key> } },
-     state: { type: { eq: "unstarted" } },
-     priority: { gte: 1 },
-     project: { id: { eq: <project_id> } }   // only if linear_project_id is set
-   }, orderBy: priority, first: 3
+   list_issues {
+     state: "unstarted",
+     team: "<team_key>",
+     project: "<project_name>",   // only if linear_project_id is set
+     limit: 3
+   }
    ```
 
 If Linear MCP fails: warn and display cached state from `~/.claude/project-manager/cache/<slug>/context.json`.

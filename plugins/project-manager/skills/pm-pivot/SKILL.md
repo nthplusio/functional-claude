@@ -1,7 +1,7 @@
 ---
 name: pm-pivot
 description: Use this skill when the user changes direction mid-feature, describes a significant scope change, says the approach isn't working, wants to abandon the current approach, or says "we need to rethink this", "let's change direction", "this isn't right", "pivot", "different approach". Also use when the user's current work no longer matches the active Linear issue.
-version: 0.4.0
+version: 0.5.0
 ---
 
 # PM Pivot — Direction Change Handler
@@ -50,25 +50,21 @@ After the user confirms:
 
 **For Option A — Update existing:**
 ```
-linear_update_issue {
-  id: <issue_id>,
-  description: <updated template with new approach>,
-  title: <updated title if needed>
-}
+save_issue { id: "<issue_id>", description: "<updated>", title: "<updated if needed>" }
 ```
 
 **For Option B — New issue + cancel old:**
 ```
-linear_create_issue { ... }  // new issue
-linear_update_issue { id: <old_id>, stateId: <cancelled_state_id> }
-// Get cancelled state: linear_get_workflow_states { teamId } → type: "cancelled"
+save_issue { team: "<team_key>", title: "...", description: "..." }  // new issue
+save_issue { id: "<old_id>", state: "cancelled" }
 ```
+To find the cancelled state name: `list_issue_statuses { team: "<team_key>" }`
 Then use `pm-branches` to create a new branch with the new issue ID.
 
 **For Option C — Split:**
 ```
-linear_create_issue { ... }  // new issue for new direction
-linear_update_issue { id: <old_id>, description: <narrowed scope> }
+save_issue { team: "<team_key>", title: "...", description: "..." }  // new direction
+save_issue { id: "<old_id>", description: "<narrowed scope>" }
 ```
 
 ## Step 4: Update Cache
