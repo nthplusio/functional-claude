@@ -88,6 +88,12 @@
       "source": "./plugins/repo-sme",
       "description": "Repository Subject Matter Expert — register GitHub repos as local SME sources and query them via background agent while you work",
       "version": "0.1.0"
+    },
+    {
+      "name": "project-manager",
+      "source": "./plugins/project-manager",
+      "description": "Project manager for multi-project workflows — per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings",
+      "version": "0.1.0"
     }
   ]
 }

@@ -27,6 +27,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | session-insights | 0.1.1 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
 | obsidian-dev | 0.1.0 | Obsidian plugin development workflows covering setup, Plugin API, commands, settings, vault operations, UI components, and editor integration |
 | repo-sme | 0.1.0 | Repository Subject Matter Expert — register GitHub repos as local SME sources and query them via background agent while you work |
+| project-manager | 0.1.0 | Project manager for multi-project workflows — per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings |
 
 ## Architecture Overview
 
@@ -518,6 +519,48 @@ Interactive session analysis, deep drill-down into Claude Code conversation hist
 | extract-history.js | Parse history.jsonl with project/date filters |
 | aggregate-stats.js | Cross-session aggregate statistics with sampling |
 
+## project-manager Plugin (v0.1.0)
+
+Project manager for multi-project workflows. Per-repo GitHub credential switching, Linear issue lifecycle management, consistent branch naming (`feat/ENG-42-description`), PR linking with auto-close (`Closes ENG-42`), and session briefings. Configured via `~/.claude/project-manager/projects.json`.
+
+### Skills
+
+| Skill | Purpose | Trigger Phrases |
+|-------|---------|-----------------|
+| project-manager | Overview, routing | "project manager", "pm", "where are we", "let's work on this project" |
+| pm-status | Session briefing — in-progress + next up | "what's in progress", "project status", "catch me up", "what's next" |
+| pm-issues | Create/update/close Linear issues with templates | "create an issue", "log this in Linear", "update the issue", "close out the issue" |
+| pm-branches | Branch naming + PR descriptions with Linear linking | "create a branch", "open a PR", "write the PR description", "link to Linear" |
+| pm-pivot | Direction change handling with recommendation | "change direction", "different approach", "pivot", "this isn't right" |
+
+### Commands
+
+| Command | Purpose |
+|---------|---------|
+| /pm | Session briefing: validates context, pings Linear, shows in-progress and next-up |
+| /pm-setup | Guided wizard to register a project (repo → gh user → Linear team) |
+
+### Hooks
+
+| Hook | Event | Purpose |
+|------|-------|---------|
+| pm-session-start | SessionStart | Detects repo, switches `gh auth --user`, validates Linear, injects project context |
+
+### Issue Templates
+
+| Type | Structure |
+|------|-----------|
+| Bug | What's Broken (1 sentence) + Steps to Reproduce + Acceptance Criteria |
+| Feature | Goal (1 sentence) + Acceptance Criteria |
+| Task | Goal (1 sentence) + Acceptance Criteria |
+
+### Config Files
+
+| File | Purpose |
+|------|---------|
+| `~/.claude/project-manager/projects.json` | Project profiles (repo → gh_user, linear_team_key, slug, displayName) |
+| `~/.claude/project-manager/cache/<slug>/context.json` | Per-project session cache (last-known issue state, current branch) |
+
 ## Root-Level Skills
 
 | Skill | Purpose |
@@ -733,6 +776,21 @@ functional-claude/
         ├── agents/
         │   ├── session-analyst.md
         │   └── workflow-improver.md
+        └── .cache/
+    └── project-manager/
+        ├── .claude-plugin/plugin.json
+        ├── hooks/
+        │   ├── hooks.json
+        │   └── pm-session-start.js
+        ├── commands/
+        │   ├── pm.md
+        │   └── pm-setup.md
+        ├── skills/
+        │   ├── project-manager/       # Main skill (overview + routing)
+        │   ├── pm-status/
+        │   ├── pm-issues/
+        │   ├── pm-branches/
+        │   └── pm-pivot/
         └── .cache/
 ```
 

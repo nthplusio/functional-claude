@@ -1,0 +1,16 @@
+{
+  "description": "project-manager hooks — detect repo on session start, switch GitHub credentials, validate Linear MCP",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/pm-session-start.js\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

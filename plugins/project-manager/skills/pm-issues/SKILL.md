@@ -1,0 +1,110 @@
+---
+name: pm-issues
+description: Use this skill when creating, updating, or closing a Linear issue; when the user describes untracked work that should be a Linear issue; when drafting issue content; or when the user says "create an issue", "log this in Linear", "add this to Linear", "update the issue", "close out the issue", "mark it done".
+version: 0.1.0
+---
+
+# PM Issue Management
+
+Create, update, and close Linear issues with consistent, clean formatting.
+
+## Issue Templates
+
+Always use the appropriate template based on issue type. Keep it concise — no filler, no unnecessary sections.
+
+### Bug Template
+
+```markdown
+## What's Broken
+[One sentence: what fails and the user impact]
+
+## Steps to Reproduce
+1.
+2.
+
+## Acceptance Criteria
+- [ ] Bug no longer occurs under the described conditions
+- [ ] [Regression test or verification step if applicable]
+```
+
+### Feature Template
+
+```markdown
+## Goal
+[One sentence: what we're enabling and why it matters]
+
+## Acceptance Criteria
+- [ ]
+- [ ]
+```
+
+### Task Template
+
+```markdown
+## Goal
+[One sentence: what needs to be done and why]
+
+## Acceptance Criteria
+- [ ]
+```
+
+## Creating an Issue
+
+### Step 1: Classify the issue type
+Ask the user: "Is this a bug, feature, or task?" — or classify from context.
+
+### Step 2: Draft content using the template
+Fill in the template based on the user's description. Ask clarifying questions only if the problem statement or acceptance criteria are unclear.
+
+**Quality checklist before creating:**
+- [ ] Problem statement is one sentence, specific, and includes impact
+- [ ] Acceptance criteria are testable and unambiguous
+- [ ] No vague language ("improve", "enhance", "handle edge cases" without specifics)
+
+### Step 3: Confirm and create
+Show the draft to the user for quick review, then create:
+
+```
+linear_create_issue {
+  teamId: <team_id>,
+  title: "<concise title>",
+  description: "<template content>",
+  priority: <1-4>,  // 1=urgent, 2=high, 3=medium, 4=low
+  assigneeId: <user_id if self-assigned>
+}
+```
+
+### Step 4: Cache the new issue
+Update `~/.claude/project-manager/cache/<slug>/context.json` with the new issue ID and title.
+
+---
+
+## Updating an Issue
+
+When work in progress diverges from the issue description:
+
+1. Fetch current issue: `linear_get_issue { id: <issue_id> }`
+2. Draft updated description or title
+3. Show diff to user: "Here's what I'd update..."
+4. Apply: `linear_update_issue { id, title?, description?, stateId? }`
+
+---
+
+## Closing an Issue
+
+Linear auto-closes issues via PR descriptions when using the `Closes <ID>` format in PRs. Do not manually close issues unless:
+- The work was abandoned
+- It was resolved without a PR
+
+To manually close: `linear_update_issue { id, stateId: <done_state_id> }`
+
+To get the done state ID: `linear_get_workflow_states { teamId }` → find state with `type: "completed"`.
+
+---
+
+## Proactive Issue Detection
+
+When the user describes work, check if it matches an open issue:
+1. Search: `linear_search_issues { query: "<keywords from user description>", teamId }`
+2. If no match found → suggest creating one
+3. If a match found → confirm: "Is this related to [ENG-42 · Auth refactor]?"
