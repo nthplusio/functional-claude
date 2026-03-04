@@ -1,14 +1,14 @@
 ---
 name: plugin-structure
-description: This skill should be used when the user asks to "create plugin structure",
-  "set up plugin directories", "plugin layout", "plugin manifest", "plugin.json",
-  or needs guidance on organizing plugin files and folders.
-version: 0.4.1
+description: Guide for organizing Claude Code plugin directories and creating manifests.
+  Use when the user asks to "create plugin structure", "set up plugin directories",
+  "plugin layout", "plugin manifest", or "plugin.json".
+version: 0.5.0
 ---
 
 # Plugin Structure
 
-Guide for organizing Claude Code plugin directories and creating manifests.
+Guide for organizing Claude Code plugin directories and manifests.
 
 ## Directory Layout
 
@@ -35,21 +35,7 @@ my-plugin/
 
 **Critical:** Only `plugin.json` goes inside `.claude-plugin/`. All other components go in the plugin root.
 
-## Guided Creation
-
-Use `/create-plugin` for an interactive 8-phase workflow that guides you through:
-1. Discovery - Understanding purpose
-2. Component planning - What you need
-3. Detailed design - Component specifics
-4. Structure creation - Files and directories
-5. Implementation - Building components
-6. Validation - Checking correctness
-7. Testing - Verifying functionality
-8. Documentation - Finalizing README
-
 ## Plugin Manifest (plugin.json)
-
-### Minimal
 
 ```json
 {
@@ -59,22 +45,7 @@ Use `/create-plugin` for an interactive 8-phase workflow that guides you through
 }
 ```
 
-### Full
-
-```json
-{
-  "name": "my-plugin",
-  "description": "Brief description",
-  "version": "1.0.0",
-  "author": {
-    "name": "Your Name",
-    "email": "email@example.com"
-  },
-  "homepage": "https://github.com/org/repo",
-  "repository": "https://github.com/org/repo",
-  "license": "MIT"
-}
-```
+Optional fields: `author` (object with name/email), `homepage`, `repository`, `license`.
 
 ## Naming Conventions
 
@@ -85,40 +56,7 @@ Use `/create-plugin` for an interactive 8-phase workflow that guides you through
 | Agent name | Describe role | `plugin-validator` |
 | Version | Semver | `1.0.0` |
 
-## Component Patterns
-
-### Single Skill (Simple)
-
-```
-code-reviewer/
-├── .claude-plugin/
-│   └── plugin.json
-└── skills/
-    └── code-review/
-        └── SKILL.md
-```
-
-### Multi-Skill (Full)
-
-```
-api-dev/
-├── .claude-plugin/plugin.json
-├── skills/
-│   ├── api-dev/           # Main overview
-│   │   ├── SKILL.md
-│   │   └── references/
-│   ├── api-testing/       # Focused skill
-│   └── api-docs/          # Focused skill
-├── agents/
-│   └── api-reviewer.md
-├── commands/
-│   └── api-check.md
-├── hooks/hooks.json
-├── .cache/.gitignore
-└── README.md
-```
-
-### Cache Directory Pattern
+## Cache Directory Pattern
 
 Always include for runtime data:
 
@@ -126,6 +64,10 @@ Always include for runtime data:
 .cache/
 └── .gitignore          # Contains: *
 ```
+
+## Guided Creation
+
+Use `/create-plugin` for an interactive workflow that guides through discovery, planning, implementation, validation, and documentation.
 
 ## Testing
 
@@ -135,19 +77,8 @@ claude --plugin-dir ./my-plugin
 
 ## Validation
 
-Use the plugin-validator agent to check structure:
+Use the `plugin-validator` agent to check structure:
 
 ```
 Validate my plugin at ./my-plugin
 ```
-
-## Checklist
-
-- [ ] `.claude-plugin/plugin.json` exists
-- [ ] Has name, version, description
-- [ ] Version follows semver
-- [ ] Skills in `skills/name/SKILL.md`
-- [ ] Agents in `agents/name.md`
-- [ ] Hooks in `hooks/hooks.json`
-- [ ] Components NOT in `.claude-plugin/`
-- [ ] .cache/ directory with .gitignore

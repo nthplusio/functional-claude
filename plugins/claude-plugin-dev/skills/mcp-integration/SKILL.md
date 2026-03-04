@@ -1,9 +1,9 @@
 ---
 name: mcp-integration
-description: This skill should be used when the user asks to "add MCP server",
-  "integrate MCP", "external tools", ".mcp.json", "Model Context Protocol",
-  or needs guidance on bundling MCP servers with plugins.
-version: 0.4.1
+description: Guide for bundling MCP servers with plugins. Use when the user asks
+  to "add MCP server", "integrate MCP", "external tools", ".mcp.json", or
+  "Model Context Protocol".
+version: 0.5.0
 ---
 
 # MCP Integration
@@ -33,81 +33,12 @@ my-plugin/
 }
 ```
 
-## Server Types Comparison
+**Key conventions:**
+- Use `${CLAUDE_PLUGIN_ROOT}` for plugin-relative paths in `command` and `args`
+- Use `${ENV_VAR}` syntax for secrets in `env`
+- stdio servers use `command` + `args`; remote servers use `url`
 
-| Type | Transport | Use Case |
-|------|-----------|----------|
-| stdio | Local process | Bundled servers, local tools |
-| http | Remote HTTP | Cloud services, APIs |
-| sse | Server-sent events | Real-time updates |
-
-### stdio (Local Process)
-
-```json
-{
-  "my-server": {
-    "command": "node",
-    "args": ["${CLAUDE_PLUGIN_ROOT}/server.js"],
-    "env": {
-      "DEBUG": "true"
-    }
-  }
-}
-```
-
-### http (Remote HTTP)
-
-```json
-{
-  "my-server": {
-    "url": "https://api.example.com/mcp"
-  }
-}
-```
-
-### sse (Server-Sent Events)
-
-```json
-{
-  "my-server": {
-    "url": "https://api.example.com/mcp/sse"
-  }
-}
-```
-
-## Authentication Patterns
-
-### API Keys via Environment
-
-```json
-{
-  "api-server": {
-    "command": "npx",
-    "args": ["-y", "@some/mcp-server"],
-    "env": {
-      "API_KEY": "${MY_API_KEY}",
-      "API_SECRET": "${MY_API_SECRET}"
-    }
-  }
-}
-```
-
-### Token-Based
-
-```json
-{
-  "oauth-server": {
-    "url": "https://api.example.com/mcp",
-    "headers": {
-      "Authorization": "Bearer ${ACCESS_TOKEN}"
-    }
-  }
-}
-```
-
-Document required environment variables in README.
-
-## Inline in Marketplace
+## Inline Marketplace Pattern
 
 For simple MCP servers, define directly in marketplace.json:
 
@@ -127,52 +58,11 @@ For simple MCP servers, define directly in marketplace.json:
 
 **Note:** `strict: false` is required when defining mcpServers inline.
 
-## Common Patterns
-
-### NPX Package
-
-```json
-{
-  "postgres": {
-    "command": "npx",
-    "args": ["-y", "@modelcontextprotocol/server-postgres"],
-    "env": {
-      "POSTGRES_CONNECTION_STRING": "${DATABASE_URL}"
-    }
-  }
-}
-```
-
-### Bundled Server
-
-```json
-{
-  "custom": {
-    "command": "node",
-    "args": ["${CLAUDE_PLUGIN_ROOT}/servers/server.js"]
-  }
-}
-```
-
-### Multiple Servers
-
-```json
-{
-  "db": {
-    "command": "npx",
-    "args": ["-y", "@mcp/postgres"]
-  },
-  "search": {
-    "command": "npx",
-    "args": ["-y", "@mcp/elasticsearch"]
-  }
-}
-```
-
-## Tool Naming
+## Tool Naming Convention
 
 MCP tools are namespaced: `mcp__<server>__<tool>`
 
+Examples:
 - `mcp__postgres__query`
 - `mcp__github__create_issue`
 
@@ -186,7 +76,7 @@ Use in hook matchers:
 
 ## External Plugin Pattern
 
-For wrapping third-party MCP servers:
+For wrapping third-party MCP servers as standalone plugins:
 
 ```
 external_plugins/
@@ -196,10 +86,4 @@ external_plugins/
     └── .mcp.json
 ```
 
-## Checklist
-
-- [ ] Server command is valid
-- [ ] Environment variables use `${VAR}` syntax
-- [ ] Plugin paths use `${CLAUDE_PLUGIN_ROOT}`
-- [ ] Required env vars documented
-- [ ] Server tested locally
+Document required environment variables in README.

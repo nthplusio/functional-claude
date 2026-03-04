@@ -1,12 +1,14 @@
 ---
 name: repo-sme
 description: This skill should be used when the user asks to "ask the SME", "check the repo for", "query the SME", "consult the expert", "how does the API work", "look up in the SME", "what does this library do", "how does [library] handle", or when TypeScript errors reference external types from a registered repo. Use proactively when the user asks API questions about external libraries that match a registered SME repo.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Repository SME (Subject Matter Expert)
 
 Query locally-cloned GitHub repositories for grounded, citation-backed answers about external library APIs.
+
+**Do NOT announce registered repos at session start.** Do not list repos, mention how many are registered, or describe how to use the SME unprompted. Only act when a relevant API question arises.
 
 ## When to Spawn the SME Agent
 

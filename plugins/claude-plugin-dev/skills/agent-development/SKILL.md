@@ -1,9 +1,9 @@
 ---
 name: agent-development
-description: This skill should be used when the user asks to "create an agent",
-  "write AGENT.md", "subagent", "specialized agent", "autonomous agent",
-  "agent tools", or needs guidance on building agents with specific tool access.
-version: 0.4.1
+description: Guide for creating specialized subagents with AGENT.md files. Use when
+  the user asks to "create an agent", "write AGENT.md", "subagent", "specialized
+  agent", "agent tools", or needs guidance on agent design.
+version: 0.5.0
 ---
 
 # Agent Development
@@ -61,7 +61,7 @@ System prompt for the agent goes here in markdown.
 
 ## Example Blocks (Critical)
 
-Use `<example>` blocks in descriptions for reliable triggering:
+`<example>` blocks in descriptions are essential for reliable triggering:
 
 ```yaml
 description: |
@@ -75,57 +75,6 @@ description: |
   Migration safety check requested.
   </commentary>
   </example>
-```
-
-## AI-Assisted Creation
-
-Use the `agent-creator` agent for interactive agent design:
-
-```
-Help me create an agent for [purpose]
-```
-
-The agent-creator guides you through:
-1. Understanding core purpose
-2. Selecting appropriate tools
-3. Designing the persona
-4. Generating complete AGENT.md
-
-## Agent Patterns
-
-### Read-Only Explorer
-
-```yaml
----
-name: code-explorer
-description: Explore codebase without modifications
-tools: Read, Grep, Glob, Bash
-disallowedTools: Write, Edit, NotebookEdit
-model: haiku
----
-```
-
-### Full-Access Specialist
-
-```yaml
----
-name: code-reviewer
-description: Review and fix code issues. Use proactively after code changes.
-tools: Read, Grep, Glob, Bash, Edit, Write
-model: inherit
----
-```
-
-### Validation Agent
-
-```yaml
----
-name: config-validator
-description: Validate configuration files for correctness
-tools: Read, Grep, Glob
-model: haiku
-color: green
----
 ```
 
 ## Proactive Triggering
@@ -145,18 +94,14 @@ description: Expert test runner. Use proactively after code changes.
 | `opus` | Complex reasoning |
 | `inherit` | Use parent's model |
 
+## AI-Assisted Creation
+
+Use the `agent-creator` agent for interactive design:
+
+```
+Help me create an agent for [purpose]
+```
+
 ## Quality Review
 
-After creating an agent, use the `skill-reviewer` agent to check:
-- Description quality and triggers
-- Tool appropriateness
-- System prompt clarity
-
-## Checklist
-
-- [ ] Description has trigger phrases
-- [ ] Description has `<example>` block(s)
-- [ ] Tools list matches needs
-- [ ] Model choice is appropriate
-- [ ] Name is kebab-case
-- [ ] System prompt is focused
+After creating an agent, use the `skill-reviewer` agent to check description quality, tool appropriateness, and system prompt clarity.

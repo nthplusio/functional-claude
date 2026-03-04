@@ -39,7 +39,7 @@
       "name": "claude-plugin-dev",
       "source": "./plugins/claude-plugin-dev",
       "description": "Documentation and conventions for building Claude Code plugins with guided workflows, AI-assisted agent creation, and dynamic documentation caching",
-      "version": "0.4.1"
+      "version": "0.5.0"
     },
     {
       "name": "opentui-dev",
@@ -87,7 +87,7 @@
       "name": "repo-sme",
       "source": "./plugins/repo-sme",
       "description": "Repository Subject Matter Expert — register GitHub repos as local SME sources and query them via background agent while you work",
-      "version": "0.1.0"
+      "version": "0.1.1"
     },
     {
       "name": "project-manager",

@@ -1,5 +1,5 @@
 {
   "name": "repo-sme",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Repository Subject Matter Expert — register GitHub repos as local SME sources and query them via background agent while you work"
 }
