@@ -4,7 +4,7 @@ description: |
   This skill should be used when the user asks about personas for agent teams, wants to understand how to apply deep behavioral profiles to teammates, or needs guidance on the productivity loop. Use this skill when the user asks about "personas", "behavioral profiles", "productivity loop", "auditor persona", "architect persona", "analyst persona", "refiner persona", "compounder persona", or says "what personas are available" or "how do personas work".
 
   Provides 8 reusable persona definitions that add deep methodology, scoring criteria, and interaction patterns to agent team teammates.
-version: 0.22.2
+version: 0.22.3
 ---
 
 # Team Personas
@@ -138,3 +138,7 @@ Each persona is defined in a standalone reference file designed to be read direc
 | Realist | `${CLAUDE_PLUGIN_ROOT}/skills/team-personas/references/realist.md` |
 
 Each file is written in second-person ("You are...") so it can be directly injected into a teammate's behavioral context. Files include methodology phases, scoring criteria, behavioral instructions, input/output contracts, and dev workflow examples.
+
+### Persona Registry
+
+For capability tags, team-type matching guides, and per-capability persona selection, see `${CLAUDE_PLUGIN_ROOT}/skills/team-personas/registry.md`. Useful when designing custom teams with the team-architect agent.

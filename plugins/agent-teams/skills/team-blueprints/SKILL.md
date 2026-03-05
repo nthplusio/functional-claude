@@ -4,16 +4,16 @@ description: |
   This skill should be used when the user wants pre-designed agent team configurations for common application development phases. Use this skill when the user asks for a "research team", "feature development team", "code review team", "debug team", "design team", "planning team", "roadmap team", "team blueprint", "team template", or says "spawn a team for [development phase]".
 
   Provides 8 ready-to-use team blueprints: Research & Discovery, Feature Development, Code Review & QA, Debugging & Investigation, Frontend Design, Planning & Roadmapping, Productivity Systems, and Brainstorming & Ideation.
-version: 0.22.2
+version: 0.22.3
 ---
 
 # Agent Team Blueprints
 
 Pre-designed team configurations for eight application development phases. Each blueprint defines the team composition, teammate roles, task structure, and the prompt to use.
 
-## New in v0.15.0: Unified Commands
+## Unified Commands
 
-Three unified commands provide simplified entry points with adaptive sizing, verbosity control, and auto-mode inference. They dispatch to the same blueprints documented below.
+Three commands provide entry points with adaptive sizing, verbosity control, and auto-mode inference. They dispatch to the blueprints documented below.
 
 | Unified Command | Modes |
 |---|---|
@@ -337,9 +337,9 @@ Team deliverables are written to disk as git-tracked markdown files in `docs/tea
 - **Primary deliverable** — One main output file per team (e.g., `roadmap.md`, `evaluation-report.md`)
 - **Task outputs** — Per-task analysis files in a `tasks/` subdirectory
 
-**Artifact mapping by team type:** See `team-coordination` skill → Artifact Output Protocol → Artifact Mapping by Team Type.
+**Artifact mapping by team type:** See `${CLAUDE_PLUGIN_ROOT}/shared/artifact-protocol.md` → Artifact Mapping by Team Type.
 
-A designated teammate compiles the primary deliverable with YAML frontmatter, writes task outputs, creates a team README, and updates the root index at `docs/teams/README.md`. See the "Artifact Output Protocol" section in the team-coordination skill for full frontmatter schemas and guidelines.
+A designated teammate compiles the primary deliverable with YAML frontmatter, writes task outputs, creates a team README, and updates the root index at `docs/teams/README.md`. See `${CLAUDE_PLUGIN_ROOT}/shared/artifact-protocol.md` for full frontmatter schemas and guidelines.
 
 ## Customizing Blueprints
 
@@ -351,15 +351,7 @@ These blueprints are starting points. Adapt them by:
 4. **Enabling delegate mode** — Press Shift+Tab to keep the lead focused on coordination
 5. **Defining file boundaries** — Assign specific directories to avoid merge conflicts
 
-### Efficiency Guidelines
-
-Session analysis shows coordination overhead scales non-linearly. Keep teams lean:
-
-- **Cap tasks at 8 per team** — Beyond this, TaskUpdate churn dominates execution
-- **Prefer 3-4 agents** — Larger teams increase SendMessage overhead without proportional output gains
-- **Max 2 teams per session** — Chain sessions for complex multi-team pipelines instead
-- **Batch instructions** — One detailed SendMessage per teammate beats multiple short follow-ups
-- **Skip teams for small work** — If total implementation is under ~30 minutes or fewer than 3 parallel tracks, use plan-then-implement instead
+For efficiency guidelines (sizing, batching, overhead budget, anti-patterns), see `${CLAUDE_PLUGIN_ROOT}/shared/efficiency-guidelines.md`.
 
 ## Choosing the Right Blueprint
 

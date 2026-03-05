@@ -1,5 +1,5 @@
 {
-  "version": "0.21.1",
+  "version": "0.22.3",
   "preserve": [
     ".cache/",
     ".claude-plugin/"
@@ -19,8 +19,10 @@
     "plugin-manifest.json",
     "shared/aar-protocol.md",
     "shared/ai-code-review-checklist.md",
+    "shared/artifact-protocol.md",
     "shared/base-agent.md",
     "shared/discovery-interview.md",
+    "shared/efficiency-guidelines.md",
     "shared/mock-repository.md",
     "shared/output-standard.md",
     "shared/planning-blueprints/_context-template.md",
@@ -34,6 +36,7 @@
     "shared/prerequisites-check.md",
     "shared/scenario-collection.md",
     "shared/shutdown-protocol.md",
+    "shared/spawn-output.md",
     "shared/spawn-shared.md",
     "shared/spec-quality-scoring.md",
     "shared/system-doc-protocol.md",
