@@ -32,6 +32,14 @@ Pipeline: [downstream commands]
 Artifacts: docs/teams/[TEAM-NAME]/
 ```
 
+**Normal mode with `--project`** (replaces the last 3 lines above):
+```
+Artifacts: docs/projects/[PROJECT]/[STAGE]/
+Project: [PROJECT] — stage [N] of [TOTAL] ([STAGE])
+Upstream context: [N] prior stage(s) — [completed stage names]
+Next stage: [NEXT] (run `/project next` after completion)
+```
+
 **Verbose mode** (everything in normal, plus):
 ```
 **Tasks:**

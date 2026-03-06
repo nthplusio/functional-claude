@@ -82,6 +82,17 @@ Stop generating questions when ANY of the following is true:
 4. Always confirm understanding before spawning: "Based on your description, here's what I understand: [summary]. Anything to adjust?"
 5. **After context compaction or session resume:** Always run the 3 core questions regardless of whether prior context suggests they were answered. Compacted context loses nuance — a brief re-run is cheap insurance against misaligned spawning. You may skip mode-specific extended questions and heuristic follow-ups that were clearly addressed before compaction, but never skip the core three.
 
+### Project Context Adaptation
+
+When `--project` is set and upstream context exists (prior stage summaries in `context.md`):
+
+- Present upstream context before core questions: "Based on prior project stages, here's what I understand: [summary from context.md]. Confirm or adjust?"
+- Core questions still run (cheap insurance) but lead pre-populates answers from context.md
+- If user says "use prior context", "looks good", or similar, accept context.md answers as sufficient for core questions
+- Extended questions can reference upstream decisions (e.g., "The brainstorm stage identified [X] — does this still hold?")
+
+See `shared/project-context-protocol.md` for the full protocol.
+
 ## Token Budget Block
 
 Include this YAML structure in the spawn prompt's Context section to help teammates calibrate their effort:

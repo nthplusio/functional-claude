@@ -1,5 +1,5 @@
 {
-  "version": "0.22.3",
+  "version": "0.23.0",
   "preserve": [
     ".cache/",
     ".claude-plugin/"
@@ -9,6 +9,7 @@
     "agents/team-architect.md",
     "commands/agent-teams.md",
     "commands/calibrate-scoring.md",
+    "commands/project.md",
     "commands/spawn-build.md",
     "commands/spawn-create.md",
     "commands/spawn-think.md",
@@ -34,6 +35,7 @@
     "shared/planning-blueprints/roadmap.md",
     "shared/planning-blueprints/spec.md",
     "shared/prerequisites-check.md",
+    "shared/project-context-protocol.md",
     "shared/scenario-collection.md",
     "shared/shutdown-protocol.md",
     "shared/spawn-output.md",

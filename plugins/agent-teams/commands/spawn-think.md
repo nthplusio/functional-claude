@@ -29,7 +29,10 @@ Extract from `$ARGUMENTS`:
 - `--mode research`, `--mode planning`, or `--mode review` (optional — auto-infer if absent)
 - `--quiet`, `--normal`, or `--verbose` (optional — default `--normal`)
 - `--min-score N` (optional — override default spec quality threshold of 4 dimensions)
+- `--project <name>` (optional — link this spawn to a project pipeline)
 - Strip flags from `$ARGUMENTS` before proceeding
+
+**Project detection:** If `--project` not set, scan `docs/projects/*/project.json` for active projects whose `currentStage` maps to this command (`research`, `plan`, or `review` stages). If found, ask: "Continue project '[name]' (stage: [stage])? Or run standalone?" If user confirms, set `--project` to that project name.
 
 ### Step 3: Mode Selection
 
@@ -159,6 +162,8 @@ Analyze the project before spawning:
 Also run the following scans from `${CLAUDE_PLUGIN_ROOT}/shared/spawn-shared.md`:
 - Mock Repository Scan (if applicable)
 - **Retrospective Scan** — use `profile: think` for evaluate-spawn files, `type: research|planning|review` for AAR files
+
+**Project context:** When `--project` is set, follow the project context protocol at `${CLAUDE_PLUGIN_ROOT}/shared/project-context-protocol.md` — read project.json, inject context.md as `### Upstream Context`, set artifact output path to `docs/projects/<project-name>/<stage>/`.
 
 ### Step 10: Spawn the Team
 
@@ -357,6 +362,8 @@ Create these tasks:
 ```
 
 **Artifact:** `review-report.md` (template: `shared/review-report-template.md`) → feeds into `/spawn-build --mode debug` (issues), `/spawn-build --mode feature` (rework)
+
+**Project routing (all modes):** When `--project` is set, replace `docs/teams/[TEAM-NAME]/` with `docs/projects/<project-name>/<stage>/` in all task artifact paths.
 
 ### Step 11: Output
 

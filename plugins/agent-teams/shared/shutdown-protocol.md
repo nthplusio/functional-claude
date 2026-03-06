@@ -92,6 +92,16 @@ The AAR protocol will:
 - Read team config from the still-intact team directory
 - Write the AAR to `docs/retrospectives/[team-name]-aar.md`
 
+### Phase 3.5: Project Context Accumulation (project spawns only)
+
+Skip if the team was not spawned with `--project`.
+
+1. Read team's primary artifact and task outputs
+2. Compose context summary per format in `shared/project-context-protocol.md`
+3. Append summary to `docs/projects/<project-name>/context.md`
+4. Update `docs/projects/<project-name>/project.json`: set stage `"completed"`, advance `currentStage`
+5. Display: "Project '[name]' advanced to [next-stage]. Run `/project next` to continue."
+
 ### Phase 4: Verify and Delete
 
 Before calling `TeamDelete`:
@@ -122,6 +132,7 @@ Spawn prompts reference this block via `[Include Shutdown Protocol from shared/s
 - If a teammate does not respond after one cycle, re-send the combined message: "@[name] — please answer the three questions above, then approve shutdown."
 - After all teammates have answered and approved, run `/after-action-review [team-name]`
 - Verify AAR file exists at `docs/retrospectives/[team-name]-aar.md` before calling TeamDelete
+- If spawned with `--project`: after AAR, append context summary to project context.md and advance project stage (see `shared/project-context-protocol.md`)
 - After AAR is verified, check for `docs/retrospectives/[team-name].md` — if absent, display: "No evaluate-spawn retrospective found. Run `/evaluate-spawn` before deleting the team? (optional)"
 ```
 

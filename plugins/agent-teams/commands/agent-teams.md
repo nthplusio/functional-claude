@@ -31,6 +31,7 @@ If `$ARGUMENTS` specifies a topic, focus on that area:
 | `productivity` | Detail the Productivity Systems team blueprint |
 | `brainstorming` | Detail the Brainstorming & Ideation team blueprint |
 | `coordination` | Team management and communication — use team-coordination skill |
+| `projects` | Explain project pipelines — multi-stage workflows with shared context. Show `/project` subcommands |
 | `reference` | Show API reference — read the reference document |
 
 ## Default Overview (no arguments)
@@ -38,10 +39,11 @@ If `$ARGUMENTS` specifies a topic, focus on that area:
 If no arguments provided, present:
 
 1. **Status** — Whether agent teams are enabled
-2. **Commands** — 3 entry points with adaptive sizing, verbosity control, and auto-mode inference:
-   - `/spawn-build [--mode feature|debug] <description>` — Build features or fix bugs
-   - `/spawn-think [--mode research|planning|review] <topic>` — Research, plan, or review
-   - `/spawn-create [--mode design|brainstorm|productivity] <topic>` — Design, brainstorm, or optimize
+2. **Commands** — 3 spawn entry points + project pipeline management:
+   - `/spawn-build [--mode feature|debug] [--project name] <description>` — Build features or fix bugs
+   - `/spawn-think [--mode research|planning|review] [--project name] <topic>` — Research, plan, or review
+   - `/spawn-create [--mode design|brainstorm|productivity] [--project name] <topic>` — Design, brainstorm, or optimize
+   - `/project <create|list|status|next|skip|archive> [name]` — Manage multi-stage project pipelines
    - `/agent-teams [topic]` — This overview command
 
 3. **Available Skills** — List the 4 focused skills:

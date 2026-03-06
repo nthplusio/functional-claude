@@ -126,3 +126,19 @@ The lead's final compilation/synthesis task should include artifact writing. App
 Write deliverables to `docs/teams/[TEAM-NAME]/`: primary artifact as `[filename].md` with frontmatter,
 task outputs to `tasks/`, team README with metadata, and update root index at `docs/teams/README.md`.
 ```
+
+## Project Artifact Routing
+
+When spawned with `--project`, artifacts go to `docs/projects/<name>/<stage>/` instead of `docs/teams/[team-name]/`. Same directory structure (README, primary deliverable, `tasks/`), same frontmatter schemas with added `project:` and `stage:` fields:
+
+```yaml
+---
+artifact: evaluation-report
+team: research-eval-auth-libs
+project: auth-overhaul
+stage: research
+date: 2026-03-06
+---
+```
+
+The root index at `docs/teams/README.md` is still updated for cross-reference — add a `Project` column when project artifacts exist. See `shared/project-context-protocol.md` for the full protocol.
