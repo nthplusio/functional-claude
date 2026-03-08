@@ -1,7 +1,7 @@
 ---
 name: tailwindv4
 description: This skill should be used when the user asks about "tailwind v4", "tailwindcss 4", "tailwind css v4", "@theme", "css-first config", "tailwind css variables", "oklch colors", "tailwind upgrade", "migrate to tailwind 4", or mentions Tailwind CSS v4 configuration, new syntax, or migration from v3.
-version: 0.2.2
+version: 0.2.3
 ---
 
 # Tailwind CSS v4
@@ -60,12 +60,22 @@ No more `tailwind.config.js` - configure directly in CSS:
 }
 ```
 
+## Upgrading to v4
+
+Always read the [upgrade guide](https://tailwindcss.com/docs/upgrade-guide) first. Run the automated upgrade tool:
+
+```bash
+npx @tailwindcss/upgrade@latest
+```
+
+The tool converts JS config to CSS format. Review all changes to clean up false positives.
+
 ## Installation
 
 ### New Project
 
 ```bash
-npm install tailwindcss@next @tailwindcss/postcss@next
+npm install tailwindcss @tailwindcss/postcss
 ```
 
 ### PostCSS Configuration
@@ -187,11 +197,10 @@ const brandColor = getComputedStyle(document.documentElement)
 
 ## Migration from v3
 
-### 1. Update Dependencies
+### 1. Run Automated Upgrade
 
 ```bash
-npm install tailwindcss@next @tailwindcss/postcss@next
-npm uninstall autoprefixer  # No longer needed
+npx @tailwindcss/upgrade@latest
 ```
 
 ### 2. Convert Configuration
@@ -278,16 +287,73 @@ Native support for container queries:
 </div>
 ```
 
-## Removed/Changed Features
+## Renamed Utilities (v4)
+
+ALWAYS use the v4 name — the v3 names no longer work:
 
 | v3 | v4 |
 |----|-----|
+| `bg-gradient-*` | `bg-linear-*` |
+| `shadow-sm` / `shadow` | `shadow-xs` / `shadow-sm` |
+| `drop-shadow-sm` / `drop-shadow` | `drop-shadow-xs` / `drop-shadow-sm` |
+| `blur-sm` / `blur` | `blur-xs` / `blur-sm` |
+| `backdrop-blur-sm` / `backdrop-blur` | `backdrop-blur-xs` / `backdrop-blur-sm` |
+| `rounded-sm` / `rounded` | `rounded-xs` / `rounded-sm` |
+| `outline-none` | `outline-hidden` |
+| `ring` (default) | `ring-3` |
+
+## Removed Utilities (v4)
+
+NEVER use these — use the replacement:
+
+| Removed | Replacement |
+|---------|-------------|
+| `bg-opacity-*`, `text-opacity-*`, etc. | Opacity modifiers: `bg-black/50`, `text-black/50` |
+| `flex-shrink-*` / `flex-grow-*` | `shrink-*` / `grow-*` |
+| `overflow-ellipsis` | `text-ellipsis` |
+| `decoration-slice` / `decoration-clone` | `box-decoration-slice` / `box-decoration-clone` |
 | `tailwind.config.js` | `@theme` in CSS |
 | `bg-[--var]` | `bg-(--var)` |
 | `theme(colors.x)` | `var(--color-x)` |
 | `@tailwind base/components/utilities` | `@import "tailwindcss"` |
-| `autoprefixer` required | Built-in |
-| `purge/content` config | Auto-detected |
+| `autoprefixer` | Built-in |
+| `@apply` | CSS variables, `--spacing()`, or framework components |
+
+## Key Rules
+
+- **Never use `@apply`** — use CSS variables, `--spacing()`, or framework components
+- **Use `gap` not `space-x-*`/`space-y-*`** in flex/grid layouts
+- **Use line-height modifiers** — `text-base/7` not `text-base leading-7`
+- **Use `min-h-dvh`** not `min-h-screen` (mobile Safari bug)
+- **Use `size-*`** when width and height are equal
+- **Use opacity modifiers** — `bg-red-500/60` not `bg-red-500 bg-opacity-60`
+
+For the complete rules reference, see `references/tailwind-rules.md`.
+
+## v4.1 Features
+
+### Text Shadows
+
+```html
+<h1 class="text-shadow-lg">Large shadow</h1>
+<p class="text-shadow-sm/50">Shadow with opacity</p>
+```
+
+### Masking
+
+```html
+<div class="mask-t-from-50%">Top fade</div>
+<div class="mask-b-from-20% mask-b-to-80%">Bottom gradient</div>
+<div class="mask-radial-[100%_100%] mask-radial-from-75% mask-radial-at-left">Radial</div>
+```
+
+### New Gradient Types
+
+```html
+<div class="bg-linear-to-br from-violet-500 to-fuchsia-500"></div>
+<div class="bg-radial-[at_50%_75%] from-sky-200 to-indigo-900"></div>
+<div class="bg-conic-180 from-indigo-600 via-indigo-50 to-indigo-600"></div>
+```
 
 ## shadcn/ui with Tailwind v4
 
@@ -318,8 +384,9 @@ Update globals.css for v4 syntax:
 
 ## Reference Files
 
-- **`references/v4-syntax.md`** - Complete v4 syntax reference
-- **`references/migration-guide.md`** - Detailed migration steps
+- **`references/tailwind-rules.md`** - v4.1+ best practices, removed/renamed utilities, layout rules, common pitfalls
+- **`references/v4-syntax.md`** - Complete v4 syntax reference (@theme, variables, layers)
+- **`references/migration-guide.md`** - Detailed v3→v4 migration steps
 - **`references/oklch-colors.md`** - OKLCH color system guide
 
 ## Resources

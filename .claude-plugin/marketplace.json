@@ -27,7 +27,7 @@
       "name": "shadcn-dev",
       "source": "./plugins/shadcn-dev",
       "description": "shadcn/ui and Tailwind CSS v4 development workflows for React applications. Covers component usage, form building with react-hook-form and zod, theming, data tables with TanStack Table, and Tailwind CSS v4 migration",
-      "version": "0.2.2"
+      "version": "0.2.3"
     },
     {
       "name": "code-quality",

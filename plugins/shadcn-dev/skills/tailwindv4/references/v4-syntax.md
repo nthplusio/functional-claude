@@ -139,6 +139,19 @@ Define design tokens directly in CSS:
 }
 ```
 
+### Line Height Modifiers
+
+Use line-height modifiers instead of separate `leading-*` classes:
+
+```html
+<!-- v4: Line height modifier on text size -->
+<p class="text-base/7">Line height of 1.75rem</p>
+<p class="text-lg/8">Line height of 2rem</p>
+<p class="text-sm/6">Line height of 1.5rem</p>
+
+<!-- Don't use separate leading-* classes -->
+```
+
 ### Letter Spacing
 
 ```css
@@ -353,9 +366,12 @@ v4 automatically detects content from imports:
 }
 
 @layer components {
-  /* Component classes */
+  /* Component classes — use CSS variables, not @apply */
   .btn-primary {
-    @apply bg-primary text-primary-foreground px-4 py-2 rounded-md;
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+    padding: var(--spacing-2) var(--spacing-4);
+    border-radius: var(--radius-md);
   }
 }
 

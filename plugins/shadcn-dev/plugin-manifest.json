@@ -1,0 +1,39 @@
+{
+  "version": "0.2.3",
+  "preserve": [
+    ".cache/",
+    ".claude-plugin/"
+  ],
+  "files": [
+    ".gitignore",
+    "agents/shadcn-agent.md",
+    "agents/shadcn-troubleshoot.md",
+    "commands/shadcn-dev.md",
+    "commands/shadcn-recon.md",
+    "hooks/hooks.json",
+    "hooks/shadcn-learnings-capture.js",
+    "hooks/shadcn-session-start.js",
+    "hooks/verify-shadcn-backup.js",
+    "plugin-manifest.json",
+    "skills/shadcn-components/SKILL.md",
+    "skills/shadcn-components/references/component-catalog.md",
+    "skills/shadcn-components/references/icon-patterns.md",
+    "skills/shadcn-data-tables/SKILL.md",
+    "skills/shadcn-data-tables/references/column-types.md",
+    "skills/shadcn-data-tables/references/table-patterns.md",
+    "skills/shadcn-dev/SKILL.md",
+    "skills/shadcn-dev/references/community-repositories.md",
+    "skills/shadcn-dev/references/component-patterns.md",
+    "skills/shadcn-forms/SKILL.md",
+    "skills/shadcn-forms/references/form-examples.md",
+    "skills/shadcn-forms/references/validation-patterns.md",
+    "skills/shadcn-theming/SKILL.md",
+    "skills/shadcn-theming/references/color-palettes.md",
+    "skills/shadcn-theming/references/theme-examples.md",
+    "skills/tailwindv4/SKILL.md",
+    "skills/tailwindv4/references/migration-guide.md",
+    "skills/tailwindv4/references/oklch-colors.md",
+    "skills/tailwindv4/references/tailwind-rules.md",
+    "skills/tailwindv4/references/v4-syntax.md"
+  ]
+}

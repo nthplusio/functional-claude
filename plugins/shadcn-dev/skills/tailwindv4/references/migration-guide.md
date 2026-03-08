@@ -9,16 +9,26 @@ Before migrating:
 - Commit all changes to version control
 - Review breaking changes below
 
+## Before Upgrading
+
+- Always read the [upgrade documentation](https://tailwindcss.com/docs/upgrade-guide) first
+- Ensure the git repository is in a clean state
+
 ## Step-by-Step Migration
 
-### 1. Update Dependencies
+### 1. Run Automated Upgrade
 
 ```bash
-# Remove old packages
-npm uninstall tailwindcss postcss autoprefixer
+npx @tailwindcss/upgrade@latest
+```
 
-# Install v4
-npm install tailwindcss@next @tailwindcss/postcss@next
+The tool converts JavaScript config files to CSS format. Review all changes to clean up false positives. Test thoroughly.
+
+### 1a. Manual Install (if not using the upgrade tool)
+
+```bash
+npm uninstall tailwindcss postcss autoprefixer
+npm install tailwindcss @tailwindcss/postcss
 ```
 
 ### 2. Update PostCSS Configuration
@@ -191,6 +201,31 @@ v4 continues to support class-based dark mode:
 | `bg-[--var]` | `bg-(--var)` | CSS variable syntax |
 | `theme(x.y)` | `var(--x-y)` | Theme function |
 | `@tailwind base` | `@import "tailwindcss"` | Import syntax |
+| `@apply ...` | CSS variables / components | Never use @apply in v4 |
+
+### Renamed Utilities
+
+| v3 | v4 |
+|----|-----|
+| `bg-gradient-*` | `bg-linear-*` |
+| `shadow-sm` / `shadow` | `shadow-xs` / `shadow-sm` |
+| `drop-shadow-sm` / `drop-shadow` | `drop-shadow-xs` / `drop-shadow-sm` |
+| `blur-sm` / `blur` | `blur-xs` / `blur-sm` |
+| `backdrop-blur-sm` / `backdrop-blur` | `backdrop-blur-xs` / `backdrop-blur-sm` |
+| `rounded-sm` / `rounded` | `rounded-xs` / `rounded-sm` |
+| `outline-none` | `outline-hidden` |
+| `ring` (default) | `ring-3` |
+
+### Removed Utilities
+
+| Removed | Replacement |
+|---------|-------------|
+| `bg-opacity-*` | `bg-black/50` (opacity modifier) |
+| `text-opacity-*` | `text-black/50` |
+| `border-opacity-*` | `border-black/50` |
+| `flex-shrink-*` / `flex-grow-*` | `shrink-*` / `grow-*` |
+| `overflow-ellipsis` | `text-ellipsis` |
+| `decoration-slice` / `decoration-clone` | `box-decoration-slice` / `box-decoration-clone` |
 
 ### Removed Features
 
@@ -250,13 +285,11 @@ After migration, verify:
 If migration fails, rollback:
 
 ```bash
-# Reinstall v3
-npm uninstall tailwindcss @tailwindcss/postcss @tailwindcss/vite
-npm install tailwindcss@3 postcss autoprefixer
+# Restore from git — the upgrade tool modified files in-place
+git checkout -- .
 
-# Restore config files from git
-git checkout -- tailwind.config.js postcss.config.js
-git checkout -- src/app/globals.css
+# If you already committed, revert the commit
+git revert HEAD
 ```
 
 ## Resources
