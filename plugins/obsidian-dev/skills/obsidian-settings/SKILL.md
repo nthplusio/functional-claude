@@ -5,7 +5,7 @@ description: |
   "PluginSettingTab obsidian", "obsidian addSettingTab", "obsidian saveData", "obsidian loadData",
   "obsidian Setting class", "obsidian toggle setting", "obsidian text setting", "obsidian dropdown setting",
   or needs help implementing persistent settings in an Obsidian plugin.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Obsidian Plugin Settings

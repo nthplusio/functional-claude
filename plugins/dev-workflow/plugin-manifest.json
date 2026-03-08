@@ -1,0 +1,14 @@
+{
+  "version": "0.2.2",
+  "preserve": [
+    ".cache/",
+    ".claude-plugin/"
+  ],
+  "files": [
+    "agents/dev-gutcheck.md",
+    "hooks/exit-plan-check.js",
+    "hooks/hooks.json",
+    "plugin-manifest.json",
+    "skills/plan-validation/SKILL.md"
+  ]
+}

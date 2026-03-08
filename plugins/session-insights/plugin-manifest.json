@@ -1,0 +1,22 @@
+{
+  "version": "0.1.2",
+  "preserve": [
+    ".cache/",
+    ".claude-plugin/"
+  ],
+  "files": [
+    "agents/session-analyst.md",
+    "agents/workflow-improver.md",
+    "commands/session-review.md",
+    "commands/session-stats.md",
+    "hooks/hooks.json",
+    "hooks/session-insights-session-start.js",
+    "plugin-manifest.json",
+    "scripts/aggregate-stats.js",
+    "scripts/extract-history.js",
+    "scripts/extract-session.js",
+    "scripts/list-projects.js",
+    "scripts/list-sessions.js",
+    "skills/session-insights/SKILL.md"
+  ]
+}

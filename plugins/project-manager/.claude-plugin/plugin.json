@@ -1,5 +1,5 @@
 {
   "name": "project-manager",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Project manager for multi-project workflows — per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings"
 }

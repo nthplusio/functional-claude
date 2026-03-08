@@ -1,0 +1,34 @@
+{
+  "version": "0.5.1",
+  "preserve": [
+    ".cache/",
+    ".claude-plugin/"
+  ],
+  "files": [
+    "agents/agent-creator.md",
+    "agents/plugin-validator.md",
+    "agents/skill-reviewer.md",
+    "commands/bump-version.md",
+    "commands/create-plugin.md",
+    "commands/plugin-status.md",
+    "commands/pre-release.md",
+    "commands/publish-marketplace.md",
+    "hooks/hooks.json",
+    "hooks/plugin-dev-learnings.js",
+    "hooks/plugin-dev-session-start.js",
+    "plugin-manifest.json",
+    "skills/agent-development/SKILL.md",
+    "skills/claude-plugin-dev/SKILL.md",
+    "skills/claude-plugin-dev/references/conventions.md",
+    "skills/claude-plugin-dev/references/docs-cache.md",
+    "skills/claude-plugin-dev/references/examples.md",
+    "skills/command-development/SKILL.md",
+    "skills/command-development/references/cache.md",
+    "skills/hook-development/SKILL.md",
+    "skills/mcp-integration/SKILL.md",
+    "skills/plugin-settings/SKILL.md",
+    "skills/plugin-settings/references/cache.md",
+    "skills/plugin-structure/SKILL.md",
+    "skills/skill-development/SKILL.md"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "version": "1.0.1",
+  "preserve": [
+    ".cache/",
+    ".claude-plugin/"
+  ],
+  "files": [
+    "agents/code-quality-troubleshoot.md",
+    "commands/code-quality-setup.md",
+    "hooks/code-quality-recon.js",
+    "hooks/hooks.json",
+    "plugin-manifest.json",
+    "skills/code-quality/SKILL.md",
+    "skills/code-quality-hooks/SKILL.md",
+    "skills/code-quality-lint/SKILL.md",
+    "skills/code-quality-setup/SKILL.md"
+  ]
+}

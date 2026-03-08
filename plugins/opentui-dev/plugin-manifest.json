@@ -1,0 +1,29 @@
+{
+  "version": "0.1.7",
+  "preserve": [
+    ".cache/",
+    ".claude-plugin/"
+  ],
+  "files": [
+    "README.md",
+    "agents/opentui-troubleshoot.md",
+    "commands/opentui-scaffold.md",
+    "hooks/hooks.json",
+    "hooks/opentui-learnings.js",
+    "hooks/opentui-session-start.js",
+    "plugin-manifest.json",
+    "skills/opentui-animation/SKILL.md",
+    "skills/opentui-components/SKILL.md",
+    "skills/opentui-dev/SKILL.md",
+    "skills/opentui-dev/references/animation-reference.md",
+    "skills/opentui-dev/references/components-reference.md",
+    "skills/opentui-dev/references/core-reference.md",
+    "skills/opentui-dev/references/keyboard-reference.md",
+    "skills/opentui-dev/references/layout-reference.md",
+    "skills/opentui-dev/references/react-reference.md",
+    "skills/opentui-dev/references/solid-reference.md",
+    "skills/opentui-dev/references/testing-reference.md",
+    "skills/opentui-keyboard/SKILL.md",
+    "skills/opentui-layout/SKILL.md"
+  ]
+}

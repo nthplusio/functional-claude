@@ -5,7 +5,7 @@ description: |
   "obsidian plugin template", "obsidian manifest", "manifest.json obsidian", "obsidian build setup",
   "obsidian tsconfig", "obsidian esbuild", "obsidian sample plugin", or needs help setting up the
   initial project structure and build tooling for an Obsidian plugin.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Obsidian Plugin Setup

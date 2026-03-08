@@ -9,19 +9,19 @@
       "name": "wezterm-dev",
       "source": "./plugins/wezterm-dev",
       "description": "WezTerm terminal configuration and customization for Claude Code workflows. Includes tmux-style keybindings, visual effects (opacity, blur, themes), custom tab bars with Nerd Font icons, and Agent Deck for monitoring Claude Code agents",
-      "version": "0.7.13"
+      "version": "0.7.14"
     },
     {
       "name": "hyper-dev",
       "source": "./plugins/hyper-dev",
       "description": "Hyper terminal configuration and plugin development for Claude Code workflows. Covers keybindings, visual customization, theme creation, plugin discovery, and building Hyper plugins with the Electron/React API",
-      "version": "0.3.8"
+      "version": "0.3.9"
     },
     {
       "name": "prisma-dev",
       "source": "./plugins/prisma-dev",
       "description": "Prisma ORM development workflows with schema analysis, migration safety, and query guidance",
-      "version": "0.1.8"
+      "version": "0.1.9"
     },
     {
       "name": "shadcn-dev",
@@ -33,31 +33,31 @@
       "name": "code-quality",
       "source": "./plugins/code-quality",
       "description": "Deterministic code quality infrastructure — git hooks, lint-staged, and formatters that run on every commit and push, with guided setup and ecosystem detection",
-      "version": "1.0.0"
+      "version": "1.0.1"
     },
     {
       "name": "claude-plugin-dev",
       "source": "./plugins/claude-plugin-dev",
       "description": "Documentation and conventions for building Claude Code plugins with guided workflows, AI-assisted agent creation, and dynamic documentation caching",
-      "version": "0.5.0"
+      "version": "0.5.1"
     },
     {
       "name": "opentui-dev",
       "source": "./plugins/opentui-dev",
       "description": "OpenTUI terminal interface development with TypeScript/Bun. Supports Core imperative API, React reconciler, and Solid reconciler with components, flexbox layout, keyboard handling, and animations",
-      "version": "0.1.6"
+      "version": "0.1.7"
     },
     {
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
       "description": "Development workflow validation and planning tools. Integrates a validation checklist into plan mode and provides a gut-check agent that reviews implementation plans before coding begins",
-      "version": "0.2.1"
+      "version": "0.2.2"
     },
     {
       "name": "tabby-dev",
       "source": "./plugins/tabby-dev",
       "description": "Tabby terminal configuration, SSH connections, and plugin development for Claude Code workflows. Covers visual customization, multi-chord hotkeys, SSH/serial/telnet connection profiles, and plugin discovery and development",
-      "version": "0.1.4"
+      "version": "0.1.5"
     },
     {
       "name": "agent-teams",
@@ -69,31 +69,31 @@
       "name": "gemini-cli",
       "source": "./plugins/gemini-cli",
       "description": "Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension. Advisory-only with --sandbox enforcement, configurable timeouts, retry logic, and output validation",
-      "version": "0.6.5"
+      "version": "0.6.6"
     },
     {
       "name": "session-insights",
       "source": "./plugins/session-insights",
       "description": "Interactive session analysis, deep drill-down into Claude Code conversation history, and workflow improvement generation with programmatic JSONL parsing",
-      "version": "0.1.1"
+      "version": "0.1.2"
     },
     {
       "name": "obsidian-dev",
       "source": "./plugins/obsidian-dev",
       "description": "Obsidian plugin development workflows covering setup, the Plugin API, commands, settings, vault operations, UI components, and editor integration",
-      "version": "0.1.0"
+      "version": "0.1.1"
     },
     {
       "name": "repo-sme",
       "source": "./plugins/repo-sme",
       "description": "Repository Subject Matter Expert — register GitHub repos, browse branches, query architecture and APIs, and create GitHub issues via read-only analysis",
-      "version": "0.2.0"
+      "version": "0.2.1"
     },
     {
       "name": "project-manager",
       "source": "./plugins/project-manager",
       "description": "Project manager for multi-project workflows — per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings",
-      "version": "0.5.0"
+      "version": "0.5.1"
     }
   ]
 }

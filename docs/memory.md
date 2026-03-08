@@ -13,21 +13,21 @@ This document contains accumulated knowledge about the functional-claude plugin 
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| wezterm-dev | 0.7.13 | WezTerm terminal configuration and customization |
-| hyper-dev | 0.3.8 | Hyper terminal configuration and plugin development |
-| prisma-dev | 0.1.8 | Prisma ORM development with schema analysis and migration safety |
+| wezterm-dev | 0.7.14 | WezTerm terminal configuration and customization |
+| hyper-dev | 0.3.9 | Hyper terminal configuration and plugin development |
+| prisma-dev | 0.1.9 | Prisma ORM development with schema analysis and migration safety |
 | shadcn-dev | 0.2.3 | shadcn/ui and Tailwind CSS v4 development workflows |
-| code-quality | 1.0.0 | Deterministic code quality infrastructure — git hooks, lint-staged, and formatters |
-| claude-plugin-dev | 0.5.0 | Plugin development with guided workflows and AI-assisted creation |
-| opentui-dev | 0.1.6 | OpenTUI terminal interface development with component design and layout |
-| dev-workflow | 0.2.1 | Development workflow validation and planning tools |
-| tabby-dev | 0.1.4 | Tabby terminal configuration, SSH connections, and plugin development |
+| code-quality | 1.0.1 | Deterministic code quality infrastructure — git hooks, lint-staged, and formatters |
+| claude-plugin-dev | 0.5.1 | Plugin development with guided workflows and AI-assisted creation |
+| opentui-dev | 0.1.7 | OpenTUI terminal interface development with component design and layout |
+| dev-workflow | 0.2.2 | Development workflow validation and planning tools |
+| tabby-dev | 0.1.5 | Tabby terminal configuration, SSH connections, and plugin development |
 | agent-teams | 0.23.0 | Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control |
-| gemini-cli | 0.6.5 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
-| session-insights | 0.1.1 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
-| obsidian-dev | 0.1.0 | Obsidian plugin development workflows covering setup, Plugin API, commands, settings, vault operations, UI components, and editor integration |
-| repo-sme | 0.2.0 | Repository Subject Matter Expert — register GitHub repos, browse branches, query architecture and APIs, and create GitHub issues via read-only analysis |
-| project-manager | 0.5.0 | Project manager for multi-project workflows — per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings |
+| gemini-cli | 0.6.6 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
+| session-insights | 0.1.2 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
+| obsidian-dev | 0.1.1 | Obsidian plugin development workflows covering setup, Plugin API, commands, settings, vault operations, UI components, and editor integration |
+| repo-sme | 0.2.1 | Repository Subject Matter Expert — register GitHub repos, browse branches, query architecture and APIs, and create GitHub issues via read-only analysis |
+| project-manager | 0.5.1 | Project manager for multi-project workflows — per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings |
 
 ## Architecture Overview
 

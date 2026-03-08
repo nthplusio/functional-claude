@@ -6,7 +6,7 @@ description: |
   "obsidian sidebar panel", "obsidian WorkspaceLeaf", "obsidian FuzzySuggestModal",
   "obsidian SuggestModal", "obsidian UI components", or needs help building user interface
   elements in an Obsidian plugin.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Obsidian UI Components

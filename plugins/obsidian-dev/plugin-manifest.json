@@ -1,0 +1,19 @@
+{
+  "version": "0.1.1",
+  "preserve": [
+    ".cache/",
+    ".claude-plugin/"
+  ],
+  "files": [
+    "plugin-manifest.json",
+    "skills/obsidian-commands/SKILL.md",
+    "skills/obsidian-dev/SKILL.md",
+    "skills/obsidian-dev/references/api-reference.md",
+    "skills/obsidian-dev/references/getting-started.md",
+    "skills/obsidian-editor/SKILL.md",
+    "skills/obsidian-settings/SKILL.md",
+    "skills/obsidian-setup/SKILL.md",
+    "skills/obsidian-ui/SKILL.md",
+    "skills/obsidian-vault/SKILL.md"
+  ]
+}

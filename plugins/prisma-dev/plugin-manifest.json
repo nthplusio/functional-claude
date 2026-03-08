@@ -1,0 +1,27 @@
+{
+  "version": "0.1.9",
+  "preserve": [
+    ".cache/",
+    ".claude-plugin/"
+  ],
+  "files": [
+    ".gitignore",
+    "README.md",
+    "agents/prisma-troubleshoot.md",
+    "commands/update-prisma-claude-md.md",
+    "hooks/block-db-push.js",
+    "hooks/block-manual-migration.js",
+    "hooks/check-prisma-learnings.js",
+    "hooks/hooks.json",
+    "hooks/prisma-recon.js",
+    "hooks/remind-migrate-after-schema-change.js",
+    "plugin-manifest.json",
+    "skills/prisma-dev/SKILL.md",
+    "skills/prisma-dev/references/cli-reference.md",
+    "skills/prisma-dev/references/common-patterns.md",
+    "skills/prisma-migrations/SKILL.md",
+    "skills/prisma-queries/SKILL.md",
+    "skills/prisma-recon/SKILL.md",
+    "skills/prisma-schema/SKILL.md"
+  ]
+}

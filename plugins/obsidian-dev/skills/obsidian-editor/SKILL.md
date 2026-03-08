@@ -6,7 +6,7 @@ description: |
   "obsidian MarkdownView", "obsidian insert text", "obsidian modify active file", "obsidian CodeMirror",
   "obsidian editorCallback", or needs help reading or modifying the active markdown editor in an
   Obsidian plugin.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Obsidian Editor API

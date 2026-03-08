@@ -5,7 +5,7 @@ description: |
   "obsidian development", "obsidian API", "obsidian typescript", "create obsidian extension",
   "obsidian plugin development", or needs general guidance on developing plugins for Obsidian.
   For specific topics, focused skills are available.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Obsidian Plugin Development

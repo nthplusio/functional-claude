@@ -1,0 +1,19 @@
+{
+  "version": "0.6.6",
+  "preserve": [
+    ".cache/",
+    ".claude-plugin/"
+  ],
+  "files": [
+    ".gitignore",
+    "agents/gemini-review.md",
+    "agents/gemini-troubleshoot.md",
+    "commands/gemini-batch.md",
+    "hooks/gemini-session-start.js",
+    "hooks/hooks.json",
+    "plugin-manifest.json",
+    "skills/gemini-cli/SKILL.md",
+    "skills/gemini-images/SKILL.md",
+    "skills/gemini-review/SKILL.md"
+  ]
+}

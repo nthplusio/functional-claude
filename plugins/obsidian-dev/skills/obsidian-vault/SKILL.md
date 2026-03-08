@@ -6,7 +6,7 @@ description: |
   "obsidian TFile", "obsidian TFolder", "obsidian file events", "obsidian vault.modify",
   "obsidian vault.process", "obsidian metadataCache", "obsidian frontmatter", or needs help
   reading, writing, or reacting to files in an Obsidian vault.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Obsidian Vault API

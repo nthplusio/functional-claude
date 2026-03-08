@@ -5,7 +5,7 @@ description: |
   "obsidian command palette", "obsidian hotkey", "obsidian checkCallback", "obsidian editorCallback",
   "obsidian editor command", "obsidian keyboard shortcut", or needs help registering commands
   in an Obsidian plugin.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Obsidian Commands

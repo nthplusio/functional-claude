@@ -1,0 +1,20 @@
+{
+  "version": "0.5.1",
+  "preserve": [
+    ".cache/",
+    ".claude-plugin/"
+  ],
+  "files": [
+    "commands/pm-setup.md",
+    "commands/pm.md",
+    "hooks/hooks.json",
+    "hooks/pm-session-end.js",
+    "hooks/pm-session-start.js",
+    "plugin-manifest.json",
+    "skills/pm-branches/SKILL.md",
+    "skills/pm-issues/SKILL.md",
+    "skills/pm-pivot/SKILL.md",
+    "skills/pm-status/SKILL.md",
+    "skills/project-manager/SKILL.md"
+  ]
+}
