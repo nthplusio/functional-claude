@@ -119,6 +119,21 @@ function main() {
     currentBranch = run('git', ['-C', cwd, 'branch', '--show-current']);
   } catch (_e) {}
 
+  // Capture HEAD so the stop hook can diff commits made this session
+  let sessionStartHead = null;
+  try {
+    sessionStartHead = run('git', ['-C', cwd, 'rev-parse', 'HEAD']);
+  } catch (_e) {}
+
+  // Extract Linear issue ID from branch name (e.g. feat/ENG-42-auth -> ENG-42)
+  let branchIssueId = null;
+  if (currentBranch && project.linear_team_key) {
+    const branchIdMatch = currentBranch.match(
+      new RegExp(`(${project.linear_team_key}-\\d+)`, 'i')
+    );
+    if (branchIdMatch) branchIssueId = branchIdMatch[1].toUpperCase();
+  }
+
   // Build context cache path
   const cacheDir = path.join(
     process.env.HOME || '',
@@ -128,7 +143,7 @@ function main() {
     fs.mkdirSync(cacheDir, { recursive: true });
     fs.writeFileSync(
       path.join(cacheDir, 'context.json'),
-      JSON.stringify({ repoKey, project, currentBranch, loadedAt: new Date().toISOString() }, null, 2),
+      JSON.stringify({ repoKey, project, currentBranch, sessionStartHead, branchIssueId, loadedAt: new Date().toISOString() }, null, 2),
       'utf8'
     );
   } catch (_e) {}

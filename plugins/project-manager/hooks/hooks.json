@@ -18,7 +18,7 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/pm-session-end.js\"",
-            "timeout": 10
+            "timeout": 15
           }
         ]
       }
