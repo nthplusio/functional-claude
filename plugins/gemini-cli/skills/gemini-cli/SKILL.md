@@ -1,7 +1,7 @@
 ---
 name: gemini-cli
 description: This skill should be used when the user asks to "use gemini", "gemini cli", "configure gemini", "set up gemini", "gemini review", "gemini images", or mentions general Gemini CLI usage. For specific topics, focused skills may be more appropriate.
-version: 0.6.6
+version: 0.6.7
 ---
 
 # Gemini CLI Development
@@ -62,7 +62,7 @@ Gemini's output is always returned to Claude Code for the user to act on. Gemini
 
 **For reviews, always use `--sandbox` mode** to enforce read-only access:
 ```bash
-gemini --sandbox -m gemini-3.1-pro-preview -p "Review this code..."
+gemini --sandbox -m gemini-3-pro-preview -p "Review this code..."
 ```
 
 **Never use `--yolo` for reviews.** The `--yolo` flag auto-approves all tool calls including file writes. It is ONLY permitted for image generation via nano-banana (which requires tool approval for the generate command).
@@ -77,16 +77,16 @@ The key integration pattern is Gemini's **headless mode** (`-p` flag), which acc
 
 ```bash
 # Simple prompt
-gemini -m gemini-3.1-pro-preview -p "Explain this error: ..."
+gemini -m gemini-3-pro-preview -p "Explain this error: ..."
 
 # Pipe file content for review
-cat large-file.ts | gemini -m gemini-3.1-pro-preview -p "Review this code for bugs and security issues" 2>&1
+cat large-file.ts | gemini -m gemini-3-pro-preview -p "Review this code for bugs and security issues" 2>&1
 
 # Pipe a directory of files
-find src/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done | gemini -m gemini-3.1-pro-preview -p "Review this codebase" 2>&1
+find src/ -name "*.ts" -type f | sort | while read f; do echo "=== FILE: $f ==="; cat "$f"; done | gemini -m gemini-3-pro-preview -p "Review this codebase" 2>&1
 
 # Use sandbox mode (default for all reviews — read-only, no file writes)
-gemini --sandbox -m gemini-3.1-pro-preview -p "Analyze this codebase"
+gemini --sandbox -m gemini-3-pro-preview -p "Analyze this codebase"
 ```
 
 ### Model Policy
@@ -95,22 +95,22 @@ gemini --sandbox -m gemini-3.1-pro-preview -p "Analyze this codebase"
 
 | Task | Preferred Model | Fallback Model |
 |------|----------------|----------------|
-| Text reviews | `gemini-3.1-pro-preview` | `gemini-2.5-pro` |
-| Image generation | `gemini-3.1-pro-image-preview` | `gemini-2.5-flash-image` |
+| Text reviews | `gemini-3-pro-preview` | `gemini-2.5-pro` |
+| Image generation | `gemini-3-pro-image-preview` | `gemini-2.5-flash-image` |
 
-For image generation, always prepend `NANOBANANA_MODEL=gemini-3.1-pro-image-preview` to gemini commands (unless the user has set `NANOBANANA_MODEL` in their environment). For text reviews, use `-m gemini-3.1-pro-preview`.
+For image generation, always prepend `NANOBANANA_MODEL=gemini-3-pro-image-preview` to gemini commands (unless the user has set `NANOBANANA_MODEL` in their environment). For text reviews, use `-m gemini-3-pro-preview`.
 
 If a model returns an error, retry with the fallback and inform the user which model was used.
 
 ```bash
 # Text review (default)
-gemini -m gemini-3.1-pro-preview -p "Your prompt here"
+gemini -m gemini-3-pro-preview -p "Your prompt here"
 
 # Text review (fallback)
 gemini -m gemini-2.5-pro -p "Your prompt here"
 
 # Image generation (default)
-NANOBANANA_MODEL=gemini-3.1-pro-image-preview gemini --yolo -p '/generate "prompt"'
+NANOBANANA_MODEL=gemini-3-pro-image-preview gemini --yolo -p '/generate "prompt"'
 
 # Image generation (fallback)
 NANOBANANA_MODEL=gemini-2.5-flash-image gemini --yolo -p '/generate "prompt"'
@@ -126,9 +126,9 @@ echo "# Project: My App\nStack: React, TypeScript, Node.js" > GEMINI.md
 
 Settings file location: `~/.gemini/settings.json`
 
-### Recommended Settings for Gemini 3.1 Pro
+### Recommended Settings for Gemini 3 Pro
 
-Gemini 3.1 Pro requires **Preview Features** to be enabled. Without this setting, `-m gemini-3.1-pro-preview` will fail with a model not found error. The SessionStart hook checks for this automatically.
+Gemini 3 Pro requires **Preview Features** to be enabled. Without this setting, `-m gemini-3-pro-preview` will fail with a model not found error. The SessionStart hook checks for this automatically.
 
 **Enable via CLI:** Run `gemini`, then use the `/settings` command and enable Preview Features.
 
@@ -158,11 +158,11 @@ Gemini 3.1 Pro requires **Preview Features** to be enabled. Without this setting
 
 | Mode | Setting | Models Used |
 |------|---------|-------------|
-| Auto (Gemini 3.1) | `/model` → Auto (Gemini 3.1) | gemini-3.1-pro-preview, gemini-3-flash-preview |
+| Auto (Gemini 3) | `/model` → Auto (Gemini 3) | gemini-3-pro-preview, gemini-3-flash-preview |
 | Auto (Gemini 2.5) | `/model` → Auto (Gemini 2.5) | gemini-2.5-pro, gemini-2.5-flash |
 | Manual | `/model` → Manual | Any available model |
 
-Note: The `/model` setting does NOT affect headless mode (`-m` flag). This plugin always uses `-m gemini-3.1-pro-preview` explicitly, so the `/model` setting only matters for interactive use.
+Note: The `/model` setting does NOT affect headless mode (`-m` flag). This plugin always uses `-m gemini-3-pro-preview` explicitly, so the `/model` setting only matters for interactive use.
 
 ## Focused Skills
 
@@ -181,23 +181,23 @@ When a task involves reviewing more context than is practical in the current ses
 
 ```bash
 # Review an entire codebase directory (--sandbox ensures read-only)
-find src/ -name "*.ts" -exec cat {} + | gemini --sandbox -m gemini-3.1-pro-preview -p "Review this TypeScript codebase for: 1) Security vulnerabilities 2) Performance issues 3) Code quality"
+find src/ -name "*.ts" -exec cat {} + | gemini --sandbox -m gemini-3-pro-preview -p "Review this TypeScript codebase for: 1) Security vulnerabilities 2) Performance issues 3) Code quality"
 
 # Review a large log file
-gemini --sandbox -m gemini-3.1-pro-preview -p "Summarize errors and patterns in this log" < /var/log/app.log
+gemini --sandbox -m gemini-3-pro-preview -p "Summarize errors and patterns in this log" < /var/log/app.log
 
 # Compare implementations
-diff -u old.ts new.ts | gemini --sandbox -m gemini-3.1-pro-preview -p "Review this diff for correctness and potential regressions"
+diff -u old.ts new.ts | gemini --sandbox -m gemini-3-pro-preview -p "Review this diff for correctness and potential regressions"
 ```
 
 ### Using Gemini with File Context
 
 ```bash
 # Pass specific files as context (--sandbox ensures read-only)
-gemini --sandbox -m gemini-3.1-pro-preview -p "Given these files, suggest improvements" --file src/api.ts --file src/types.ts
+gemini --sandbox -m gemini-3-pro-preview -p "Given these files, suggest improvements" --file src/api.ts --file src/types.ts
 
 # Review with project context
-gemini --sandbox -m gemini-3.1-pro-preview -p "Review the architecture of this project" --file package.json --file tsconfig.json --file src/index.ts
+gemini --sandbox -m gemini-3-pro-preview -p "Review the architecture of this project" --file package.json --file tsconfig.json --file src/index.ts
 ```
 
 ## Troubleshooting
