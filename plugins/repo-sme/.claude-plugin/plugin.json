@@ -1,5 +1,5 @@
 {
   "name": "repo-sme",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Repository Subject Matter Expert — register GitHub repos, browse branches, query architecture and APIs, and create GitHub issues via read-only analysis"
 }

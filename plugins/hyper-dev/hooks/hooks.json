@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/hyper-session-start.js",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/hyper-session-start.js",
             "timeout": 30
           }
         ]
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/verify-hyper-backup.js",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/verify-hyper-backup.js",
             "timeout": 10
           }
         ]
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/check-hyper-learnings.js",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/check-hyper-learnings.js",
             "timeout": 10
           }
         ]

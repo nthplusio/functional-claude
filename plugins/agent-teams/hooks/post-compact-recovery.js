@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // Injects recovery instructions after compaction
 // Note: Using stdout instead of hookSpecificOutput.additionalContext
 // due to Claude Code bug #16538 where plugin SessionStart hooks

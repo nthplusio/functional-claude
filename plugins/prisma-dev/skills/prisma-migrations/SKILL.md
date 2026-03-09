@@ -1,7 +1,7 @@
 ---
 name: prisma-migrations
 description: This skill should be used when the user is working with Prisma schema changes or database migrations — including "prisma migrate", "migrate dev", "migrate deploy", "migration history", "rollback migration", "schema migration", "database migration", "db push", "prisma db push", "schema change", "schema update", "schema evolution", "add field", "add column", "add model", "rename field", "drop column", "change schema", "update schema", "alter table", "schema drift", "migration file", "pending migration", "apply migration", "create migration", "new table", "schema version", or any time a schema.prisma file is modified or the database structure needs to change.
-version: 0.1.9
+version: 0.1.10
 ---
 
 # Prisma Migrations

@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/verify-shadcn-backup.js\"",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/verify-shadcn-backup.js",
             "timeout": 10
           }
         ]
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/shadcn-session-start.js\"",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/shadcn-session-start.js",
             "timeout": 30
           }
         ]
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/shadcn-learnings-capture.js\"",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/shadcn-learnings-capture.js",
             "timeout": 10
           }
         ]

@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/wezterm-session-start.js",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/wezterm-session-start.js",
             "timeout": 30
           }
         ]
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/verify-wezterm-backup.js",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/verify-wezterm-backup.js",
             "timeout": 10
           }
         ]
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/check-wezterm-learnings.js",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/check-wezterm-learnings.js",
             "timeout": 10
           }
         ]

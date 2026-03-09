@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/dedup-guard.js\"",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/dedup-guard.js",
             "timeout": 5
           }
         ]
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/post-compact-recovery.js\"",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/post-compact-recovery.js",
             "timeout": 5
           }
         ]
@@ -28,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/stale-cleanup.js\"",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/stale-cleanup.js",
             "timeout": 10
           }
         ]

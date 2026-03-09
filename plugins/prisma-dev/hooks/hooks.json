@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/block-manual-migration.js",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/block-manual-migration.js",
             "timeout": 10
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/block-db-push.js",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/block-db-push.js",
             "timeout": 10
           }
         ]
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/remind-migrate-after-schema-change.js",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/remind-migrate-after-schema-change.js",
             "timeout": 10
           }
         ]
@@ -40,7 +40,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/prisma-recon.js",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/prisma-recon.js",
             "timeout": 30
           }
         ]
@@ -51,7 +51,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/check-prisma-learnings.js",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/check-prisma-learnings.js",
             "timeout": 10
           }
         ]

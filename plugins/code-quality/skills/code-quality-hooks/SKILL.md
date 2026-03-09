@@ -4,7 +4,7 @@ description: This skill should be used when the user asks to "configure husky",
   "set up lefthook", "add pre-push hook", "add pre-commit hook", "git hooks not running",
   "husky not working", "modify git hooks", or needs deep reference for a specific
   git hook framework.
-version: 1.0.1
+version: 1.0.2
 ---
 
 # Git Hook Framework Reference

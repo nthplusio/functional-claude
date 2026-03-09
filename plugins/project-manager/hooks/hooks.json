@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/pm-session-start.js\"",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pm-session-start.js",
             "timeout": 30
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/pm-session-end.js\"",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pm-session-end.js",
             "timeout": 15
           }
         ]

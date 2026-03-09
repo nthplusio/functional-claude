@@ -1,7 +1,7 @@
 ---
 name: repo-sme
 description: This skill should be used when the user asks to "ask the SME", "check the repo for", "query the SME", "consult the expert", "how does the API work", "look up in the SME", "what does this library do", "how does [library] handle", "repo architecture", "how does the repo work", "create an issue", "file an issue", "what branch has", or when TypeScript errors reference external types from a registered repo. Also use when the user asks about patterns, conventions, or architecture of a registered repository, or wants to compare branches.
-version: 0.2.1
+version: 0.2.2
 ---
 
 # Repository SME (Subject Matter Expert)

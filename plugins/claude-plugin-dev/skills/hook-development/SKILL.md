@@ -4,7 +4,7 @@ description: Guide for creating event-driven hooks that validate, log, or modify
   Claude's behavior. Use when the user asks to "create a hook", "add PreToolUse hook",
   "validate tool use", "hook events", "hooks.json", or mentions hook events
   (PreToolUse, PostToolUse, Stop).
-version: 0.5.1
+version: 0.5.2
 ---
 
 # Hook Development
