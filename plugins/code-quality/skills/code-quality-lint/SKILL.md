@@ -4,7 +4,7 @@ description: This skill should be used when the user asks to "set up eslint",
   "configure prettier", "add biome", "set up ruff", "configure lint-staged",
   "add formatter", "configure linter", or needs reference for linter/formatter/lint-staged
   configuration in their project.
-version: 1.0.2
+version: 1.0.3
 ---
 
 # Linter, Formatter, and lint-staged Reference

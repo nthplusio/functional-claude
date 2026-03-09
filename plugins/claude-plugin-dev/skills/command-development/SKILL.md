@@ -3,7 +3,7 @@ name: command-development
 description: Guide for creating user-invocable slash commands. Use when the user
   asks to "create a command", "slash command", "write a command", "$ARGUMENTS",
   "dynamic arguments", or "@ file references".
-version: 0.6.0
+version: 0.6.1
 ---
 
 # Command Development

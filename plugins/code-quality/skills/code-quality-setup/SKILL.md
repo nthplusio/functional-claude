@@ -3,7 +3,7 @@ name: code-quality-setup
 description: This skill should be used when the user asks to "set up code quality",
   "configure git hooks", "add pre-commit hooks", "set up lint-staged", "add pre-push checks",
   "initialize code quality", or when starting a new project that needs quality gates.
-version: 1.0.2
+version: 1.0.3
 ---
 
 # Code Quality Setup

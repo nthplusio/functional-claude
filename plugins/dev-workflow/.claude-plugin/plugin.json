@@ -1,5 +1,5 @@
 {
   "name": "dev-workflow",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Development workflow validation and planning tools. Integrates a validation checklist into plan mode and provides a gut-check agent that reviews implementation plans before coding begins"
 }
