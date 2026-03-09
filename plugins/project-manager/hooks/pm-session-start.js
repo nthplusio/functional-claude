@@ -21,7 +21,10 @@ let input = '';
 
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => { input += chunk; });
-process.stdin.on('error', () => { console.log(JSON.stringify({ continue: true })); });
+process.stdin.on('error', () => {
+  console.log(JSON.stringify({ continue: true }));
+  process.exit(0);
+});
 
 process.stdin.on('end', () => {
   try {
@@ -30,6 +33,7 @@ process.stdin.on('end', () => {
     // Always fail open — never block a session
     console.log(JSON.stringify({ continue: true }));
   }
+  process.exit(0);
 });
 
 function normalizeRemoteUrl(url) {

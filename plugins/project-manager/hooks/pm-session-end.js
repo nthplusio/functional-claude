@@ -21,7 +21,10 @@ let input = '';
 
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => { input += chunk; });
-process.stdin.on('error', () => { console.log(JSON.stringify({})); });
+process.stdin.on('error', () => {
+  console.log(JSON.stringify({}));
+  process.exit(0);
+});
 
 process.stdin.on('end', () => {
   try {
@@ -29,16 +32,27 @@ process.stdin.on('end', () => {
   } catch (_err) {
     // Always fail open — never block a session
     console.log(JSON.stringify({}));
+    process.exit(0);
   }
 });
 
 function run(cmd, args, cwd) {
   return execFileSync(cmd, args, {
     encoding: 'utf8',
-    timeout: 5000,
+    timeout: 3000,
     cwd: cwd || process.cwd(),
     stdio: ['pipe', 'pipe', 'pipe']
   }).trim();
+}
+
+function normalizeRemoteUrl(url) {
+  if (!url) return null;
+  const stripped = url.trim().replace(/\.git$/, '');
+  const sshMatch = stripped.match(/git@github\.com:(.+)/);
+  if (sshMatch) return sshMatch[1];
+  const httpsMatch = stripped.match(/https?:\/\/github\.com\/(.+)/);
+  if (httpsMatch) return httpsMatch[1];
+  return null;
 }
 
 function main() {
@@ -48,6 +62,7 @@ function main() {
   // Guard: prevent infinite loop when our stopReason triggers a new turn
   if (data.stop_hook_active === true) {
     console.log(JSON.stringify({}));
+    process.exit(0);
     return;
   }
 
@@ -55,13 +70,17 @@ function main() {
   const transcriptPath = data.transcript_path;
   if (!transcriptPath || !fs.existsSync(transcriptPath)) {
     console.log(JSON.stringify({}));
+    process.exit(0);
     return;
   }
 
-  // Load the most recently active project context from cache
-  const context = loadActiveContext();
+  const cwd = data.cwd || process.cwd();
+
+  // Load context matching the current repo, not just the newest
+  const context = loadActiveContext(cwd);
   if (!context) {
     console.log(JSON.stringify({}));
+    process.exit(0);
     return;
   }
 
@@ -71,10 +90,10 @@ function main() {
     transcript = fs.readFileSync(transcriptPath, 'utf8');
   } catch (_e) {
     console.log(JSON.stringify({}));
+    process.exit(0);
     return;
   }
 
-  const cwd = data.cwd || process.cwd();
   const signals = collectSignals(context, transcript, cwd);
   const trackingResult = computeTrackingScore(signals);
   const { autoActions, questions } = buildDirectives(signals, trackingResult, context.project);
@@ -82,10 +101,12 @@ function main() {
 
   if (!stopReason) {
     console.log(JSON.stringify({}));
+    process.exit(0);
     return;
   }
 
   console.log(JSON.stringify({ stopReason }));
+  process.exit(0);
 }
 
 // ---------------------------------------------------------------------------
@@ -282,12 +303,20 @@ function formatStopReason(autoActions, questions, project) {
 }
 
 // ---------------------------------------------------------------------------
-// Load the most recently active project context from cache
+// Load the active project context matching the current repo
 // ---------------------------------------------------------------------------
 
-function loadActiveContext() {
+function loadActiveContext(cwd) {
   if (!fs.existsSync(CACHE_ROOT)) return null;
 
+  // Detect current repo to match against cached contexts
+  let currentRepoKey = null;
+  try {
+    const remoteUrl = run('git', ['-C', cwd, 'remote', 'get-url', 'origin']);
+    currentRepoKey = normalizeRemoteUrl(remoteUrl);
+  } catch (_e) {}
+
+  let matched = null;
   let newest = null;
   let newestTime = 0;
 
@@ -305,6 +334,11 @@ function loadActiveContext() {
         const twentyFourHours = 24 * 60 * 60 * 1000;
         if (Date.now() - loadedAt > twentyFourHours) continue;
 
+        // Prefer exact repo match over newest
+        if (currentRepoKey && ctx.repoKey === currentRepoKey) {
+          matched = ctx;
+        }
+
         if (loadedAt > newestTime) {
           newestTime = loadedAt;
           newest = ctx;
@@ -313,5 +347,6 @@ function loadActiveContext() {
     }
   } catch (_e) {}
 
-  return newest;
+  // Use repo-matched context if found, otherwise fall back to newest
+  return matched || newest;
 }

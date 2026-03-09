@@ -1,7 +1,7 @@
 ---
 name: pm-issues
 description: Use this skill when creating, updating, or closing a Linear issue; when the user describes untracked work that should be a Linear issue; when drafting issue content; or when the user says "create an issue", "log this in Linear", "add this to Linear", "update the issue", "close out the issue", "mark it done".
-version: 0.6.0
+version: 0.6.1
 ---
 
 # PM Issue Management
