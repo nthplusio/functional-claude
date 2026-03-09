@@ -164,6 +164,9 @@ function main() {
     `- **Issue tracker:** ${project.issue_tracker || 'linear'}`,
   ];
 
+  if (project.linear_workspace) {
+    lines.push(`- **Linear workspace:** ${project.linear_workspace}`);
+  }
   if (project.linear_team_key) {
     lines.push(`- **Linear team:** ${project.linear_team_key}`);
   }
@@ -177,6 +180,9 @@ function main() {
     lines.push(``, ghSwitchWarning);
   }
 
+  if (project.linear_workspace) {
+    lines.push(``, `**Linear workspace verification:** On first Linear MCP call, run \`list_teams\` and confirm team \`${project.linear_team_key || ''}\` exists in the results. If not found, warn: "Linear MCP may be connected to a different workspace. Expected: ${project.linear_workspace}. Run \`/pm-setup\` to reconfigure or reconnect Linear MCP to the correct workspace."`);
+  }
   lines.push(``, `**Note:** Linear MCP should be available as \`linear\`. If Linear tools are unavailable, warn the user and fall back to cached issue state.`);
   lines.push(``, `Use the \`project-manager\` skill to handle project status, issue management, PR linking, and direction changes. Proactively suggest creating Linear issues when the user describes untracked work.`);
 

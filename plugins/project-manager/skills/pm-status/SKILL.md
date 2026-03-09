@@ -1,7 +1,7 @@
 ---
 name: pm-status
 description: Use this skill when the user asks "where are we", "what's in progress", "what should I work on next", "project status", "catch me up", or "what's open". Provides a concise session briefing with in-progress issues and next suggested work. Do NOT include past session history unless the user explicitly asks.
-version: 0.6.3
+version: 0.7.0
 ---
 
 # PM Status Briefing
@@ -10,7 +10,7 @@ Deliver a concise, actionable briefing of current project state.
 
 ## Step 1: Confirm Project Context
 
-Check the injected **Active Project** context for repo, Linear team key, Linear project (if set), and gh user. If missing, prompt the user to run `/pm-setup`.
+Check the injected **Active Project** context for repo, Linear workspace, Linear team key, Linear project (if set), and gh user. If missing, prompt the user to run `/pm-setup`.
 
 ## Step 2: Query Linear for Current State
 
@@ -49,7 +49,7 @@ If Linear MCP fails: warn and display cached state from `~/.claude/project-manag
 Output format (keep it tight — no padding, no extra explanation):
 
 ```
-Project: <displayName> · <org/repo> · gh: <gh_user> · <linear_project_name if set>
+Project: <displayName> · <org/repo> · gh: <gh_user> · <linear_workspace> / <linear_team_key> · <linear_project_name if set>
 
 IN PROGRESS
   <ID> · <title> (<priority label>)

@@ -44,16 +44,23 @@ Validate the chosen user:
 gh auth switch --user <chosen_user> && gh api user --jq '.login'
 ```
 
-**c) Linear team key**
-> "What's the Linear team key for this project? (e.g., 'ENG', 'PLATFORM', 'APP')"
+**c) Linear workspace**
+> "Which Linear workspace is this project in?"
 
-Validate by querying Linear MCP:
+Detect available workspaces by querying:
 ```
 list_teams
 ```
-Find the team matching the key. If not found: "Team key not found in Linear. Available teams: [list]. Please check and re-enter."
+The workspace name appears in team results. List the detected workspace(s) and let the user confirm. If the user has access to multiple workspaces, they may need to reconnect the Linear MCP to the correct one first.
 
-**d) Linear project (optional)**
+Store both the workspace name and slug (lowercase, hyphenated).
+
+**d) Linear team key**
+> "What's the Linear team key for this project? (e.g., 'ENG', 'PLATFORM', 'APP')"
+
+Use the teams already fetched in step (c). Find the team matching the key. If not found: "Team key not found in Linear. Available teams: [list]. Please check and re-enter."
+
+**e) Linear project (optional)**
 > "Is this work part of a specific Linear project? (optional — press Enter to skip)"
 
 If the user provides a project name, validate it:
@@ -64,7 +71,7 @@ Match by name (case-insensitive). If not found: "Project not found. Available pr
 
 Store the project ID and name if provided. This can be updated later via `/pm-setup` (re-running on an existing project) or by editing `~/.claude/project-manager/projects.json` directly.
 
-**e) Issue tracker confirmation**
+**f) Issue tracker confirmation**
 Default is `linear`. Ask only if relevant:
 > "Issue tracker: Linear (default). Is that correct?"
 
@@ -80,6 +87,8 @@ Load or initialize `~/.claude/project-manager/projects.json`:
       "displayName": "<user input>",
       "gh_user": "<chosen github user>",
       "issue_tracker": "linear",
+      "linear_workspace": "<workspace name>",
+      "linear_workspace_slug": "<workspace slug>",
       "linear_team_key": "<team key>",
       "linear_team_id": "<team id from MCP validation>",
       "linear_project_id": "<project id if provided, or null>",
@@ -107,10 +116,11 @@ mkdir -p ~/.claude/project-manager/cache/<slug>
 Output a confirmation:
 ```
 ✓ Project registered: <displayName>
-  Repo:         <org/repo>
-  GitHub user:  <gh_user>
-  Linear team:  <team_key> (<team_id>)
-  Linear project: <project_name> (or "none — issues will be team-scoped")
+  Repo:            <org/repo>
+  GitHub user:     <gh_user>
+  Linear workspace: <workspace_name>
+  Linear team:     <team_key> (<team_id>)
+  Linear project:  <project_name> (or "none — issues will be team-scoped")
 
 Run /pm to get your first project briefing.
 To update the project later, run /pm-setup again in this repo.
