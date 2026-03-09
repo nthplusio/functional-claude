@@ -1,5 +1,5 @@
 {
-  "version": "0.5.2",
+  "version": "0.6.0",
   "preserve": [
     ".cache/",
     ".claude-plugin/"
@@ -25,6 +25,7 @@
     "skills/command-development/SKILL.md",
     "skills/command-development/references/cache.md",
     "skills/hook-development/SKILL.md",
+    "skills/hook-development/references/patterns.md",
     "skills/mcp-integration/SKILL.md",
     "skills/plugin-settings/SKILL.md",
     "skills/plugin-settings/references/cache.md",

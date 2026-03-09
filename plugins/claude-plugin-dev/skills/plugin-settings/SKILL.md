@@ -3,7 +3,7 @@ name: plugin-settings
 description: Guide for implementing user-configurable plugin settings with .local.md
   files. Use when the user asks about ".local.md", "plugin settings", "configuration
   file", "temporarily active hooks", or "user configuration".
-version: 0.5.2
+version: 0.6.0
 ---
 
 # Plugin Settings

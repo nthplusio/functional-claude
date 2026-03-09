@@ -3,7 +3,7 @@ name: claude-plugin-dev
 description: Overview of Claude Code plugin development with component routing.
   Use when the user asks to "create a plugin", "build a plugin", "plugin structure",
   "how do plugins work", or needs general plugin guidance.
-version: 0.5.2
+version: 0.6.0
 ---
 
 # Claude Code Plugin Development

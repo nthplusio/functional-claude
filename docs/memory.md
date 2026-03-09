@@ -18,7 +18,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | prisma-dev | 0.1.10 | Prisma ORM development with schema analysis and migration safety |
 | shadcn-dev | 0.2.4 | shadcn/ui and Tailwind CSS v4 development workflows |
 | code-quality | 1.0.2 | Deterministic code quality infrastructure — git hooks, lint-staged, and formatters |
-| claude-plugin-dev | 0.5.2 | Plugin development with guided workflows and AI-assisted creation |
+| claude-plugin-dev | 0.6.0 | Plugin development with guided workflows and AI-assisted creation |
 | opentui-dev | 0.1.8 | OpenTUI terminal interface development with component design and layout |
 | dev-workflow | 0.2.3 | Development workflow validation and planning tools |
 | tabby-dev | 0.1.6 | Tabby terminal configuration, SSH connections, and plugin development |
@@ -27,7 +27,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | session-insights | 0.1.3 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
 | obsidian-dev | 0.1.1 | Obsidian plugin development workflows covering setup, Plugin API, commands, settings, vault operations, UI components, and editor integration |
 | repo-sme | 0.2.2 | Repository Subject Matter Expert — register GitHub repos, browse branches, query architecture and APIs, and create GitHub issues via read-only analysis |
-| project-manager | 0.6.2 | Project manager for multi-project workflows — per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings |
+| project-manager | 0.6.3 | Project manager for multi-project workflows — per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings |
 
 ## Architecture Overview
 
@@ -267,7 +267,7 @@ OpenTUI terminal interface development with TypeScript/Bun.
 | references/testing-reference.md | Test renderer and snapshots |
 | references/cache-management.md | Cache refresh strategy and learnings |
 
-## claude-plugin-dev Plugin (v0.5.0)
+## claude-plugin-dev Plugin (v0.6.0)
 
 Plugin development documentation with guided workflows and AI-assisted creation.
 
@@ -519,7 +519,7 @@ Interactive session analysis, deep drill-down into Claude Code conversation hist
 | extract-history.js | Parse history.jsonl with project/date filters |
 | aggregate-stats.js | Cross-session aggregate statistics with sampling |
 
-## project-manager Plugin (v0.6.2)
+## project-manager Plugin (v0.6.3)
 
 Project manager for multi-project workflows. Per-repo GitHub credential switching, Linear issue lifecycle management, consistent branch naming (`feat/ENG-42-description`), PR linking with auto-close (`Closes ENG-42`), proactive work tracking with branch awareness, and session briefings. Configured via `~/.claude/project-manager/projects.json`.
 

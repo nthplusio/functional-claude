@@ -4,7 +4,7 @@ description: Guide for creating event-driven hooks that validate, log, or modify
   Claude's behavior. Use when the user asks to "create a hook", "add PreToolUse hook",
   "validate tool use", "hook events", "hooks.json", or mentions hook events
   (PreToolUse, PostToolUse, Stop).
-version: 0.5.2
+version: 0.6.0
 ---
 
 # Hook Development
@@ -111,11 +111,35 @@ See `/claude-plugin-dev:plugin-settings` for configuration patterns.
 
 Permission values: `allow`, `deny`, `ask`
 
-## Hook Script Template
+## Hook Script Templates
+
+### Bash Hook (Preferred for validation/logging)
+
+```bash
+#!/bin/bash
+# Hook: PreToolUse - Description
+# Exit 0 = allow, Exit 2 = block (stderr shown to Claude)
+set -e
+
+INPUT=$(cat)
+TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // "unknown"')
+TOOL_INPUT=$(echo "$INPUT" | jq -c '.tool_input // {}')
+
+# ... validation logic ...
+
+exit 0
+```
+
+### Node.js Hook (Cross-Platform Shebang Required)
+
+**Never use `#!/usr/bin/env node`** — it fails on macOS when Node is installed via version managers (nvm, fnm, volta). Use this polyglot preamble instead:
 
 ```javascript
-#!/usr/bin/env node
-const fs = require('fs');
+#!/bin/sh
+":" //; export PATH="/opt/homebrew/bin:/usr/local/bin:$HOME/.volta/bin:$HOME/.fnm/aliases/default/bin:$HOME/.asdf/shims:$HOME/.local/share/mise/shims:$HOME/.local/bin:$PATH"
+":" //; command -v node >/dev/null 2>&1 || { [ -s "${NVM_DIR:-$HOME/.nvm}/nvm.sh" ] && . "${NVM_DIR:-$HOME/.nvm}/nvm.sh" 2>/dev/null; }
+":" //; exec node "$0" "$@"
+'use strict';
 
 let input = '';
 process.stdin.setEncoding('utf8');
@@ -123,17 +147,12 @@ process.stdin.on('data', chunk => input += chunk);
 process.stdin.on('end', () => {
   try {
     const data = JSON.parse(input || '{}');
-    const content = data.tool_input?.content || '';
-
-    if (shouldBlock(content)) {
-      console.error('Reason for blocking');
-      process.exit(2);
-    }
-
-    console.log(JSON.stringify({ permissionDecision: "allow" }));
-    process.exit(0);
+    // ... logic ...
+    console.log(JSON.stringify({ continue: true }));
   } catch (err) {
-    process.exit(0);
+    process.exit(0); // Always fail open
   }
 });
 ```
+
+For detailed patterns, bash examples, and best practices: read `references/patterns.md`.

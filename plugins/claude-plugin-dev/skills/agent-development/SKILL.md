@@ -3,7 +3,7 @@ name: agent-development
 description: Guide for creating specialized subagents with AGENT.md files. Use when
   the user asks to "create an agent", "write AGENT.md", "subagent", "specialized
   agent", "agent tools", or needs guidance on agent design.
-version: 0.5.2
+version: 0.6.0
 ---
 
 # Agent Development

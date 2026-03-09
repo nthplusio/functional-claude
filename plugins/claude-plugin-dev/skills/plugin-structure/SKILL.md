@@ -3,7 +3,7 @@ name: plugin-structure
 description: Guide for organizing Claude Code plugin directories and creating manifests.
   Use when the user asks to "create plugin structure", "set up plugin directories",
   "plugin layout", "plugin manifest", or "plugin.json".
-version: 0.5.2
+version: 0.6.0
 ---
 
 # Plugin Structure

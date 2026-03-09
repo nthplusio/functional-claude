@@ -3,7 +3,7 @@ name: mcp-integration
 description: Guide for bundling MCP servers with plugins. Use when the user asks
   to "add MCP server", "integrate MCP", "external tools", ".mcp.json", or
   "Model Context Protocol".
-version: 0.5.2
+version: 0.6.0
 ---
 
 # MCP Integration

@@ -3,7 +3,7 @@ name: skill-development
 description: Guide for writing effective SKILL.md files with proper triggers and
   progressive disclosure. Use when the user asks to "create a skill", "write SKILL.md",
   "skill frontmatter", "skill description", or "trigger phrases".
-version: 0.5.2
+version: 0.6.0
 ---
 
 # Skill Development
