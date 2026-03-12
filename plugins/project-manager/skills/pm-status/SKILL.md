@@ -1,7 +1,7 @@
 ---
 name: pm-status
 description: Use this skill when the user asks "where are we", "what's in progress", "what should I work on next", "project status", "catch me up", or "what's open". Provides a concise session briefing with in-progress issues and next suggested work. Do NOT include past session history unless the user explicitly asks.
-version: 0.8.1
+version: 0.9.0
 ---
 
 # PM Status Briefing
