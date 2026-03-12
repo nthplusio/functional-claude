@@ -9,10 +9,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Cache Foundation
 
-- [ ] **CACHE-01**: Plugin stores issue data (status, title, priority, assignee, description, updatedAt) in a normalized JSON cache at `cache/<slug>/issues.json`
-- [ ] **CACHE-02**: Cache writes use atomic write pattern (write-to-temp, then rename) to prevent corruption from process termination
-- [ ] **CACHE-03**: Cache read/write failures are caught and never block session startup or command execution
-- [ ] **CACHE-04**: Each project's cache is isolated in its own `cache/<slug>/` directory
+- [x] **CACHE-01**: Plugin stores issue data (status, title, priority, assignee, description, updatedAt) in a normalized JSON cache at `cache/<slug>/issues.json`
+- [x] **CACHE-02**: Cache writes use atomic write pattern (write-to-temp, then rename) to prevent corruption from process termination
+- [x] **CACHE-03**: Cache read/write failures are caught and never block session startup or command execution
+- [x] **CACHE-04**: Each project's cache is isolated in its own `cache/<slug>/` directory
 
 ### Sync Engine
 
@@ -62,10 +62,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CACHE-01 | Phase 1 | Pending |
-| CACHE-02 | Phase 1 | Pending |
-| CACHE-03 | Phase 1 | Pending |
-| CACHE-04 | Phase 1 | Pending |
+| CACHE-01 | Phase 1 | Complete |
+| CACHE-02 | Phase 1 | Complete |
+| CACHE-03 | Phase 1 | Complete |
+| CACHE-04 | Phase 1 | Complete |
 | SYNC-01 | Phase 1 | Pending |
 | SYNC-02 | Phase 2 | Pending |
 | SYNC-03 | Phase 2 | Pending |

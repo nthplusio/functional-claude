@@ -31,7 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Cache store module with atomic writes, backup recovery, and fail-open (TDD)
+- [x] 01-01-PLAN.md — Cache store module with atomic writes, backup recovery, and fail-open (TDD)
 - [ ] 01-02-PLAN.md — GitHub and Linear full sync adapters with normalization (TDD)
 
 ### Phase 2: Delta Sync and Session Integration
