@@ -28,11 +28,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Each project's cache is isolated in its own `cache/<slug>/` directory -- syncing project A does not affect project B's cache
   4. Killing the process mid-write does not corrupt the cache file (atomic write-to-temp-then-rename pattern works)
   5. When cache read or write fails (permissions, disk full, corrupt JSON), the error is caught and the plugin continues without blocking
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md — Cache store module with atomic writes, backup recovery, and fail-open (TDD)
+- [ ] 01-02-PLAN.md — GitHub and Linear full sync adapters with normalization (TDD)
 
 ### Phase 2: Delta Sync and Session Integration
 **Goal**: Sessions start instantly from cached data, only fetch what changed since the last sync, and expired caches trigger automatic or manual full refresh
@@ -69,6 +69,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Cache Storage and Full Sync | 0/0 | Not started | - |
+| 1. Cache Storage and Full Sync | 0/2 | Planning complete | - |
 | 2. Delta Sync and Session Integration | 0/0 | Not started | - |
 | 3. Delta Reporting | 0/0 | Not started | - |
