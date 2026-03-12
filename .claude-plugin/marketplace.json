@@ -32,7 +32,7 @@
     {
       "name": "code-quality",
       "source": "./plugins/code-quality",
-      "description": "Deterministic code quality infrastructure \u2014 git hooks, lint-staged, and formatters that run on every commit and push, with guided setup and ecosystem detection",
+      "description": "Deterministic code quality infrastructure — git hooks, lint-staged, and formatters that run on every commit and push, with guided setup and ecosystem detection",
       "version": "1.0.3"
     },
     {
@@ -86,14 +86,14 @@
     {
       "name": "repo-sme",
       "source": "./plugins/repo-sme",
-      "description": "Repository Subject Matter Expert \u2014 register GitHub repos, browse branches, query architecture and APIs, and create GitHub issues via read-only analysis",
+      "description": "Repository Subject Matter Expert — register GitHub repos, browse branches, query architecture and APIs, and create GitHub issues via read-only analysis",
       "version": "0.2.3"
     },
     {
       "name": "project-manager",
       "source": "./plugins/project-manager",
-      "description": "Project manager for multi-project workflows \u2014 per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings",
-      "version": "0.7.0"
+      "description": "Project manager for multi-project workflows — per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings",
+      "version": "0.8.0"
     }
   ]
 }

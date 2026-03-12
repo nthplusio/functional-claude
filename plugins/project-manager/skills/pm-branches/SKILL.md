@@ -1,7 +1,7 @@
 ---
 name: pm-branches
 description: Use this skill when creating a git branch for a Linear issue, writing a PR description, opening a pull request, or linking a PR to a Linear issue. Trigger phrases: "create a branch", "new branch for this issue", "open a PR", "write the PR description", "link to Linear", "push this up".
-version: 0.7.0
+version: 0.8.0
 ---
 
 # PM Branches & PR Linking
