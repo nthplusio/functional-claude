@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 01-02-PLAN.md (GitHub and Linear adapters) -- Phase 1 complete
-last_updated: "2026-03-12T21:56:13.641Z"
-last_activity: 2026-03-12 -- Completed 01-02 (GitHub and Linear adapters)
+status: in-progress
+stopped_at: Completed 02-01-PLAN.md (cache store sync-meta, merge, and freshness)
+last_updated: "2026-03-13T21:22:50Z"
+last_activity: 2026-03-13 -- Completed 02-01 (sync-meta, merge, freshness primitives)
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
-  percent: 100
+  total_plans: 5
+  completed_plans: 3
+  percent: 60
 ---
 
 # Project State
@@ -21,32 +21,33 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** Session startup is fast and token-efficient -- the plugin loads cached state instantly and only fetches what changed since the last check.
-**Current focus:** Phase 1: Cache Storage and Full Sync
+**Current focus:** Phase 2: Delta Sync and Session Integration
 
 ## Current Position
 
-Phase: 1 of 3 (Cache Storage and Full Sync) -- COMPLETE
-Plan: 2 of 2 in current phase
-Status: Phase Complete
-Last activity: 2026-03-12 -- Completed 01-02 (GitHub and Linear adapters)
+Phase: 2 of 3 (Delta Sync and Session Integration)
+Plan: 1 of 3 in current phase
+Status: In Progress
+Last activity: 2026-03-13 -- Completed 02-01 (sync-meta, merge, freshness primitives)
 
-Progress: [██████████] 100%
+Progress: [██████----] 60%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
+- Total plans completed: 3
 - Average duration: 3min
-- Total execution time: 0.1 hours
+- Total execution time: 0.15 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 - Cache Storage | 2 | 6min | 3min |
+| 2 - Delta Sync | 1 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3min), 01-02 (3min)
+- Last 5 plans: 01-01 (3min), 01-02 (3min), 02-01 (3min)
 - Trend: Consistent
 
 *Updated after each plan completion*
@@ -66,6 +67,10 @@ Recent decisions affecting current work:
 - [Phase 01-02]: GitHub adapter uses execFileSync (no shell) matching existing pm-session-start.js pattern
 - [Phase 01-02]: Linear adapter is pure normalization only -- no MCP calls, model drives fetch via skill
 - [Phase 01-02]: Both adapters return identical {issues, syncedAt} shape for cache-store compatibility
+- [02-01]: No .bak fallback for sync-meta (reconstructable from full sync, unlike issue data)
+- [02-01]: mergeIssues uses shallow spread for immutable merge (delta overwrites by key)
+- [02-01]: classifyFreshness evaluates EXPIRED first, then STALE, then FRESH (priority order)
+- [02-01]: formatAge uses floor rounding for all tiers
 
 ### Pending Todos
 
@@ -77,6 +82,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-12T21:51:50.652Z
-Stopped at: Completed 01-02-PLAN.md (GitHub and Linear adapters) -- Phase 1 complete
+Last session: 2026-03-13T21:22:50Z
+Stopped at: Completed 02-01-PLAN.md (cache store sync-meta, merge, and freshness)
 Resume file: None
