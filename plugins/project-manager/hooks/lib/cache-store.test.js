@@ -10,6 +10,11 @@ const {
   getCacheDir,
   readIssues,
   writeIssues,
+  readSyncMeta,
+  writeSyncMeta,
+  mergeIssues,
+  classifyFreshness,
+  formatAge,
   CACHE_VERSION,
   CACHE_ROOT,
 } = require('./cache-store.js');
@@ -229,6 +234,281 @@ describe('cache-store', () => {
     });
   });
 
+  describe('readSyncMeta', () => {
+    it('returns parsed sync-meta.json when file exists and has version field', () => {
+      const meta = {
+        version: 1,
+        lastSyncedAt: '2026-03-13T10:30:00.000Z',
+        lastFullSyncAt: '2026-03-12T08:00:00.000Z',
+        ttlHours: 24,
+        issueCount: 12,
+        syncType: 'delta',
+        provider: 'linear',
+      };
+      const slugDir = path.join(tmpRoot, 'sync-slug');
+      fs.mkdirSync(slugDir, { recursive: true });
+      fs.writeFileSync(path.join(slugDir, 'sync-meta.json'), JSON.stringify(meta), 'utf8');
+
+      const result = readSyncMeta('sync-slug', tmpRoot);
+      assert.ok(result !== null, 'should return parsed data');
+      assert.equal(result.version, 1);
+      assert.equal(result.lastSyncedAt, '2026-03-13T10:30:00.000Z');
+      assert.equal(result.provider, 'linear');
+    });
+
+    it('returns null when file does not exist', () => {
+      const result = readSyncMeta('no-such-slug', tmpRoot);
+      assert.equal(result, null);
+    });
+
+    it('returns null when file contains invalid JSON', () => {
+      const slugDir = path.join(tmpRoot, 'bad-json-slug');
+      fs.mkdirSync(slugDir, { recursive: true });
+      fs.writeFileSync(path.join(slugDir, 'sync-meta.json'), '{broken!!!', 'utf8');
+
+      const result = readSyncMeta('bad-json-slug', tmpRoot);
+      assert.equal(result, null);
+    });
+
+    it('returns null when parsed data has no version field', () => {
+      const slugDir = path.join(tmpRoot, 'no-version-slug');
+      fs.mkdirSync(slugDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(slugDir, 'sync-meta.json'),
+        JSON.stringify({ lastSyncedAt: '2026-03-13T10:30:00.000Z' }),
+        'utf8'
+      );
+
+      const result = readSyncMeta('no-version-slug', tmpRoot);
+      assert.equal(result, null);
+    });
+  });
+
+  describe('writeSyncMeta', () => {
+    it('writes sync-meta.json atomically and returns true', () => {
+      const meta = {
+        version: 1,
+        lastSyncedAt: '2026-03-13T10:30:00.000Z',
+        lastFullSyncAt: '2026-03-12T08:00:00.000Z',
+        ttlHours: 24,
+        issueCount: 12,
+        syncType: 'delta',
+        provider: 'linear',
+      };
+      const result = writeSyncMeta('write-sync-slug', meta, tmpRoot);
+      assert.equal(result, true);
+
+      const filePath = path.join(tmpRoot, 'write-sync-slug', 'sync-meta.json');
+      assert.ok(fs.existsSync(filePath), 'sync-meta.json should exist');
+
+      const written = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      assert.deepEqual(written, meta);
+    });
+
+    it('returns false (not throws) on permission error', () => {
+      const readOnlyDir = path.join(tmpRoot, 'readonly-sync');
+      fs.mkdirSync(readOnlyDir, { recursive: true });
+      fs.chmodSync(readOnlyDir, 0o444);
+
+      const result = writeSyncMeta('sub-slug', { version: 1 }, readOnlyDir);
+      assert.equal(result, false, 'should return false on permission error');
+
+      fs.chmodSync(readOnlyDir, 0o755);
+    });
+
+    it('no .tmp file remains after successful write', () => {
+      writeSyncMeta('clean-slug', { version: 1, lastSyncedAt: '2026-03-13T00:00:00.000Z' }, tmpRoot);
+
+      const slugDir = path.join(tmpRoot, 'clean-slug');
+      const files = fs.readdirSync(slugDir);
+      const tmpFiles = files.filter(f => f.includes('.tmp.'));
+      assert.equal(tmpFiles.length, 0, 'no .tmp files should remain');
+    });
+  });
+
+  describe('mergeIssues', () => {
+    it('overlays delta issues onto existing, preserving untouched entries', () => {
+      const existing = sampleData();
+      existing.issues['NTH-99'] = {
+        id: 'NTH-99', title: 'Untouched issue', status: 'todo',
+        priority: 3, assignee: 'Jane', description: 'Stays the same',
+        updatedAt: '2026-03-10T00:00:00.000Z', tracker: 'linear',
+      };
+
+      const delta = {
+        syncedAt: '2026-03-13T12:00:00.000Z',
+        issues: {
+          'NTH-42': {
+            id: 'NTH-42', title: 'Auth middleware refactor', status: 'done',
+            priority: 2, assignee: 'Scott', description: 'Refactored',
+            updatedAt: '2026-03-13T11:00:00.000Z', tracker: 'linear',
+          },
+        },
+      };
+
+      const result = mergeIssues(existing, delta);
+
+      // NTH-42 updated to delta version
+      assert.equal(result.issues['NTH-42'].status, 'done');
+      // NTH-99 preserved unchanged
+      assert.equal(result.issues['NTH-99'].title, 'Untouched issue');
+    });
+
+    it('updates existing issues with delta version', () => {
+      const existing = sampleData();
+      const delta = {
+        syncedAt: '2026-03-13T12:00:00.000Z',
+        issues: {
+          'NTH-42': {
+            id: 'NTH-42', title: 'Updated title', status: 'done',
+            priority: 1, assignee: 'Scott', description: 'Updated',
+            updatedAt: '2026-03-13T11:00:00.000Z', tracker: 'linear',
+          },
+        },
+      };
+
+      const result = mergeIssues(existing, delta);
+      assert.equal(result.issues['NTH-42'].title, 'Updated title');
+      assert.equal(result.issues['NTH-42'].priority, 1);
+    });
+
+    it('adds new issues from delta', () => {
+      const existing = sampleData();
+      const delta = {
+        syncedAt: '2026-03-13T12:00:00.000Z',
+        issues: {
+          'NTH-100': {
+            id: 'NTH-100', title: 'Brand new issue', status: 'todo',
+            priority: 4, assignee: 'Bob', description: 'New',
+            updatedAt: '2026-03-13T11:00:00.000Z', tracker: 'linear',
+          },
+        },
+      };
+
+      const result = mergeIssues(existing, delta);
+      assert.ok(result.issues['NTH-100'], 'new issue should be added');
+      assert.equal(result.issues['NTH-100'].title, 'Brand new issue');
+      // Original still there
+      assert.ok(result.issues['NTH-42'], 'existing issue should remain');
+    });
+
+    it('result has version and tracker from existingData, syncedAt from deltaResult', () => {
+      const existing = sampleData();
+      existing.version = 1;
+      existing.tracker = 'linear';
+      const delta = {
+        syncedAt: '2026-03-13T15:00:00.000Z',
+        issues: {},
+      };
+
+      const result = mergeIssues(existing, delta);
+      assert.equal(result.version, 1);
+      assert.equal(result.tracker, 'linear');
+      assert.equal(result.syncedAt, '2026-03-13T15:00:00.000Z');
+    });
+
+    it('does not mutate the original existingData object', () => {
+      const existing = sampleData();
+      const originalSyncedAt = existing.syncedAt;
+      const originalIssueStatus = existing.issues['NTH-42'].status;
+
+      const delta = {
+        syncedAt: '2026-03-13T12:00:00.000Z',
+        issues: {
+          'NTH-42': {
+            id: 'NTH-42', title: 'Changed', status: 'done',
+            priority: 2, assignee: 'Scott', description: 'Changed',
+            updatedAt: '2026-03-13T11:00:00.000Z', tracker: 'linear',
+          },
+        },
+      };
+
+      mergeIssues(existing, delta);
+
+      // Original should be unchanged
+      assert.equal(existing.syncedAt, originalSyncedAt);
+      assert.equal(existing.issues['NTH-42'].status, originalIssueStatus);
+    });
+  });
+
+  describe('classifyFreshness', () => {
+    it('returns FRESH when lastSyncedAt < 1 hour ago', () => {
+      const now = new Date();
+      const thirtyMinAgo = new Date(now.getTime() - 30 * 60 * 1000).toISOString();
+      const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString();
+
+      const result = classifyFreshness({
+        lastSyncedAt: thirtyMinAgo,
+        lastFullSyncAt: twoHoursAgo,
+        ttlHours: 24,
+      });
+      assert.equal(result.tier, 'FRESH');
+      assert.ok(typeof result.age === 'number');
+      assert.ok(typeof result.message === 'string');
+    });
+
+    it('returns STALE when lastSyncedAt > 1 hour but lastFullSyncAt within TTL', () => {
+      const now = new Date();
+      const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString();
+      const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000).toISOString();
+
+      const result = classifyFreshness({
+        lastSyncedAt: twoHoursAgo,
+        lastFullSyncAt: twelveHoursAgo,
+        ttlHours: 24,
+      });
+      assert.equal(result.tier, 'STALE');
+    });
+
+    it('returns EXPIRED when lastFullSyncAt > TTL', () => {
+      const now = new Date();
+      const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString();
+      const threeDaysAgo = new Date(now.getTime() - 72 * 60 * 60 * 1000).toISOString();
+
+      const result = classifyFreshness({
+        lastSyncedAt: twoHoursAgo,
+        lastFullSyncAt: threeDaysAgo,
+        ttlHours: 24,
+      });
+      assert.equal(result.tier, 'EXPIRED');
+    });
+
+    it('uses default ttlHours of 24 when missing from syncMeta', () => {
+      const now = new Date();
+      const thirtyMinAgo = new Date(now.getTime() - 30 * 60 * 1000).toISOString();
+      const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000).toISOString();
+
+      // No ttlHours provided -- should default to 24
+      const result = classifyFreshness({
+        lastSyncedAt: thirtyMinAgo,
+        lastFullSyncAt: twelveHoursAgo,
+      });
+      // lastSyncedAt < 1h => FRESH, lastFullSyncAt 12h < 24h default TTL
+      assert.equal(result.tier, 'FRESH');
+    });
+  });
+
+  describe('formatAge', () => {
+    it('returns "Xm" for durations under 1 hour', () => {
+      assert.equal(formatAge(30 * 60 * 1000), '30m');
+      assert.equal(formatAge(59 * 60 * 1000), '59m');
+    });
+
+    it('returns "Xh" for durations under 24 hours', () => {
+      assert.equal(formatAge(60 * 60 * 1000), '1h');
+      assert.equal(formatAge(23 * 60 * 60 * 1000), '23h');
+    });
+
+    it('returns "Xd" for durations 24+ hours', () => {
+      assert.equal(formatAge(24 * 60 * 60 * 1000), '1d');
+      assert.equal(formatAge(72 * 60 * 60 * 1000), '3d');
+    });
+
+    it('edge case: 0ms returns "0m"', () => {
+      assert.equal(formatAge(0), '0m');
+    });
+  });
+
   describe('exports', () => {
     it('CACHE_VERSION is 1', () => {
       assert.equal(CACHE_VERSION, 1);
@@ -237,6 +517,14 @@ describe('cache-store', () => {
     it('CACHE_ROOT is a string under .claude/project-manager/cache', () => {
       assert.ok(typeof CACHE_ROOT === 'string');
       assert.ok(CACHE_ROOT.includes(path.join('.claude', 'project-manager', 'cache')));
+    });
+
+    it('exports all expected functions', () => {
+      assert.equal(typeof readSyncMeta, 'function');
+      assert.equal(typeof writeSyncMeta, 'function');
+      assert.equal(typeof mergeIssues, 'function');
+      assert.equal(typeof classifyFreshness, 'function');
+      assert.equal(typeof formatAge, 'function');
     });
   });
 });
