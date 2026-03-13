@@ -14,6 +14,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
+const cacheStore = require('./lib/cache-store');
 
 const PROJECTS_PATH = path.join(
   process.env.HOME || process.env.USERPROFILE || '',
@@ -185,6 +186,44 @@ function main() {
   }
   lines.push(``, `**Note:** Linear MCP should be available as \`linear\`. If Linear tools are unavailable, warn the user and fall back to cached issue state.`);
   lines.push(``, `Use the \`project-manager\` skill to handle project status, issue management, PR linking, and direction changes. Proactively suggest creating Linear issues when the user describes untracked work.`);
+
+  // --- Cache-first issue injection (Phase 2) ---
+  const slug = project.slug || repoKey.replace('/', '-');
+  const syncMeta = cacheStore.readSyncMeta(slug);
+  const cachedData = cacheStore.readIssues(slug);
+
+  if (cachedData && cachedData.issues && syncMeta) {
+    const freshness = cacheStore.classifyFreshness(syncMeta);
+    const issues = Object.values(cachedData.issues);
+
+    const inProgress = issues.filter(i => i.status === 'started');
+    const upNext = issues.filter(i => i.status === 'unstarted');
+
+    lines.push('', `### Cached Issues (${freshness.message})`);
+
+    if (inProgress.length > 0) {
+      lines.push('', '**IN PROGRESS:**');
+      for (const issue of inProgress.slice(0, 5)) {
+        lines.push(`- ${issue.id} - ${issue.title}`);
+      }
+      if (inProgress.length > 5) {
+        lines.push(`- ... and ${inProgress.length - 5} more`);
+      }
+    }
+
+    if (upNext.length > 0) {
+      lines.push('', '**UP NEXT:**');
+      for (const issue of upNext.slice(0, 3)) {
+        lines.push(`- ${issue.id} - ${issue.title}`);
+      }
+    }
+
+    if (freshness.tier === 'EXPIRED') {
+      lines.push('', '> Issue data has expired. Run `/pm --refresh` for a full sync.');
+    } else if (freshness.tier === 'STALE') {
+      lines.push('', '> Run `/pm` to refresh issue data.');
+    }
+  }
 
   const systemMessage = lines.join('\n');
 
