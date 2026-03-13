@@ -9,6 +9,7 @@
  *
  * Exports:
  *   normalizeLinearIssues(linearIssues, teamKey) - Normalize MCP response
+ *   normalizeLinearDelta(linearIssues, teamKey, lastSyncedAt) - Delta-filtered normalization
  *   normalizeLinearState(stateName) - Map Linear state to standard vocabulary
  */
 
@@ -75,7 +76,33 @@ function normalizeLinearIssues(linearIssues, teamKey) {
   return { issues, syncedAt: new Date().toISOString() };
 }
 
+/**
+ * Normalize Linear issues with delta filtering by timestamp.
+ *
+ * Filters linearIssues to only those updated after lastSyncedAt, then
+ * delegates to normalizeLinearIssues for normalization. This provides
+ * client-side delta filtering since Linear MCP has no date filter parameter.
+ *
+ * Issues with missing or null updatedAt are excluded.
+ *
+ * @param {Array} linearIssues - Raw issues from Linear MCP list_issues
+ * @param {string} teamKey - Team key for identifier fallback (e.g., "NTH")
+ * @param {string} lastSyncedAt - ISO 8601 timestamp for delta cutoff
+ * @returns {{ issues: Object, syncedAt: string }}
+ */
+function normalizeLinearDelta(linearIssues, teamKey, lastSyncedAt) {
+  const cutoff = new Date(lastSyncedAt).getTime();
+
+  const filtered = linearIssues.filter(raw => {
+    if (!raw.updatedAt) return false;
+    return new Date(raw.updatedAt).getTime() > cutoff;
+  });
+
+  return normalizeLinearIssues(filtered, teamKey);
+}
+
 module.exports = {
   normalizeLinearIssues,
+  normalizeLinearDelta,
   normalizeLinearState,
 };

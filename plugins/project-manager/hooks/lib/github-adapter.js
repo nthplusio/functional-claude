@@ -12,7 +12,9 @@ const { CACHE_VERSION } = require('./cache-store');
  *
  * Exports:
  *   fetchAll(projectConfig) - CLI-based full sync
- *   normalizeGitHubIssues(rawIssues) - Pure normalization
+ *   fetchDelta(projectConfig, lastSyncedAt) - CLI-based delta sync via gh api
+ *   normalizeGitHubIssues(rawIssues) - Pure normalization (gh issue list format)
+ *   normalizeGitHubApiIssues(rawIssues) - Pure normalization (gh api format, snake_case)
  *   extractPriorityFromLabels(labels) - Priority label extraction
  */
 
@@ -112,8 +114,75 @@ function fetchAll(projectConfig) {
   };
 }
 
+/**
+ * Normalize raw GitHub issues from `gh api` response to NormalizedIssue schema.
+ *
+ * SEPARATE from normalizeGitHubIssues -- this handles the snake_case fields
+ * returned by `gh api repos/{owner}/{repo}/issues` (e.g., updated_at, not updatedAt).
+ * Also filters out pull requests (items with pull_request field).
+ *
+ * @param {Array} rawIssues - Raw issues from gh api JSON response
+ * @returns {{ issues: Object, syncedAt: string }}
+ */
+function normalizeGitHubApiIssues(rawIssues) {
+  const issues = {};
+
+  for (const raw of rawIssues) {
+    // gh api /issues endpoint includes PRs -- filter them out
+    if (raw.pull_request) continue;
+
+    const id = '#' + raw.number;
+    issues[id] = {
+      id,
+      title: raw.title,
+      status: raw.state === 'open' ? 'started' : 'completed',
+      priority: extractPriorityFromLabels(raw.labels || []),
+      assignee: raw.assignees?.[0]?.login || null,
+      description: (raw.body || '').slice(0, 500),
+      updatedAt: raw.updated_at,
+      tracker: 'github',
+    };
+  }
+
+  return { issues, syncedAt: new Date().toISOString() };
+}
+
+/**
+ * Fetch issues changed since lastSyncedAt from a GitHub repo via gh api.
+ *
+ * Uses `gh api repos/{repoKey}/issues` with `since` parameter for server-side
+ * delta filtering. Returns only issues updated after the given timestamp.
+ *
+ * Does NOT wrap in try/catch -- let caller handle errors
+ * (same pattern as fetchAll).
+ *
+ * @param {object} projectConfig - Project config with repoKey
+ * @param {string} lastSyncedAt - ISO 8601 timestamp for delta cutoff
+ * @returns {{ issues: Object, syncedAt: string }}
+ */
+function fetchDelta(projectConfig, lastSyncedAt) {
+  const repoKey = projectConfig.repoKey;
+
+  const output = execFileSync('gh', [
+    'api', `repos/${repoKey}/issues`,
+    '--method', 'GET',
+    '-f', `since=${lastSyncedAt}`,
+    '-f', 'state=all',
+    '-f', 'per_page=100',
+  ], {
+    encoding: 'utf8',
+    timeout: 15000,
+    stdio: ['pipe', 'pipe', 'pipe'],
+  });
+
+  const rawIssues = JSON.parse(output);
+  return normalizeGitHubApiIssues(rawIssues);
+}
+
 module.exports = {
   fetchAll,
+  fetchDelta,
   normalizeGitHubIssues,
+  normalizeGitHubApiIssues,
   extractPriorityFromLabels,
 };
