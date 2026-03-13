@@ -32,7 +32,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md — Cache store module with atomic writes, backup recovery, and fail-open (TDD)
-- [ ] 01-02-PLAN.md — GitHub and Linear full sync adapters with normalization (TDD)
+- [x] 01-02-PLAN.md — GitHub and Linear full sync adapters with normalization (TDD)
 
 ### Phase 2: Delta Sync and Session Integration
 **Goal**: Sessions start instantly from cached data, only fetch what changed since the last sync, and expired caches trigger automatic or manual full refresh
@@ -44,11 +44,12 @@ Plans:
   3. When cache is older than TTL (default 24h), the system message indicates staleness and a full sync is triggered on next access
   4. Running `/pm --refresh` forces a complete re-pull regardless of TTL or cache freshness
   5. When cache is stale but not expired, the system message shows freshness level so the user knows how old the data is
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
+- [ ] 02-01-PLAN.md — Cache store extensions: sync-meta persistence, issue merging, and freshness classification (TDD)
+- [ ] 02-02-PLAN.md — GitHub and Linear delta adapter methods (TDD)
+- [ ] 02-03-PLAN.md — Session-start hook cache injection, pm-status cache-first flow, /pm --refresh
 
 ### Phase 3: Delta Reporting
 **Goal**: Users see exactly what changed since their last session -- which issues moved, what fields updated -- instead of a static snapshot
@@ -69,6 +70,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Cache Storage and Full Sync | 0/2 | Planning complete | - |
-| 2. Delta Sync and Session Integration | 0/0 | Not started | - |
+| 1. Cache Storage and Full Sync | 2/2 | Complete | 2026-03-12 |
+| 2. Delta Sync and Session Integration | 0/3 | Planning complete | - |
 | 3. Delta Reporting | 0/0 | Not started | - |
