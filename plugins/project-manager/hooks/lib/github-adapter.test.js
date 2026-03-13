@@ -2,7 +2,7 @@
 
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { normalizeGitHubIssues, extractPriorityFromLabels } = require('./github-adapter');
+const { normalizeGitHubIssues, normalizeGitHubApiIssues, fetchDelta, extractPriorityFromLabels } = require('./github-adapter');
 
 describe('github-adapter', () => {
   describe('normalizeGitHubIssues', () => {
@@ -146,6 +146,108 @@ describe('github-adapter', () => {
       assert.equal(issue.description, 'Description of the bug');
       assert.equal(issue.updatedAt, '2026-03-10T00:00:00Z');
       assert.equal(issue.tracker, 'github');
+    });
+  });
+
+  describe('normalizeGitHubApiIssues', () => {
+    it('converts snake_case updated_at to camelCase updatedAt', () => {
+      const result = normalizeGitHubApiIssues([
+        { number: 1, title: 'Bug', state: 'open', updated_at: '2026-03-10T00:00:00Z', assignees: [], labels: [], body: '' }
+      ]);
+      assert.equal(result.issues['#1'].updatedAt, '2026-03-10T00:00:00Z');
+    });
+
+    it('maps lowercase state "open" to "started"', () => {
+      const result = normalizeGitHubApiIssues([
+        { number: 2, title: 'Open', state: 'open', updated_at: '2026-03-10T00:00:00Z', assignees: [], labels: [], body: '' }
+      ]);
+      assert.equal(result.issues['#2'].status, 'started');
+    });
+
+    it('maps lowercase state "closed" to "completed"', () => {
+      const result = normalizeGitHubApiIssues([
+        { number: 3, title: 'Closed', state: 'closed', updated_at: '2026-03-10T00:00:00Z', assignees: [], labels: [], body: '' }
+      ]);
+      assert.equal(result.issues['#3'].status, 'completed');
+    });
+
+    it('filters out items with pull_request field', () => {
+      const result = normalizeGitHubApiIssues([
+        { number: 4, title: 'Issue', state: 'open', updated_at: '2026-03-10T00:00:00Z', assignees: [], labels: [], body: '' },
+        { number: 5, title: 'PR', state: 'open', updated_at: '2026-03-10T00:00:00Z', assignees: [], labels: [], body: '', pull_request: { url: 'https://...' } }
+      ]);
+      assert.ok('#4' in result.issues);
+      assert.ok(!('#5' in result.issues));
+    });
+
+    it('extracts priority from labels using extractPriorityFromLabels', () => {
+      const result = normalizeGitHubApiIssues([
+        { number: 6, title: 'High', state: 'open', updated_at: '2026-03-10T00:00:00Z', assignees: [], labels: [{ name: 'priority:high' }], body: '' }
+      ]);
+      assert.equal(result.issues['#6'].priority, 2);
+    });
+
+    it('returns empty issues object for empty input', () => {
+      const result = normalizeGitHubApiIssues([]);
+      assert.deepEqual(result.issues, {});
+      assert.ok(typeof result.syncedAt === 'string');
+    });
+
+    it('truncates description to 500 chars', () => {
+      const longBody = 'X'.repeat(600);
+      const result = normalizeGitHubApiIssues([
+        { number: 7, title: 'Long', state: 'open', updated_at: '2026-03-10T00:00:00Z', assignees: [], labels: [], body: longBody }
+      ]);
+      assert.equal(result.issues['#7'].description.length, 500);
+    });
+
+    it('extracts first assignee from assignees array', () => {
+      const result = normalizeGitHubApiIssues([
+        { number: 8, title: 'Assigned', state: 'open', updated_at: '2026-03-10T00:00:00Z', assignees: [{ login: 'alice' }, { login: 'bob' }], labels: [], body: '' }
+      ]);
+      assert.equal(result.issues['#8'].assignee, 'alice');
+    });
+
+    it('returns null assignee when assignees is empty', () => {
+      const result = normalizeGitHubApiIssues([
+        { number: 9, title: 'No assignee', state: 'open', updated_at: '2026-03-10T00:00:00Z', assignees: [], labels: [], body: '' }
+      ]);
+      assert.equal(result.issues['#9'].assignee, null);
+    });
+
+    it('sets tracker to github on every issue', () => {
+      const result = normalizeGitHubApiIssues([
+        { number: 10, title: 'Tracked', state: 'open', updated_at: '2026-03-10T00:00:00Z', assignees: [], labels: [], body: '' }
+      ]);
+      assert.equal(result.issues['#10'].tracker, 'github');
+    });
+
+    it('keys issues by #number format', () => {
+      const result = normalizeGitHubApiIssues([
+        { number: 42, title: 'Keyed', state: 'open', updated_at: '2026-03-10T00:00:00Z', assignees: [], labels: [], body: '' }
+      ]);
+      assert.ok('#42' in result.issues);
+      assert.equal(result.issues['#42'].id, '#42');
+    });
+
+    it('handles null body gracefully', () => {
+      const result = normalizeGitHubApiIssues([
+        { number: 11, title: 'No body', state: 'open', updated_at: '2026-03-10T00:00:00Z', assignees: [], labels: [], body: null }
+      ]);
+      assert.equal(result.issues['#11'].description, '');
+    });
+
+    it('handles missing labels with empty array fallback', () => {
+      const result = normalizeGitHubApiIssues([
+        { number: 12, title: 'No labels', state: 'open', updated_at: '2026-03-10T00:00:00Z', assignees: [], body: '' }
+      ]);
+      assert.equal(result.issues['#12'].priority, 0);
+    });
+  });
+
+  describe('fetchDelta', () => {
+    it('is an exported function', () => {
+      assert.equal(typeof fetchDelta, 'function');
     });
   });
 

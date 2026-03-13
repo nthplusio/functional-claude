@@ -27,7 +27,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | session-insights | 0.1.4 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
 | obsidian-dev | 0.1.1 | Obsidian plugin development workflows covering setup, Plugin API, commands, settings, vault operations, UI components, and editor integration |
 | repo-sme | 0.2.3 | Repository Subject Matter Expert — register GitHub repos, browse branches, query architecture and APIs, and create GitHub issues via read-only analysis |
-| project-manager | 0.10.1 | Project manager for multi-project workflows — per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings |
+| project-manager | 0.10.2 | Project manager for multi-project workflows — per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings |
 
 ## Architecture Overview
 

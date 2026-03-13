@@ -2,7 +2,7 @@
 
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { normalizeLinearIssues, normalizeLinearState } = require('./linear-adapter');
+const { normalizeLinearIssues, normalizeLinearState, normalizeLinearDelta } = require('./linear-adapter');
 
 describe('linear-adapter', () => {
   describe('normalizeLinearState', () => {
@@ -269,6 +269,79 @@ describe('linear-adapter', () => {
       }], 'NTH');
 
       assert.equal(result.issues['NTH-11'].status, 'completed');
+    });
+  });
+
+  describe('normalizeLinearDelta', () => {
+    const lastSyncedAt = '2026-03-10T00:00:00Z';
+
+    it('includes issues updated after lastSyncedAt', () => {
+      const result = normalizeLinearDelta([
+        { identifier: 'NTH-1', title: 'Recent', state: { name: 'In Progress' }, priority: 2, assignee: null, description: '', updatedAt: '2026-03-11T00:00:00Z' }
+      ], 'NTH', lastSyncedAt);
+
+      assert.ok('NTH-1' in result.issues);
+    });
+
+    it('excludes issues updated before lastSyncedAt', () => {
+      const result = normalizeLinearDelta([
+        { identifier: 'NTH-2', title: 'Old', state: { name: 'Backlog' }, priority: 0, assignee: null, description: '', updatedAt: '2026-03-09T00:00:00Z' }
+      ], 'NTH', lastSyncedAt);
+
+      assert.ok(!('NTH-2' in result.issues));
+    });
+
+    it('excludes issues updated exactly at lastSyncedAt', () => {
+      const result = normalizeLinearDelta([
+        { identifier: 'NTH-3', title: 'Exact', state: { name: 'Backlog' }, priority: 0, assignee: null, description: '', updatedAt: '2026-03-10T00:00:00Z' }
+      ], 'NTH', lastSyncedAt);
+
+      assert.ok(!('NTH-3' in result.issues));
+    });
+
+    it('excludes issues with null updatedAt', () => {
+      const result = normalizeLinearDelta([
+        { identifier: 'NTH-4', title: 'Null date', state: { name: 'Backlog' }, priority: 0, assignee: null, description: '', updatedAt: null }
+      ], 'NTH', lastSyncedAt);
+
+      assert.ok(!('NTH-4' in result.issues));
+    });
+
+    it('excludes issues with missing updatedAt', () => {
+      const result = normalizeLinearDelta([
+        { identifier: 'NTH-5', title: 'Missing date', state: { name: 'Backlog' }, priority: 0, assignee: null, description: '' }
+      ], 'NTH', lastSyncedAt);
+
+      assert.ok(!('NTH-5' in result.issues));
+    });
+
+    it('returns empty issues when all are older than lastSyncedAt', () => {
+      const result = normalizeLinearDelta([
+        { identifier: 'NTH-6', title: 'Old1', state: { name: 'Backlog' }, priority: 0, assignee: null, description: '', updatedAt: '2026-03-09T00:00:00Z' },
+        { identifier: 'NTH-7', title: 'Old2', state: { name: 'Backlog' }, priority: 0, assignee: null, description: '', updatedAt: '2026-03-08T00:00:00Z' }
+      ], 'NTH', lastSyncedAt);
+
+      assert.deepEqual(result.issues, {});
+    });
+
+    it('returns {issues, syncedAt} shape', () => {
+      const result = normalizeLinearDelta([
+        { identifier: 'NTH-8', title: 'Recent', state: { name: 'In Progress' }, priority: 1, assignee: null, description: '', updatedAt: '2026-03-11T00:00:00Z' }
+      ], 'NTH', lastSyncedAt);
+
+      assert.ok(typeof result.issues === 'object');
+      assert.ok(typeof result.syncedAt === 'string');
+    });
+
+    it('delegates normalization to normalizeLinearIssues', () => {
+      const result = normalizeLinearDelta([
+        { identifier: 'NTH-9', title: 'Delegated', state: { name: 'Done' }, priority: 3, assignee: { name: 'Scott' }, description: 'desc', updatedAt: '2026-03-11T00:00:00Z' }
+      ], 'NTH', lastSyncedAt);
+
+      const issue = result.issues['NTH-9'];
+      assert.equal(issue.status, 'completed');
+      assert.equal(issue.tracker, 'linear');
+      assert.equal(issue.assignee, 'Scott');
     });
   });
 });
