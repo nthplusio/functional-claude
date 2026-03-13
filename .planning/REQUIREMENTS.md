@@ -17,7 +17,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Sync Engine
 
 - [x] **SYNC-01**: Plugin can perform a full sync (fetch all relevant issues from tracker, normalize, write to cache) as the cold-start and TTL-expiry path
-- [ ] **SYNC-02**: Plugin performs delta sync using timestamp filtering — GitHub via `gh api` `since` parameter, Linear via `list_issues` sorted by `updatedAt` with client-side comparison
+- [x] **SYNC-02**: Plugin performs delta sync using timestamp filtering — GitHub via `gh api` `since` parameter, Linear via `list_issues` sorted by `updatedAt` with client-side comparison
 - [x] **SYNC-03**: Cache automatically expires after a configurable TTL (default 24h), triggering full sync on next access
 - [ ] **SYNC-04**: User can force a full cache refresh with `/pm --refresh`
 - [ ] **SYNC-05**: Delta sync produces a change summary showing which issues changed and what fields moved (e.g., "NTH-42: In Progress -> In Review")
@@ -67,7 +67,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CACHE-03 | Phase 1 | Complete |
 | CACHE-04 | Phase 1 | Complete |
 | SYNC-01 | Phase 1 | Complete |
-| SYNC-02 | Phase 2 | Pending |
+| SYNC-02 | Phase 2 | Complete |
 | SYNC-03 | Phase 2 | Complete |
 | SYNC-04 | Phase 2 | Pending |
 | SYNC-05 | Phase 3 | Pending |

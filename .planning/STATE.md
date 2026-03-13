@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in-progress
-stopped_at: Completed 02-01-PLAN.md (cache store sync-meta, merge, and freshness)
-last_updated: "2026-03-13T21:22:50Z"
-last_activity: 2026-03-13 -- Completed 02-01 (sync-meta, merge, freshness primitives)
+stopped_at: Completed 02-02-PLAN.md (GitHub and Linear delta adapter methods)
+last_updated: "2026-03-13T21:25:54Z"
+last_activity: 2026-03-13 -- Completed 02-02 (delta adapter methods)
 progress:
   total_phases: 3
   completed_phases: 1
   total_plans: 5
-  completed_plans: 3
-  percent: 60
+  completed_plans: 4
+  percent: 80
 ---
 
 # Project State
@@ -26,28 +26,28 @@ See: .planning/PROJECT.md (updated 2026-03-11)
 ## Current Position
 
 Phase: 2 of 3 (Delta Sync and Session Integration)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In Progress
-Last activity: 2026-03-13 -- Completed 02-01 (sync-meta, merge, freshness primitives)
+Last activity: 2026-03-13 -- Completed 02-02 (delta adapter methods)
 
-Progress: [██████----] 60%
+Progress: [████████--] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 3min
-- Total execution time: 0.15 hours
+- Total plans completed: 4
+- Average duration: 4min
+- Total execution time: 0.3 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 - Cache Storage | 2 | 6min | 3min |
-| 2 - Delta Sync | 1 | 3min | 3min |
+| 2 - Delta Sync | 2 | 9min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3min), 01-02 (3min), 02-01 (3min)
+- Last 5 plans: 01-01 (3min), 01-02 (3min), 02-01 (3min), 02-02 (6min)
 - Trend: Consistent
 
 *Updated after each plan completion*
@@ -71,6 +71,9 @@ Recent decisions affecting current work:
 - [02-01]: mergeIssues uses shallow spread for immutable merge (delta overwrites by key)
 - [02-01]: classifyFreshness evaluates EXPIRED first, then STALE, then FRESH (priority order)
 - [02-01]: formatAge uses floor rounding for all tiers
+- [02-02]: normalizeGitHubApiIssues is separate from normalizeGitHubIssues -- different input schemas (snake_case vs camelCase)
+- [02-02]: fetchDelta uses gh api (not gh issue list) for server-side since filtering
+- [02-02]: normalizeLinearDelta filters client-side then delegates to existing normalizeLinearIssues
 
 ### Pending Todos
 
@@ -82,6 +85,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T21:22:50Z
-Stopped at: Completed 02-01-PLAN.md (cache store sync-meta, merge, and freshness)
+Last session: 2026-03-13T21:25:54Z
+Stopped at: Completed 02-02-PLAN.md (GitHub and Linear delta adapter methods)
 Resume file: None
