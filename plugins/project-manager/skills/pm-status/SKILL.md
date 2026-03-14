@@ -1,7 +1,7 @@
 ---
 name: pm-status
 description: Use this skill when the user asks "where are we", "what's in progress", "what should I work on next", "project status", "catch me up", or "what's open". Provides a cache-first session briefing with in-progress issues, next suggested work, and delta sync on demand. Supports --refresh for full re-pull. Do NOT include past session history unless the user explicitly asks.
-version: 0.11.1
+version: 0.11.2
 ---
 
 # PM Status Briefing
@@ -64,12 +64,13 @@ node -e "
   const cs = require('$HOME/.claude/plugins/project-manager/hooks/lib/cache-store');
   const slug = '<slug>';
   const meta = cs.readSyncMeta(slug);
-  const delta = gh.fetchDelta({ repoKey: '<org/repo>' }, meta.lastSyncedAt);
   const existing = cs.readIssues(slug);
+  const delta = gh.fetchDelta({ repoKey: '<org/repo>' }, meta.lastSyncedAt);
+  const changes = cs.diffIssues(existing.issues, delta.issues);
   const merged = cs.mergeIssues(existing, delta);
   cs.writeIssues(slug, merged);
   cs.writeSyncMeta(slug, { ...meta, lastSyncedAt: delta.syncedAt, syncType: 'delta', issueCount: Object.keys(merged.issues).length });
-  console.log(JSON.stringify({ deltaCount: Object.keys(delta.issues).length, totalCount: Object.keys(merged.issues).length }));
+  console.log(JSON.stringify({ changes, changeSummary: cs.formatChangeSummary(changes), deltaCount: Object.keys(delta.issues).length, totalCount: Object.keys(merged.issues).length }));
 "
 ```
 
@@ -96,12 +97,18 @@ node -e "
      const linearIssues = <paste MCP result array here>;
      const delta = la.normalizeLinearDelta(linearIssues, '<team_key>', meta.lastSyncedAt);
      const existing = cs.readIssues(slug);
+     const changes = cs.diffIssues(existing.issues, delta.issues);
      const merged = cs.mergeIssues(existing, delta);
      cs.writeIssues(slug, merged);
      cs.writeSyncMeta(slug, { ...meta, lastSyncedAt: delta.syncedAt, syncType: 'delta', issueCount: Object.keys(merged.issues).length });
-     console.log(JSON.stringify({ deltaCount: Object.keys(delta.issues).length, totalCount: Object.keys(merged.issues).length }));
+     console.log(JSON.stringify({ changes, changeSummary: cs.formatChangeSummary(changes), deltaCount: Object.keys(delta.issues).length, totalCount: Object.keys(merged.issues).length }));
    "
    ```
+
+After running the delta sync one-liner above, check the JSON output:
+- If `changeSummary` is present and not "No changes since last sync", display the change summary to the user before proceeding to **Step 6**
+- If `changeSummary` is "No changes since last sync", display that line before proceeding to **Step 6**
+- This ensures the user always sees what changed (or that nothing changed) after a delta sync
 
 Proceed to **Step 6**.
 
