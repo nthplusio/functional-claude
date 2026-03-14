@@ -19,12 +19,12 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **SYNC-01**: Plugin can perform a full sync (fetch all relevant issues from tracker, normalize, write to cache) as the cold-start and TTL-expiry path
 - [x] **SYNC-02**: Plugin performs delta sync using timestamp filtering — GitHub via `gh api` `since` parameter, Linear via `list_issues` sorted by `updatedAt` with client-side comparison
 - [x] **SYNC-03**: Cache automatically expires after a configurable TTL (default 24h), triggering full sync on next access
-- [ ] **SYNC-04**: User can force a full cache refresh with `/pm --refresh`
+- [x] **SYNC-04**: User can force a full cache refresh with `/pm --refresh`
 - [ ] **SYNC-05**: Delta sync produces a change summary showing which issues changed and what fields moved (e.g., "NTH-42: In Progress -> In Review")
 
 ### Session Integration
 
-- [ ] **SESS-01**: Session-start hook loads cached issue data and injects it into the system message without making API calls
+- [x] **SESS-01**: Session-start hook loads cached issue data and injects it into the system message without making API calls
 - [x] **SESS-02**: When cache is stale or expired, the system message indicates staleness level so user knows data freshness
 
 ## v2 Requirements
@@ -69,9 +69,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SYNC-01 | Phase 1 | Complete |
 | SYNC-02 | Phase 2 | Complete |
 | SYNC-03 | Phase 2 | Complete |
-| SYNC-04 | Phase 2 | Pending |
+| SYNC-04 | Phase 2 | Complete |
 | SYNC-05 | Phase 3 | Pending |
-| SESS-01 | Phase 2 | Pending |
+| SESS-01 | Phase 2 | Complete |
 | SESS-02 | Phase 2 | Complete |
 
 **Coverage:**
