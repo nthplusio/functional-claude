@@ -230,6 +230,103 @@ function mergeIssues(existingData, deltaResult) {
 }
 
 /**
+ * Fields to compare when diffing issues. Only user-visible fields are
+ * included -- description is noisy and updatedAt always changes for delta issues.
+ */
+const DIFF_FIELDS = ['status', 'priority', 'assignee', 'title'];
+
+/**
+ * Compare delta issues against existing issues to produce a list of changes.
+ *
+ * Call this BEFORE mergeIssues -- after merge the before-state is lost.
+ *
+ * @param {object} existingIssues - The .issues object from the current cache { [id]: NormalizedIssue }
+ * @param {object} deltaIssues - The .issues object from the delta result { [id]: NormalizedIssue }
+ * @returns {Array<{ id: string, type: 'new'|'updated', title: string, fields: Array<{ field: string, from: *, to: * }> }>}
+ */
+function diffIssues(existingIssues, deltaIssues) {
+  const changes = [];
+
+  for (const [id, deltaIssue] of Object.entries(deltaIssues)) {
+    if (!(id in existingIssues)) {
+      // New issue -- not in existing cache
+      changes.push({ id, type: 'new', title: deltaIssue.title, fields: [] });
+      continue;
+    }
+
+    // Existing issue -- compare user-visible fields
+    const existingIssue = existingIssues[id];
+    const fields = [];
+
+    for (const field of DIFF_FIELDS) {
+      if (existingIssue[field] !== deltaIssue[field]) {
+        fields.push({ field, from: existingIssue[field], to: deltaIssue[field] });
+      }
+    }
+
+    if (fields.length > 0) {
+      changes.push({ id, type: 'updated', title: deltaIssue.title, fields });
+    }
+  }
+
+  return changes;
+}
+
+/**
+ * Priority label map for human-readable display.
+ */
+const PRIORITY_LABELS = { 0: 'None', 1: 'Urgent', 2: 'High', 3: 'Medium', 4: 'Low' };
+
+/**
+ * Format a list of issue changes into a human-readable summary string.
+ *
+ * @param {Array} changes - Output from diffIssues
+ * @returns {string} Formatted change summary
+ */
+function formatChangeSummary(changes) {
+  if (changes.length === 0) {
+    return 'No changes since last sync';
+  }
+
+  const lines = ['CHANGES SINCE LAST SYNC'];
+
+  for (const change of changes) {
+    if (change.type === 'new') {
+      lines.push('  ' + change.id + ' ' + change.title + ' (new)');
+      continue;
+    }
+
+    // type === 'updated'
+    for (const f of change.fields) {
+      let fromFormatted = f.from;
+      let toFormatted = f.to;
+
+      if (f.field === 'priority') {
+        fromFormatted = PRIORITY_LABELS[f.from] || String(f.from);
+        toFormatted = PRIORITY_LABELS[f.to] || String(f.to);
+      }
+
+      if (f.field === 'assignee') {
+        fromFormatted = f.from === null ? '(unassigned)' : f.from;
+        toFormatted = f.to === null ? '(unassigned)' : f.to;
+      }
+
+      if (f.field === 'status') {
+        // Status is the primary change -- omit field label
+        lines.push('  ' + change.id + ' ' + change.title + ': ' + fromFormatted + ' -> ' + toFormatted);
+      } else {
+        lines.push('  ' + change.id + ' ' + change.title + ': ' + f.field + ' ' + fromFormatted + ' -> ' + toFormatted);
+      }
+    }
+  }
+
+  lines.push('');
+  lines.push(changes.length + ' issue(s) changed');
+
+  return lines.join('\n');
+}
+
+/**
  * Format a duration in milliseconds as a human-readable age string.
  *
  * @param {number} ms - Duration in milliseconds
@@ -297,6 +394,8 @@ module.exports = {
   readSyncMeta,
   writeSyncMeta,
   mergeIssues,
+  diffIssues,
+  formatChangeSummary,
   classifyFreshness,
   formatAge,
   CACHE_VERSION,

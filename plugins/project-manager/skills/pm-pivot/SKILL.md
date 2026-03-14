@@ -1,7 +1,7 @@
 ---
 name: pm-pivot
 description: Use this skill when the user changes direction mid-feature, describes a significant scope change, says the approach isn't working, wants to abandon the current approach, or says "we need to rethink this", "let's change direction", "this isn't right", "pivot", "different approach". Also use when the user's current work no longer matches the active Linear issue.
-version: 0.11.0
+version: 0.11.1
 ---
 
 # PM Pivot — Direction Change Handler

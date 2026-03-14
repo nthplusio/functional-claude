@@ -1,7 +1,7 @@
 ---
 name: pm-status
 description: Use this skill when the user asks "where are we", "what's in progress", "what should I work on next", "project status", "catch me up", or "what's open". Provides a cache-first session briefing with in-progress issues, next suggested work, and delta sync on demand. Supports --refresh for full re-pull. Do NOT include past session history unless the user explicitly asks.
-version: 0.11.0
+version: 0.11.1
 ---
 
 # PM Status Briefing
