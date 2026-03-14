@@ -20,7 +20,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **SYNC-02**: Plugin performs delta sync using timestamp filtering — GitHub via `gh api` `since` parameter, Linear via `list_issues` sorted by `updatedAt` with client-side comparison
 - [x] **SYNC-03**: Cache automatically expires after a configurable TTL (default 24h), triggering full sync on next access
 - [x] **SYNC-04**: User can force a full cache refresh with `/pm --refresh`
-- [ ] **SYNC-05**: Delta sync produces a change summary showing which issues changed and what fields moved (e.g., "NTH-42: In Progress -> In Review")
+- [x] **SYNC-05**: Delta sync produces a change summary showing which issues changed and what fields moved (e.g., "NTH-42: In Progress -> In Review")
 
 ### Session Integration
 
@@ -70,7 +70,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SYNC-02 | Phase 2 | Complete |
 | SYNC-03 | Phase 2 | Complete |
 | SYNC-04 | Phase 2 | Complete |
-| SYNC-05 | Phase 3 | Pending |
+| SYNC-05 | Phase 3 | Complete |
 | SESS-01 | Phase 2 | Complete |
 | SESS-02 | Phase 2 | Complete |
 
