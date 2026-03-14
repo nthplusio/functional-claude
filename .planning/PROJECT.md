@@ -20,18 +20,19 @@ Session startup is fast and token-efficient — the plugin loads cached state in
 - ✓ Session-end tracking — stop hook analyzes transcript for issue signals and git activity
 - ✓ Fail-open design — hooks silently skip on errors, never block sessions
 - ✓ 24-hour TTL — session context expires after 24 hours in stop hook
+- ✓ Normalized JSON issue cache with atomic writes and fail-open error handling — v1.0
+- ✓ GitHub full sync via `gh` CLI with NormalizedIssue schema — v1.0
+- ✓ Linear full sync via MCP with identical normalization — v1.0
+- ✓ Timestamp-based delta sync (GitHub: `gh api` `since`, Linear: client-side comparison) — v1.0
+- ✓ Sync-meta persistence with FRESH/STALE/EXPIRED freshness tiers — v1.0
+- ✓ Cache-first session startup with zero API calls in session-start hook — v1.0
+- ✓ `/pm --refresh` force full re-pull — v1.0
+- ✓ Delta reporting with field-level change diffs and "no changes" handling — v1.0
+- ✓ Unified cache format for both Linear and GitHub Issues — v1.0
 
 ### Active
 
-- [ ] Cache issue data (status, title, priority, assignee, description) alongside session context
-- [ ] Timestamp-based delta sync — store "last checked at", query API for items updated after that timestamp
-- [ ] TTL safety net — auto-expire cached issue data after configurable period (force full refresh)
-- [ ] Delta reporting — show "X issues changed since last check" when loading from cache
-- [ ] Fast cache-first startup — load cached issue state immediately, fetch deltas in background or on-demand
-- [ ] Linear incremental sync — use Linear API's `updatedAt` filter to fetch only changed issues
-- [ ] GitHub Issues incremental sync — use GitHub API's `since` parameter to fetch only changed issues
-- [ ] Cache invalidation on full refresh — manual `/pm --refresh` or TTL expiry triggers complete re-pull
-- [ ] Unified cache format — single cache structure that works for both Linear and GitHub Issues
+(No active requirements — v1.0 complete. See v2 deferred items in Out of Scope.)
 
 ### Out of Scope
 
@@ -39,22 +40,24 @@ Session startup is fast and token-efficient — the plugin loads cached state in
 - Real-time sync — the plugin runs on session start, not continuously
 - Caching comments or activity logs — only cache decision-making data (status, metadata, descriptions)
 - Cross-project cache sharing — each project has its own cache in `cache/<slug>/`
+- Cache metadata display in system message (UX-01) — deferred to v2
+- Branch-issue cache enrichment (UX-02) — deferred to v2
+- Configurable per-project TTL (UX-03) — deferred to v2
+- Stale-while-revalidate pattern (UX-04) — deferred to v2
+- Cache write-through on mutations (LIFE-01) — deferred to v2
+- Cache versioning and migration (LIFE-02) — deferred to v2
+- Session-end cache update (LIFE-03) — deferred to v2
 
 ## Context
 
-The project-manager plugin currently pulls all issue data fresh from Linear MCP (or GitHub) every time `/pm` or `/pm-status` runs. This burns tokens processing full API responses and adds latency waiting for API round-trips, even when nothing has changed since the last session.
+**v1.0 shipped 2026-03-14.** The project-manager plugin now caches issue data locally and uses timestamp-based delta sync for both Linear and GitHub.
 
-The existing cache infrastructure at `~/.claude/project-manager/cache/<slug>/` only stores session context (branch, HEAD, issue ID) — not the actual issue data that drives routing decisions. Both Linear and GitHub APIs support filtering by update timestamp, making incremental sync straightforward.
+**Current data flow (v1.0):**
+1. Session starts → hook loads cached issues from `cache/<slug>/issues.json`, injects summary with FRESH/STALE/EXPIRED indicator into system message (zero API calls)
+2. User runs `/pm` → reads cache first, runs delta sync if STALE, full sync if EXPIRED; displays change summary with field-level diffs
+3. User runs `/pm --refresh` → forces complete re-pull regardless of cache freshness
 
-**Current data flow:**
-1. Session starts → hook writes context.json (branch/HEAD only)
-2. User runs `/pm` → full API pull from Linear MCP (every time)
-3. Session ends → stop hook analyzes transcript
-
-**Target data flow:**
-1. Session starts → hook loads cached issue data + fetches deltas since last check
-2. User runs `/pm` → reads from cache (instant), shows what changed
-3. Session ends → stop hook updates cache with any issue state changes
+**Implementation:** 699 LOC across 3 modules (`cache-store.js`, `github-adapter.js`, `linear-adapter.js`) with 125 passing tests (1,384 LOC tests). All modules use CommonJS, zero npm dependencies, atomic writes, fail-open error handling.
 
 ## Constraints
 
@@ -67,10 +70,13 @@ The existing cache infrastructure at `~/.claude/project-manager/cache/<slug>/` o
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Timestamp-based delta over ETags/webhooks | Simpler, both APIs support it natively, no infrastructure needed | — Pending |
-| Cache in plugin .cache/ not .planning/ | Issue data is runtime state, not planning artifact; should be gitignored | — Pending |
-| TTL safety net with configurable expiry | Prevents stale cache from silently serving outdated data | — Pending |
-| Cache status + metadata + descriptions only | These are the decision-making fields; comments/activity are too verbose | — Pending |
+| Timestamp-based delta over ETags/webhooks | Simpler, both APIs support it natively, no infrastructure needed | ✓ Good — GitHub `since` param works server-side, Linear sort-and-compare works client-side |
+| Cache in plugin .cache/ not .planning/ | Issue data is runtime state, not planning artifact; should be gitignored | ✓ Good — `~/.claude/project-manager/cache/<slug>/` keeps cache isolated and gitignored |
+| TTL safety net with configurable expiry | Prevents stale cache from silently serving outdated data | ✓ Good — 24h TTL with FRESH/STALE/EXPIRED tiers gives clear user feedback |
+| Cache status + metadata + descriptions only | These are the decision-making fields; comments/activity are too verbose | ✓ Good — NormalizedIssue schema covers routing decisions without bloat |
+| CommonJS modules, zero npm deps | Match existing hook file conventions; keep plugin lightweight | ✓ Good — 699 LOC with atomic writes, no install step |
+| Separate normalizers for `gh api` vs `gh issue list` | Different response schemas (snake_case vs camelCase) | ✓ Good — prevents silent field-mapping bugs |
+| Diff-before-merge pattern | `diffIssues` must run before `mergeIssues` since merge destroys before-state | ✓ Good — clean separation of concerns |
 
 ---
-*Last updated: 2026-03-11 after initialization*
+*Last updated: 2026-03-14 after v1.0 milestone*
