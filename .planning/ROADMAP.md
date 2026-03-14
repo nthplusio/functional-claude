@@ -47,9 +47,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Cache store extensions: sync-meta persistence, issue merging, and freshness classification (TDD)
-- [ ] 02-02-PLAN.md — GitHub and Linear delta adapter methods (TDD)
-- [ ] 02-03-PLAN.md — Session-start hook cache injection, pm-status cache-first flow, /pm --refresh
+- [x] 02-01-PLAN.md — Cache store extensions: sync-meta persistence, issue merging, and freshness classification (TDD)
+- [x] 02-02-PLAN.md — GitHub and Linear delta adapter methods (TDD)
+- [x] 02-03-PLAN.md — Session-start hook cache injection, pm-status cache-first flow, /pm --refresh
 
 ### Phase 3: Delta Reporting
 **Goal**: Users see exactly what changed since their last session -- which issues moved, what fields updated -- instead of a static snapshot
@@ -58,10 +58,10 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. After delta sync completes, the plugin displays a change summary listing each changed issue with field-level diffs (e.g., "NTH-42: In Progress -> In Review")
   2. When no issues changed since last sync, the plugin reports "no changes" rather than showing nothing
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 03-01: TBD
+- [ ] 03-01-PLAN.md — diffIssues + formatChangeSummary in cache-store (TDD), pm-status skill change summary integration
 
 ## Progress
 
@@ -71,5 +71,5 @@ Phases execute in numeric order: 1 -> 2 -> 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Cache Storage and Full Sync | 2/2 | Complete | 2026-03-12 |
-| 2. Delta Sync and Session Integration | 1/3 | In Progress | - |
-| 3. Delta Reporting | 0/0 | Not started | - |
+| 2. Delta Sync and Session Integration | 3/3 | Complete | 2026-03-14 |
+| 3. Delta Reporting | 0/1 | Not started | - |
