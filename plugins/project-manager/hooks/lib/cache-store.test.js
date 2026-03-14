@@ -13,6 +13,8 @@ const {
   readSyncMeta,
   writeSyncMeta,
   mergeIssues,
+  diffIssues,
+  formatChangeSummary,
   classifyFreshness,
   formatAge,
   CACHE_VERSION,
@@ -509,6 +511,230 @@ describe('cache-store', () => {
     });
   });
 
+  describe('diffIssues', () => {
+    it('returns empty array when deltaIssues is empty', () => {
+      const existing = {
+        'NTH-1': {
+          id: 'NTH-1', title: 'Existing issue', status: 'started',
+          priority: 2, assignee: 'Scott', description: 'Desc',
+          updatedAt: '2026-03-10T14:30:00.000Z', tracker: 'linear',
+        },
+      };
+      const result = diffIssues(existing, {});
+      assert.deepEqual(result, []);
+    });
+
+    it('marks new issues not in existing cache', () => {
+      const delta = {
+        'NTH-1': {
+          id: 'NTH-1', title: 'Brand new issue', status: 'unstarted',
+          priority: 3, assignee: 'Jane', description: 'New desc',
+          updatedAt: '2026-03-13T10:00:00.000Z', tracker: 'linear',
+        },
+      };
+      const result = diffIssues({}, delta);
+      assert.equal(result.length, 1);
+      assert.equal(result[0].id, 'NTH-1');
+      assert.equal(result[0].type, 'new');
+      assert.equal(result[0].title, 'Brand new issue');
+      assert.deepEqual(result[0].fields, []);
+    });
+
+    it('detects status field change', () => {
+      const existing = {
+        'NTH-42': {
+          id: 'NTH-42', title: 'Auth refactor', status: 'started',
+          priority: 2, assignee: 'Scott', description: 'Desc',
+          updatedAt: '2026-03-10T14:30:00.000Z', tracker: 'linear',
+        },
+      };
+      const delta = {
+        'NTH-42': {
+          id: 'NTH-42', title: 'Auth refactor', status: 'completed',
+          priority: 2, assignee: 'Scott', description: 'Desc',
+          updatedAt: '2026-03-13T10:00:00.000Z', tracker: 'linear',
+        },
+      };
+      const result = diffIssues(existing, delta);
+      assert.equal(result.length, 1);
+      assert.equal(result[0].type, 'updated');
+      assert.equal(result[0].fields.length, 1);
+      assert.deepEqual(result[0].fields[0], { field: 'status', from: 'started', to: 'completed' });
+    });
+
+    it('detects priority field change', () => {
+      const existing = {
+        'NTH-42': {
+          id: 'NTH-42', title: 'Auth refactor', status: 'started',
+          priority: 2, assignee: 'Scott', description: 'Desc',
+          updatedAt: '2026-03-10T14:30:00.000Z', tracker: 'linear',
+        },
+      };
+      const delta = {
+        'NTH-42': {
+          id: 'NTH-42', title: 'Auth refactor', status: 'started',
+          priority: 1, assignee: 'Scott', description: 'Desc',
+          updatedAt: '2026-03-13T10:00:00.000Z', tracker: 'linear',
+        },
+      };
+      const result = diffIssues(existing, delta);
+      assert.equal(result.length, 1);
+      assert.deepEqual(result[0].fields[0], { field: 'priority', from: 2, to: 1 });
+    });
+
+    it('detects assignee field change', () => {
+      const existing = {
+        'NTH-42': {
+          id: 'NTH-42', title: 'Auth refactor', status: 'started',
+          priority: 2, assignee: 'Scott', description: 'Desc',
+          updatedAt: '2026-03-10T14:30:00.000Z', tracker: 'linear',
+        },
+      };
+      const delta = {
+        'NTH-42': {
+          id: 'NTH-42', title: 'Auth refactor', status: 'started',
+          priority: 2, assignee: 'Jane', description: 'Desc',
+          updatedAt: '2026-03-13T10:00:00.000Z', tracker: 'linear',
+        },
+      };
+      const result = diffIssues(existing, delta);
+      assert.equal(result.length, 1);
+      assert.deepEqual(result[0].fields[0], { field: 'assignee', from: 'Scott', to: 'Jane' });
+    });
+
+    it('detects title field change', () => {
+      const existing = {
+        'NTH-42': {
+          id: 'NTH-42', title: 'Old title', status: 'started',
+          priority: 2, assignee: 'Scott', description: 'Desc',
+          updatedAt: '2026-03-10T14:30:00.000Z', tracker: 'linear',
+        },
+      };
+      const delta = {
+        'NTH-42': {
+          id: 'NTH-42', title: 'New title', status: 'started',
+          priority: 2, assignee: 'Scott', description: 'Desc',
+          updatedAt: '2026-03-13T10:00:00.000Z', tracker: 'linear',
+        },
+      };
+      const result = diffIssues(existing, delta);
+      assert.equal(result.length, 1);
+      assert.deepEqual(result[0].fields[0], { field: 'title', from: 'Old title', to: 'New title' });
+    });
+
+    it('detects multiple field changes on same issue', () => {
+      const existing = {
+        'NTH-42': {
+          id: 'NTH-42', title: 'Auth refactor', status: 'started',
+          priority: 2, assignee: 'Scott', description: 'Desc',
+          updatedAt: '2026-03-10T14:30:00.000Z', tracker: 'linear',
+        },
+      };
+      const delta = {
+        'NTH-42': {
+          id: 'NTH-42', title: 'Auth refactor', status: 'completed',
+          priority: 1, assignee: 'Scott', description: 'Desc',
+          updatedAt: '2026-03-13T10:00:00.000Z', tracker: 'linear',
+        },
+      };
+      const result = diffIssues(existing, delta);
+      assert.equal(result.length, 1);
+      assert.equal(result[0].fields.length, 2);
+    });
+
+    it('omits issues where only updatedAt changed', () => {
+      const existing = {
+        'NTH-42': {
+          id: 'NTH-42', title: 'Auth refactor', status: 'started',
+          priority: 2, assignee: 'Scott', description: 'Desc',
+          updatedAt: '2026-03-10T14:30:00.000Z', tracker: 'linear',
+        },
+      };
+      const delta = {
+        'NTH-42': {
+          id: 'NTH-42', title: 'Auth refactor', status: 'started',
+          priority: 2, assignee: 'Scott', description: 'Desc',
+          updatedAt: '2026-03-13T10:00:00.000Z', tracker: 'linear',
+        },
+      };
+      const result = diffIssues(existing, delta);
+      assert.equal(result.length, 0);
+    });
+
+    it('does not diff description field', () => {
+      const existing = {
+        'NTH-42': {
+          id: 'NTH-42', title: 'Auth refactor', status: 'started',
+          priority: 2, assignee: 'Scott', description: 'Old description',
+          updatedAt: '2026-03-10T14:30:00.000Z', tracker: 'linear',
+        },
+      };
+      const delta = {
+        'NTH-42': {
+          id: 'NTH-42', title: 'Auth refactor', status: 'started',
+          priority: 2, assignee: 'Scott', description: 'New description',
+          updatedAt: '2026-03-13T10:00:00.000Z', tracker: 'linear',
+        },
+      };
+      const result = diffIssues(existing, delta);
+      assert.equal(result.length, 0);
+    });
+  });
+
+  describe('formatChangeSummary', () => {
+    it('returns no-changes message for empty array', () => {
+      const result = formatChangeSummary([]);
+      assert.equal(result, 'No changes since last sync');
+    });
+
+    it('formats status change with field values', () => {
+      const changes = [{
+        id: 'NTH-42', type: 'updated', title: 'Auth refactor',
+        fields: [{ field: 'status', from: 'started', to: 'completed' }],
+      }];
+      const result = formatChangeSummary(changes);
+      assert.ok(result.includes('started -> completed'), 'should include status transition');
+      assert.ok(result.includes('NTH-42'), 'should include issue ID');
+    });
+
+    it('formats new issue', () => {
+      const changes = [{
+        id: 'NTH-105', type: 'new', title: 'New dashboard layout', fields: [],
+      }];
+      const result = formatChangeSummary(changes);
+      assert.ok(result.includes('(new)'), 'should include (new) marker');
+      assert.ok(result.includes('NTH-105'), 'should include issue ID');
+      assert.ok(result.includes('New dashboard layout'), 'should include title');
+    });
+
+    it('formats priority with labels not numbers', () => {
+      const changes = [{
+        id: 'NTH-42', type: 'updated', title: 'Auth refactor',
+        fields: [{ field: 'priority', from: 2, to: 1 }],
+      }];
+      const result = formatChangeSummary(changes);
+      assert.ok(result.includes('High -> Urgent'), 'should use priority labels not numbers');
+    });
+
+    it('formats assignee null as unassigned', () => {
+      const changes = [{
+        id: 'NTH-42', type: 'updated', title: 'Auth refactor',
+        fields: [{ field: 'assignee', from: null, to: 'Scott' }],
+      }];
+      const result = formatChangeSummary(changes);
+      assert.ok(result.includes('(unassigned) -> Scott'), 'should format null as (unassigned)');
+    });
+
+    it('includes issue count line', () => {
+      const changes = [
+        { id: 'NTH-42', type: 'updated', title: 'Auth refactor', fields: [{ field: 'status', from: 'started', to: 'completed' }] },
+        { id: 'NTH-105', type: 'new', title: 'New layout', fields: [] },
+      ];
+      const result = formatChangeSummary(changes);
+      assert.ok(result.includes('2 issue(s) changed'), 'should include count line');
+    });
+  });
+
   describe('exports', () => {
     it('CACHE_VERSION is 1', () => {
       assert.equal(CACHE_VERSION, 1);
@@ -523,6 +749,8 @@ describe('cache-store', () => {
       assert.equal(typeof readSyncMeta, 'function');
       assert.equal(typeof writeSyncMeta, 'function');
       assert.equal(typeof mergeIssues, 'function');
+      assert.equal(typeof diffIssues, 'function');
+      assert.equal(typeof formatChangeSummary, 'function');
       assert.equal(typeof classifyFreshness, 'function');
       assert.equal(typeof formatAge, 'function');
     });
