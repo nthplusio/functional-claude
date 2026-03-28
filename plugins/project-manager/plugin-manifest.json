@@ -1,5 +1,5 @@
 {
-  "version": "0.7.0",
+  "version": "0.11.3",
   "preserve": [
     ".cache/",
     ".claude-plugin/"
@@ -8,6 +8,12 @@
     "commands/pm-setup.md",
     "commands/pm.md",
     "hooks/hooks.json",
+    "hooks/lib/cache-store.js",
+    "hooks/lib/cache-store.test.js",
+    "hooks/lib/github-adapter.js",
+    "hooks/lib/github-adapter.test.js",
+    "hooks/lib/linear-adapter.js",
+    "hooks/lib/linear-adapter.test.js",
     "hooks/pm-session-end.js",
     "hooks/pm-session-start.js",
     "plugin-manifest.json",

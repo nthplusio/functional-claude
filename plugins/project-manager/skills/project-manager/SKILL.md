@@ -1,7 +1,7 @@
 ---
 name: project-manager
 description: Use this skill when the user says "project manager", "pm", "where are we", "what's in progress", "what should I work on next", "let's work on this project", "project status", "open issues", "what's next", or asks about Linear issues, GitHub PRs, or issue tracking for the current project. Also use proactively when the user describes work that doesn't appear to be tracked in Linear, when starting new work on main/master, or when branch naming suggests untracked work.
-version: 0.11.2
+version: 0.11.3
 ---
 
 # Project Manager
