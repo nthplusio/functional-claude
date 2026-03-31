@@ -1,195 +1,153 @@
 ---
 name: resend-cli
-description: "Operate the Resend CLI for sending emails, managing domains, contacts, broadcasts, templates, webhooks, API keys, and segments. Use when the user mentions Resend, wants to send email from the terminal, manage email infrastructure, work with Resend domains or contacts, create broadcasts, manage email templates, or any task involving the `resend` command. Also trigger when the user says 'resend-send', 'send an email', 'email sending', 'resend domains', 'resend contacts', 'resend broadcasts', 'resend templates', or references Resend CLI operations."
-version: 0.1.0
+description: "Operate the Resend CLI and MCP server for sending emails, managing
+  domains, contacts, broadcasts, templates, webhooks, API keys, and segments. Use
+  when the user mentions Resend, wants to send email from the terminal, manage email
+  infrastructure, work with Resend domains or contacts, create broadcasts, manage
+  email templates, or any task involving the `resend` command or Resend MCP tools.
+  Also trigger when the user says 'resend-send', 'send an email', 'email sending',
+  'resend domains', 'resend contacts', 'resend broadcasts', 'resend templates',
+  'configure resend', 'update resend config', 'resend setup', or references Resend
+  operations. Manages per-project configuration (.resend.md) for domain, sender
+  address, and sending instructions."
+version: 0.2.0
 ---
 
 # Resend CLI
 
-## Pre-flight Checks
+## Project Setup (run on every activation)
 
-Before running any resend command, perform these checks:
+On every activation, run through these checks in order before proceeding with the user's request. See [references/setup.md](references/setup.md) for detailed procedures.
 
-### 1. Verify the CLI is installed
+### 1. Project Configuration (`.resend.md`)
+
+Read `.resend.md` from the project root. If it exists, parse the YAML frontmatter:
+
+```yaml
+---
+domain: nthplus.io
+from: "Claude <claude@nthplus.io>"
+instructions: |
+  Keep emails professional and concise.
+  Sign off with "Best regards"
+---
+```
+
+Fields:
+- `domain` — Sending domain
+- `from` — Default sender in `"Name <address>"` format
+- `instructions` — Behavioral guidelines for composing emails (tone, sign-off, formatting, CC rules, etc.)
+
+**If `.resend.md` is missing**: Run first-time setup — see [references/setup.md](references/setup.md) § First-Run Setup.
+
+**If the user asks to update/change config**: Read the current file, ask what to change, update the frontmatter, confirm. See [references/setup.md](references/setup.md) § Updating Configuration.
+
+### 2. MCP Server (`.mcp.json`)
+
+Check `.mcp.json` at the project root for a `resend` entry under `mcpServers`. If missing, set it up — see [references/setup.md](references/setup.md) § MCP Server Setup.
+
+When the MCP server is configured, `mcp__resend__*` tools are available for direct API access. Prefer MCP tools over the CLI for sending emails and managing resources.
+
+**Note:** After adding the MCP server entry, the user may need to restart their Claude session for the tools to become available.
+
+### 3. CLI Pre-flight (only when CLI is needed)
+
+Only run these checks when an operation requires the CLI (webhook listening, diagnostics, auth management, or when MCP tools are unavailable):
 
 ```bash
 ~/.resend/bin/resend --version
 ```
 
-If not found, install with: `curl -fsSL https://resend.com/install.sh | bash`
+If not found: `curl -fsSL https://resend.com/install.sh | bash`
 
-### 2. Check for API key
+## Sending Emails
 
-```bash
-echo "$RESEND_API_KEY"
-```
+Always apply project configuration when sending:
 
-The `RESEND_API_KEY` env var is the primary auth method. If empty, check:
-- `~/.bashrc` for `export RESEND_API_KEY=...` (may need `source ~/.bashrc` to load)
-- `~/.config/resend/credentials.json` for stored profiles via `resend login`
-- If neither exists, ask the user for their Resend API key before proceeding
+1. Use the `from` value from `.resend.md` as the default sender
+2. Follow `instructions` from the config (tone, format, sign-off, etc.)
+3. The user can override any default per-email
 
-### 3. Check for the sender alias
+### Via MCP (preferred)
 
-```bash
-grep 'resend-send' ~/.bashrc
-```
+Use `mcp__resend__*` tools when the MCP server is configured. Pass the `from` address from config.
 
-The user may have a `resend-send` alias in `.bashrc` that pre-fills `--from`. If it exists, use the alias to avoid repeating the sender address. If not, always provide `--from` explicitly. Note: shell aliases are not available in non-interactive bash. Always use the full expanded command when running via Bash tool:
+### Via CLI (fallback)
 
 ```bash
-~/.resend/bin/resend emails send --from "Claude <claude@resend.nthplus.io>" --to ...
+~/.resend/bin/resend emails send \
+  --from "<from-value-from-config>" \
+  --to user@example.com \
+  --subject "Subject" \
+  --text "Body"
 ```
 
-Parse the alias to extract the `--from` value and the binary path rather than relying on the alias itself.
-
-## Environment
-
-- Binary: `~/.resend/bin/resend`
-- Auth: `RESEND_API_KEY` env var (typically set in `.bashrc`)
-- Config: `~/.config/resend/credentials.json`
-- Auth priority: `--api-key` flag > `RESEND_API_KEY` env var > stored credentials
-
-## Quick Start
-
-After pre-flight checks, use the full binary path and `--from` value discovered from the alias or provided by the user.
-
-Send a plain text email:
-
-```bash
-~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --subject "Hello" --text "Message body"
-```
+### Common Patterns
 
 Send HTML email:
-
 ```bash
-~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --subject "Update" --html "<h1>Hello</h1><p>Content</p>"
-```
-
-Send HTML from file:
-
-```bash
-~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --subject "Report" --html-file ./report.html
+~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --subject "Update" --html "<h1>Hello</h1>"
 ```
 
 Send with attachments:
-
 ```bash
-~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --subject "Files" --text "See attached" --attachment ./doc.pdf ./data.csv
+~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --subject "Files" --text "See attached" --attachment ./doc.pdf
 ```
 
-Send to multiple recipients with CC/BCC:
-
+Pipe HTML from file:
 ```bash
-~/.resend/bin/resend emails send --from "<FROM>" --to a@example.com b@example.com --cc c@example.com --bcc d@example.com --subject "Team" --text "Hi all"
-```
-
-Schedule for later (ISO 8601 or natural language):
-
-```bash
-~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --subject "Reminder" --text "Don't forget" --scheduled-at "2025-03-01T09:00:00Z"
+~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --subject "Newsletter" --html-file ./newsletter.html
 ```
 
 Send using a template:
-
 ```bash
-~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --template tmpl_abc123 --var name=Alice --var plan=Pro
+~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --template tmpl_abc123 --var name=Alice
 ```
 
-## Key Commands
+Batch send from JSON:
+```bash
+~/.resend/bin/resend emails batch --file batch.json
+```
+
+Schedule for later:
+```bash
+~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --subject "Reminder" --text "..." --scheduled-at "2025-03-01T09:00:00Z"
+```
+
+## Quick Reference
 
 | Task | Command |
 |------|---------|
 | Send email | `resend emails send --from ... --to ... --subject ... --text/--html ...` |
 | List sent emails | `resend emails list` |
-| Get email details | `resend emails get <id>` |
-| Batch send (up to 100) | `resend emails batch --file emails.json` |
+| Batch send | `resend emails batch --file emails.json` |
 | Cancel scheduled | `resend emails cancel <id>` |
 | List domains | `resend domains list` |
-| Verify domain DNS | `resend domains verify <id>` |
+| Verify domain | `resend domains verify <id>` |
 | List contacts | `resend contacts list` |
-| Create contact | `resend contacts create --email user@example.com` |
 | Create broadcast | `resend broadcasts create --from ... --subject ... --segment-id ... --html ...` |
 | Send broadcast | `resend broadcasts send <id>` |
 | List templates | `resend templates list` |
 | Create webhook | `resend webhooks create --endpoint https://... --events all` |
-| Listen for webhooks | `resend webhooks listen --url <tunnel-url>` |
-| Listen for inbound | `resend emails receiving listen` |
-| Check auth status | `resend whoami` |
-| Run diagnostics | `resend doctor` |
+| Listen webhooks | `resend webhooks listen --url <tunnel-url>` |
+| Check auth | `resend whoami` |
+| Diagnostics | `resend doctor` |
 
 ## Global Flags
 
-Apply to any command, placed before the subcommand:
-
-- `--api-key <key>` -- Override API key
-- `-p, --profile <name>` -- Use specific profile
-- `--json` -- Force JSON output (automatic when piped)
-- `-q, --quiet` -- Suppress spinners, implies `--json`
+- `--api-key <key>` — Override API key
+- `-p, --profile <name>` — Use specific profile
+- `--json` — Force JSON output
+- `-q, --quiet` — Suppress spinners, implies `--json`
 
 ## Output Behavior
 
 - **Interactive** (TTY): Formatted text + spinners on stderr
 - **Machine** (piped/CI/`--json`): JSON on stdout, nothing on stderr
-- Errors always: `{"error":{"message":"...","code":"..."}}` + exit code `1`
-
-## Pagination
-
-Most list commands support: `--limit <1-100>` (default 10), `--after <cursor>`, `--before <cursor>`.
+- Errors: `{"error":{"message":"...","code":"..."}}` + exit code `1`
 
 ## Command Reference
 
-For complete flags and options for every command, see [references/commands.md](references/commands.md).
+For complete flags and options, see [references/commands.md](references/commands.md).
 
-Top-level command groups:
-
-- **emails** -- Send, list, get, batch, cancel, update, receiving (inbound)
-- **domains** -- Create, list, get, verify, update, delete
-- **api-keys** -- Create, list, delete
-- **broadcasts** -- Create, send, list, get, update, delete
-- **templates** -- Create, list, get, update, publish, duplicate, delete
-- **contacts** -- Create, list, get, update, delete, segments, topics
-- **contact-properties** -- Create, list, get, update, delete
-- **segments** -- Create, list, get, delete
-- **topics** -- Create, list, get, update, delete
-- **webhooks** -- Create, list, get, update, delete, listen
-- **auth** -- login, logout, list, switch, rename, remove profiles
-
-## Common Patterns
-
-### Pipe HTML from stdin
-
-```bash
-cat newsletter.html | ~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --subject "Newsletter" --html-file -
-```
-
-### Batch send from JSON
-
-```json
-[
-  {"from": "<FROM>", "to": ["a@example.com"], "subject": "Hi A", "text": "Hello A"},
-  {"from": "<FROM>", "to": ["b@example.com"], "subject": "Hi B", "text": "Hello B"}
-]
-```
-
-```bash
-~/.resend/bin/resend emails batch --file batch.json
-```
-
-### Forward inbound email
-
-```bash
-~/.resend/bin/resend emails receiving forward <email-id> --to user@example.com --from "<FROM>"
-```
-
-### Create and send broadcast
-
-```bash
-~/.resend/bin/resend broadcasts create --from "<FROM>" --subject "Announcement" --segment-id seg_abc --html "<h1>News</h1>" --send
-```
-
-### Dev webhook tunnel
-
-```bash
-~/.resend/bin/resend webhooks listen --url https://abc123.ngrok.io --forward-to http://localhost:3000/webhooks --events email.delivered email.bounced
-```
+Command groups: emails, domains, api-keys, broadcasts, templates, contacts, contact-properties, segments, topics, webhooks, auth.

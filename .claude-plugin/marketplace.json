@@ -98,8 +98,8 @@
     {
       "name": "resend-cli",
       "source": "./plugins/resend-cli",
-      "description": "Resend CLI integration for sending emails, managing domains, contacts, broadcasts, templates, webhooks, API keys, and segments from the terminal",
-      "version": "0.1.0"
+      "description": "Resend CLI and MCP integration for sending emails, managing domains, contacts, broadcasts, templates, webhooks, API keys, and segments with per-project configuration",
+      "version": "0.2.0"
     }
   ]
 }
