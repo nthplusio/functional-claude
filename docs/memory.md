@@ -13,15 +13,11 @@ This document contains accumulated knowledge about the functional-claude plugin 
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| wezterm-dev | 0.7.16 | WezTerm terminal configuration and customization |
-| hyper-dev | 0.3.11 | Hyper terminal configuration and plugin development |
 | prisma-dev | 0.1.11 | Prisma ORM development with schema analysis and migration safety |
 | shadcn-dev | 0.2.5 | shadcn/ui and Tailwind CSS v4 development workflows |
 | code-quality | 1.0.3 | Deterministic code quality infrastructure — git hooks, lint-staged, and formatters |
 | claude-plugin-dev | 0.6.1 | Plugin development with guided workflows and AI-assisted creation |
 | opentui-dev | 0.1.9 | OpenTUI terminal interface development with component design and layout |
-| dev-workflow | 0.2.4 | Development workflow validation and planning tools |
-| tabby-dev | 0.1.7 | Tabby terminal configuration, SSH connections, and plugin development |
 | agent-teams | 0.23.2 | Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control |
 | gemini-cli | 0.6.9 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
 | session-insights | 0.1.4 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
@@ -64,60 +60,6 @@ plugins/<plugin-name>/
 │   └── <agent-name>.md       # Autonomous agent (flat file)
 └── .cache/                   # Gitignored - runtime cache
 ```
-
-## WezTerm Plugin (v0.7.9)
-
-### Skills
-
-| Skill | Purpose | Trigger Phrases |
-|-------|---------|-----------------|
-| wezterm-dev | Overview, base config | "configure wezterm", "wezterm config" |
-| wezterm-keybindings | Tmux-style keybindings | "leader key", "tmux-style", "pane splitting" |
-| wezterm-visual | Opacity, blur, cursor, colors | "opacity", "blur", "cursor", "theme" |
-| wezterm-tabs | Tab bar with Nerd Font icons | "tab bar", "nerd font icons", "process icons" |
-| wezterm-agent-deck | Agent Deck integration | "agent deck", "claude monitoring" |
-
-### Agent
-
-| Agent | Purpose | Trigger Phrases |
-|-------|---------|-----------------|
-| wezterm-troubleshoot | Autonomous debugging | "wezterm not working", "fix wezterm", "debug wezterm" |
-
-## Hyper Plugin (v0.3.4)
-
-### Skills
-
-| Skill | Purpose | Trigger Phrases |
-|-------|---------|-----------------|
-| hyper-dev | Overview, base config | "configure hyper", "hyper config" |
-| hyper-keybindings | Keymap customization | "hyper keys", "shortcuts" |
-| hyper-visual | Opacity, colors, cursor | "opacity", "colors", "cursor" |
-| hyper-plugins | Plugin development | "create plugin", "decorateConfig", "redux" |
-| hyper-themes | Theme creation | "create theme", "color scheme" |
-| hyper-ecosystem | Plugin discovery | "popular plugins", "find plugin", "recommendations" |
-
-### Agent
-
-| Agent | Purpose | Trigger Phrases |
-|-------|---------|-----------------|
-| hyper-troubleshoot | Autonomous debugging | "hyper not working", "fix hyper", "debug hyper" |
-
-### Hooks
-
-| Hook | Event | Purpose |
-|------|-------|---------|
-| hyper-session-start | SessionStart | Detects Hyper version, refreshes caches |
-| verify-hyper-backup | PreToolUse | Verifies backup before config edits |
-| check-hyper-learnings | Stop | Prompts for learnings capture |
-
-### Cache Files
-
-| File | Refresh | Purpose |
-|------|---------|---------|
-| hyper-config.json | Daily | Version, config path, installed plugins |
-| docs-index.json | Daily | Documentation source URLs |
-| plugin-ecosystem.json | Weekly | Top 25 popular plugins |
-| learnings.md | Daily | Documentation and session learnings |
 
 ## Prisma Plugin (v0.1.8)
 
@@ -309,72 +251,6 @@ Plugin development documentation with guided workflows and AI-assisted creation.
 | references/docs-cache.md | Compressed official documentation |
 | references/conventions.md | Patterns from anthropics/claude-plugins-official |
 | references/examples.md | Complete plugin examples |
-
-## dev-workflow Plugin (v0.2.0)
-
-Development workflow validation and planning tools.
-
-### Skills
-
-| Skill | Purpose | Trigger Phrases |
-|-------|---------|-----------------|
-| plan-validation | Checklist integrated into plan creation | "create a plan", "plan the implementation", "enter plan mode" |
-
-### Agents
-
-| Agent | Purpose | Trigger Phrases |
-|-------|---------|-----------------|
-| dev-gutcheck | Thorough post-plan validation | "gut check this plan", "validate this plan", "sanity check before implementing" |
-
-### Hooks
-
-| Hook | Event | Purpose |
-|------|-------|---------|
-| exit-plan-check | PreToolUse (ExitPlanMode) | Suggests running gut-check before plan approval |
-
-## tabby-dev Plugin (v0.1.0)
-
-Tabby terminal configuration, SSH connections, and plugin development.
-
-### Skills
-
-| Skill | Purpose | Trigger Phrases |
-|-------|---------|-----------------|
-| tabby-dev | Overview, base config | "configure tabby", "tabby config" |
-| tabby-visual | Themes, colors, fonts, appearance | "tabby theme", "colors", "cursor" |
-| tabby-keybindings | Hotkeys, shortcuts, multi-chord | "tabby hotkeys", "shortcuts" |
-| tabby-connections | SSH, serial, telnet profiles | "ssh profile", "serial connection" |
-| tabby-plugins | Plugin discovery and development | "tabby plugin", "install plugin" |
-
-### Agents
-
-| Agent | Purpose | Trigger Phrases |
-|-------|---------|-----------------|
-| tabby-troubleshoot | Autonomous debugging | "tabby not working", "fix tabby", "debug tabby" |
-| tabby-cache-update | Silent cache refresh | Triggered by SessionStart hook when cache is stale |
-
-### Commands
-
-| Command | Purpose |
-|---------|---------|
-| /tabby-recon | Analyze Tabby configuration and recommend optimizations |
-| /tabby-dev | Overview of Tabby development guidance with optional [topic] argument |
-
-### Hooks
-
-| Hook | Event | Purpose |
-|------|-------|---------|
-| tabby-session-start | SessionStart | Detects Tabby version, config path, refreshes caches |
-| verify-tabby-backup | PreToolUse | Verifies backup before config edits |
-| check-tabby-learnings | Stop | Prompts for learnings capture |
-
-### Cache Files
-
-| File | Refresh | Purpose |
-|------|---------|---------|
-| tabby-config.json | Daily | Version, config path, connection counts |
-| sources.json | - | Documentation source URLs |
-| learnings.md | Weekly | Documentation and session learnings |
 
 ## agent-teams Plugin (v0.17.1)
 
@@ -584,30 +460,6 @@ functional-claude/
 │   └── terminal-cache/       # Shared terminal cache skill
 │       └── SKILL.md
 └── plugins/
-    ├── wezterm-dev/
-    │   ├── .claude-plugin/plugin.json
-    │   ├── hooks/hooks.json
-    │   ├── skills/
-    │   │   ├── wezterm-dev/         # Main skill (overview)
-    │   │   ├── wezterm-keybindings/
-    │   │   ├── wezterm-visual/
-    │   │   ├── wezterm-tabs/
-    │   │   └── wezterm-agent-deck/
-    │   ├── agents/
-    │   │   └── wezterm-troubleshoot.md
-    │   └── .cache/
-    ├── hyper-dev/
-    │   ├── .claude-plugin/plugin.json
-    │   ├── hooks/hooks.json
-    │   ├── skills/
-    │   │   ├── hyper-dev/           # Main skill (overview)
-    │   │   ├── hyper-keybindings/
-    │   │   ├── hyper-visual/
-    │   │   ├── hyper-plugins/
-    │   │   └── hyper-themes/
-    │   ├── agents/
-    │   │   └── hyper-troubleshoot.md
-    │   └── .cache/
     ├── prisma-dev/
     │   ├── .claude-plugin/plugin.json
     │   ├── hooks/hooks.json
@@ -686,33 +538,6 @@ functional-claude/
     │   │   └── opentui-animation/
     │   ├── agents/
     │   │   └── opentui-troubleshoot.md
-    │   └── .cache/
-    ├── dev-workflow/
-    │   ├── .claude-plugin/plugin.json
-    │   ├── skills/
-    │   │   └── plan-validation/
-    │   │       └── SKILL.md
-    │   ├── agents/
-    │   │   └── dev-gutcheck.md
-    │   ├── hooks/
-    │   │   ├── hooks.json
-    │   │   └── exit-plan-check.js
-    │   └── .cache/
-    ├── tabby-dev/
-    │   ├── .claude-plugin/plugin.json
-    │   ├── hooks/hooks.json
-    │   ├── commands/
-    │   │   ├── tabby-recon.md
-    │   │   └── tabby-dev.md
-    │   ├── skills/
-    │   │   ├── tabby-dev/             # Main skill (overview)
-    │   │   ├── tabby-visual/
-    │   │   ├── tabby-keybindings/
-    │   │   ├── tabby-connections/
-    │   │   └── tabby-plugins/
-    │   ├── agents/
-    │   │   ├── tabby-troubleshoot.md
-    │   │   └── tabby-cache-update.md
     │   └── .cache/
     └── agent-teams/
         ├── .claude-plugin/plugin.json
@@ -1013,14 +838,14 @@ tools:
 ### Testing Plugins Locally
 
 ```bash
-claude --plugin-dir ./plugins/wezterm-dev
+claude --plugin-dir ./plugins/prisma-dev
 ```
 
 ### Installing from Marketplace
 
 ```
 /plugin marketplace add nthplusio/functional-claude
-/plugin install wezterm-dev@functional-claude
+/plugin install prisma-dev@functional-claude
 ```
 
 ### Creating a New Skill
@@ -1041,7 +866,7 @@ claude --plugin-dir ./plugins/wezterm-dev
 
 ### Naming
 
-- Plugin names: lowercase with hyphens (`wezterm-dev`, `hyper-dev`)
+- Plugin names: lowercase with hyphens (`prisma-dev`, `resend-cli`)
 - Skill names: `<plugin>-<topic>` (e.g., `wezterm-keybindings`)
 - Agent names: `<plugin>-<action>` (e.g., `wezterm-troubleshoot`)
 - Hook scripts: descriptive (`verify-wezterm-backup.sh`)
@@ -1079,10 +904,10 @@ SessionStart hooks should do work in the hook itself (not delegate to agents) an
 
 **Standard Output Format:**
 ```
-[plugin-name] Brief status (e.g., "Hyper 3.4.1, 5 plugins")
+[plugin-name] Brief status (e.g., "Prisma 6.2.0, 12 models")
 ```
 
-**Reference Implementation:** `plugins/hyper-dev/hooks/hyper-session-start.js`
+**Reference Implementation:** `plugins/prisma-dev/hooks/prisma-session-start.js`
 
 **Key Components:**
 1. Detect installation/version
@@ -1142,7 +967,7 @@ function extractTextFromHtml(html) {
 
 Stop hooks should use rich category-based pattern matching with contextual messages.
 
-**Reference Implementation:** `plugins/hyper-dev/hooks/check-hyper-learnings.js`
+**Reference Implementation:** `plugins/prisma-dev/hooks/check-prisma-learnings.js`
 
 **Standard Structure:**
 
@@ -1184,7 +1009,7 @@ if (matchedCategories.length > 0) {
 
 PreToolUse hooks should protect config files by requiring dated backups before edits.
 
-**Reference Implementation:** `plugins/hyper-dev/hooks/verify-hyper-backup.js`
+**Reference Implementation:** `plugins/prisma-dev/hooks/verify-prisma-backup.js`
 
 **Key Features:**
 1. Check if target file matches protected patterns
