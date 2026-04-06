@@ -9,8 +9,8 @@ description: "Operate the Resend CLI and MCP server for sending emails, managing
   'resend domains', 'resend contacts', 'resend broadcasts', 'resend templates',
   'configure resend', 'update resend config', 'resend setup', or references Resend
   operations. Manages per-project configuration (.resend.md) for domain, sender
-  address, and sending instructions."
-version: 0.2.0
+  address, default recipient, API key env var, and sending instructions."
+version: 0.2.1
 ---
 
 # Resend CLI
@@ -25,8 +25,9 @@ Read `.resend.md` from the project root. If it exists, parse the YAML frontmatte
 
 ```yaml
 ---
-domain: nthplus.io
+api_key_env: RESEND_API_KEY
 from: "Claude <claude@nthplus.io>"
+to: "scott@nthplus.io"
 instructions: |
   Keep emails professional and concise.
   Sign off with "Best regards"
@@ -34,9 +35,18 @@ instructions: |
 ```
 
 Fields:
-- `domain` — Sending domain
+- `api_key_env` — Name of the environment variable holding the Resend API key for this project (e.g., `RESEND_API_KEY`, `RESEND_KEY_STAGING`)
 - `from` — Default sender in `"Name <address>"` format
+- `to` — Default recipient address
 - `instructions` — Behavioral guidelines for composing emails (tone, sign-off, formatting, CC rules, etc.)
+
+**If `.resend.md` exists**, verify it is gitignored:
+
+```bash
+git check-ignore .resend.md
+```
+
+If not ignored, add it to `.gitignore` before proceeding. This file must never be committed.
 
 **If `.resend.md` is missing**: Run first-time setup — see [references/setup.md](references/setup.md) § First-Run Setup.
 
@@ -44,7 +54,7 @@ Fields:
 
 ### 2. MCP Server (`.mcp.json`)
 
-Check `.mcp.json` at the project root for a `resend` entry under `mcpServers`. If missing, set it up — see [references/setup.md](references/setup.md) § MCP Server Setup.
+Check `.mcp.json` at the project root for a `resend` entry under `mcpServers`. If missing, set it up using the `api_key_env` from `.resend.md` — see [references/setup.md](references/setup.md) § MCP Server Setup.
 
 When the MCP server is configured, `mcp__resend__*` tools are available for direct API access. Prefer MCP tools over the CLI for sending emails and managing resources.
 
@@ -65,8 +75,9 @@ If not found: `curl -fsSL https://resend.com/install.sh | bash`
 Always apply project configuration when sending:
 
 1. Use the `from` value from `.resend.md` as the default sender
-2. Follow `instructions` from the config (tone, format, sign-off, etc.)
-3. The user can override any default per-email
+2. Use the `to` value as the default recipient when the user doesn't specify one
+3. Follow `instructions` from the config (tone, format, sign-off, etc.)
+4. The user can override any default per-email
 
 ### Via MCP (preferred)
 
