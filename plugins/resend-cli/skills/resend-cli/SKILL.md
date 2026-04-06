@@ -10,7 +10,7 @@ description: "Operate the Resend CLI and MCP server for sending emails, managing
   'configure resend', 'update resend config', 'resend setup', or references Resend
   operations. Manages per-project configuration (.resend.md) for domain, sender
   address, default recipient, API key env var, and sending instructions."
-version: 0.3.0
+version: 0.3.1
 ---
 
 # Resend CLI
@@ -72,12 +72,18 @@ If not found: `curl -fsSL https://resend.com/install.sh | bash`
 
 ## Sending Emails
 
-Always apply project configuration when sending:
+**CRITICAL: Use config values VERBATIM. Never infer, shorten, guess, or modify email addresses.** Copy-paste the exact `from` and `to` strings from `.resend.md` into the send command. If the config says `to: "sethcoussens@intellilake.com"`, send to exactly `sethcoussens@intellilake.com` — not `seth@intellilake.com` or any other variation.
 
-1. Use the `from` value from `.resend.md` as the default sender
-2. Use the `to` value as the default recipient when the user doesn't specify one
-3. Follow `instructions` from the config (tone, format, sign-off, etc.)
-4. The user can override any default per-email
+### Pre-send checklist (mandatory before every send)
+
+1. Read `.resend.md` and extract the exact `from`, `to`, and `instructions` values
+2. **Confirm with the user before sending** — show the exact from/to/subject that will be used:
+   > Sending from: `<exact from value>`
+   > To: `<exact to value or user-specified override>`
+   > Subject: `<subject>`
+3. Only send after user confirms or if the user's request was already explicit about all fields
+4. Apply `instructions` from the config (tone, format, sign-off, etc.)
+5. The user can override any default per-email — but only when they explicitly provide a different value
 
 ### Template-Aware Sending
 
