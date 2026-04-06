@@ -1,7 +1,7 @@
 ---
 name: prisma-queries
 description: This skill should be used when the user asks about "prisma client", "findMany", "findUnique", "create", "update", "delete", "prisma query", "include", "select", "where", "prisma transactions", "nested writes", or mentions database queries and CRUD operations with Prisma.
-version: 0.1.11
+version: 0.2.0
 ---
 
 # Prisma Queries
@@ -32,20 +32,6 @@ const user = await prisma.user.create({
     email: 'alice@example.com',
     name: 'Alice',
   },
-})
-
-// Create with relations
-const user = await prisma.user.create({
-  data: {
-    email: 'alice@example.com',
-    posts: {
-      create: [
-        { title: 'Post 1' },
-        { title: 'Post 2' },
-      ],
-    },
-  },
-  include: { posts: true },
 })
 
 // Create many
@@ -92,12 +78,6 @@ const user = await prisma.user.findUniqueOrThrow({
 const user = await prisma.user.update({
   where: { id: 1 },
   data: { name: 'New Name' },
-})
-
-// Update many
-const count = await prisma.user.updateMany({
-  where: { role: 'USER' },
-  data: { verified: true },
 })
 
 // Upsert (update or create)
@@ -153,54 +133,6 @@ const users = await prisma.user.findMany({
 | `endsWith` | String ends with |
 | `mode: 'insensitive'` | Case-insensitive |
 
-### Combining Filters
-
-```typescript
-const users = await prisma.user.findMany({
-  where: {
-    AND: [
-      { verified: true },
-      { role: 'ADMIN' },
-    ],
-  },
-})
-
-const users = await prisma.user.findMany({
-  where: {
-    OR: [
-      { email: { contains: '@company.com' } },
-      { role: 'ADMIN' },
-    ],
-  },
-})
-
-const users = await prisma.user.findMany({
-  where: {
-    NOT: { role: 'BANNED' },
-  },
-})
-```
-
-### Relation Filters
-
-```typescript
-// Filter by relation existence
-const usersWithPosts = await prisma.user.findMany({
-  where: {
-    posts: { some: {} },  // Has at least one post
-  },
-})
-
-// Filter by relation field
-const users = await prisma.user.findMany({
-  where: {
-    posts: {
-      some: { published: true },
-    },
-  },
-})
-```
-
 ## Select and Include
 
 ### Select Specific Fields
@@ -225,28 +157,6 @@ const user = await prisma.user.findUnique({
     profile: true,          // Profile relation
   },
 })
-
-// Nested includes
-const user = await prisma.user.findUnique({
-  where: { id: 1 },
-  include: {
-    posts: {
-      include: { comments: true },
-    },
-  },
-})
-
-// Filtered includes
-const user = await prisma.user.findUnique({
-  where: { id: 1 },
-  include: {
-    posts: {
-      where: { published: true },
-      orderBy: { createdAt: 'desc' },
-      take: 5,
-    },
-  },
-})
 ```
 
 ## Pagination
@@ -267,121 +177,19 @@ const users = await prisma.user.findMany({
 })
 ```
 
-## Aggregations
+## Advanced Operations
 
-```typescript
-// Count
-const count = await prisma.user.count({
-  where: { verified: true },
-})
+For complex query patterns beyond basic CRUD, see [references/advanced-queries.md](references/advanced-queries.md):
 
-// Aggregate
-const stats = await prisma.order.aggregate({
-  _sum: { amount: true },
-  _avg: { amount: true },
-  _min: { amount: true },
-  _max: { amount: true },
-})
-
-// Group by
-const grouped = await prisma.user.groupBy({
-  by: ['role'],
-  _count: { id: true },
-  orderBy: { _count: { id: 'desc' } },
-})
-```
-
-## Transactions
-
-### Sequential Transactions
-
-```typescript
-const [user, post] = await prisma.$transaction([
-  prisma.user.create({ data: { email: 'new@example.com' } }),
-  prisma.post.create({ data: { title: 'New Post', authorId: 1 } }),
-])
-```
-
-### Interactive Transactions
-
-```typescript
-const result = await prisma.$transaction(async (tx) => {
-  const user = await tx.user.findUnique({ where: { id: 1 } })
-
-  if (!user) throw new Error('User not found')
-
-  const updated = await tx.user.update({
-    where: { id: 1 },
-    data: { balance: user.balance - 100 },
-  })
-
-  return updated
-})
-```
-
-### Transaction Options
-
-```typescript
-await prisma.$transaction(
-  async (tx) => {
-    // operations
-  },
-  {
-    maxWait: 5000,      // Max time to acquire lock
-    timeout: 10000,     // Max transaction duration
-    isolationLevel: 'Serializable',
-  }
-)
-```
-
-## Nested Writes
-
-```typescript
-// Create with nested relations
-const user = await prisma.user.create({
-  data: {
-    email: 'alice@example.com',
-    profile: {
-      create: { bio: 'Hello!' },
-    },
-    posts: {
-      create: [
-        { title: 'Post 1' },
-        { title: 'Post 2' },
-      ],
-    },
-  },
-})
-
-// Update nested relations
-const user = await prisma.user.update({
-  where: { id: 1 },
-  data: {
-    posts: {
-      create: { title: 'New Post' },
-      update: {
-        where: { id: 1 },
-        data: { published: true },
-      },
-      delete: { id: 2 },
-    },
-  },
-})
-```
-
-## Raw Queries
-
-```typescript
-// Raw SQL query
-const users = await prisma.$queryRaw`
-  SELECT * FROM "User" WHERE email = ${email}
-`
-
-// Raw SQL execute
-const result = await prisma.$executeRaw`
-  UPDATE "User" SET verified = true WHERE id = ${id}
-`
-```
+| Topic | Use When |
+|-------|----------|
+| Combining Filters | Building complex AND/OR/NOT conditions |
+| Relation Filters | Filtering by related record properties |
+| Nested Includes | Loading deeply nested or filtered relations |
+| Aggregations | count, sum, avg, min, max, groupBy |
+| Transactions | Multi-operation atomicity (sequential or interactive) |
+| Nested Writes | Creating/updating related records in one call |
+| Raw Queries | Complex SQL the Prisma Client can't express |
 
 ## Best Practices
 
@@ -390,3 +198,9 @@ const result = await prisma.$executeRaw`
 3. **Use transactions for consistency** - Multiple related operations
 4. **Handle errors gracefully** - Catch Prisma errors by code
 5. **Disconnect on shutdown** - Call `prisma.$disconnect()`
+
+## Reference Files
+
+| File | Contents |
+|------|----------|
+| [references/advanced-queries.md](references/advanced-queries.md) | Combining filters, relation filters, nested includes, aggregations, transactions, nested writes, raw queries |

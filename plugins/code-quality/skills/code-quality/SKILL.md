@@ -3,7 +3,7 @@ name: code-quality
 description: This skill should be used when the user asks about "code quality",
   "quality checks", "set up code quality", "quality infrastructure", or wants an
   overview of deterministic quality gates for their project.
-version: 1.0.3
+version: 1.1.0
 ---
 
 # Code Quality

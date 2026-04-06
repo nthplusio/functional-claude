@@ -1,5 +1,5 @@
 {
   "name": "code-quality",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Deterministic code quality infrastructure \u2014 git hooks, lint-staged, and formatters that run on every commit and push"
 }

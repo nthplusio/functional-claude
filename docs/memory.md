@@ -13,12 +13,12 @@ This document contains accumulated knowledge about the functional-claude plugin 
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| prisma-dev | 0.1.11 | Prisma ORM development with schema analysis and migration safety |
-| shadcn-dev | 0.2.5 | shadcn/ui and Tailwind CSS v4 development workflows |
-| code-quality | 1.0.3 | Deterministic code quality infrastructure — git hooks, lint-staged, and formatters |
+| prisma-dev | 0.2.0 | Prisma ORM development with schema analysis and migration safety |
+| shadcn-dev | 0.3.0 | shadcn/ui and Tailwind CSS v4 development workflows |
+| code-quality | 1.1.0 | Deterministic code quality infrastructure — git hooks, lint-staged, and formatters |
 | claude-plugin-dev | 0.6.1 | Plugin development with guided workflows and AI-assisted creation |
 | opentui-dev | 0.1.9 | OpenTUI terminal interface development with component design and layout |
-| agent-teams | 0.23.2 | Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control |
+| agent-teams | 0.24.0 | Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control |
 | gemini-cli | 0.6.9 | Gemini CLI integration for large context review, batch processing, and image generation via nano-banana extension |
 | session-insights | 0.1.4 | Interactive session analysis, deep drill-down into conversation history, and workflow improvement generation |
 | obsidian-dev | 0.1.1 | Obsidian plugin development workflows covering setup, Plugin API, commands, settings, vault operations, UI components, and editor integration |

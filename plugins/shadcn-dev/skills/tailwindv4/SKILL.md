@@ -1,7 +1,7 @@
 ---
 name: tailwindv4
 description: This skill should be used when the user asks about "tailwind v4", "tailwindcss 4", "tailwind css v4", "@theme", "css-first config", "tailwind css variables", "oklch colors", "tailwind upgrade", "migrate to tailwind 4", or mentions Tailwind CSS v4 configuration, new syntax, or migration from v3.
-version: 0.2.5
+version: 0.3.0
 ---
 
 # Tailwind CSS v4
@@ -12,7 +12,7 @@ Configure and use Tailwind CSS v4 with its CSS-first configuration and new featu
 
 ### CSS-First Configuration
 
-No more `tailwind.config.js` - configure directly in CSS:
+No more `tailwind.config.js` — configure directly in CSS:
 
 ```css
 @import "tailwindcss";
@@ -27,38 +27,20 @@ No more `tailwind.config.js` - configure directly in CSS:
 ### New Import Syntax
 
 ```css
-/* v3 */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* v4 */
+/* v3: @tailwind base; @tailwind components; @tailwind utilities; */
+/* v4: */
 @import "tailwindcss";
 ```
 
 ### CSS Variable Syntax Change
 
 ```html
-<!-- v3: Square brackets -->
-<div class="bg-[--brand-color]"></div>
-
-<!-- v4: Parentheses -->
-<div class="bg-(--brand-color)"></div>
+<!-- v3: bg-[--brand-color]  →  v4: bg-(--brand-color) -->
 ```
 
 ### theme() Function Replacement
 
-```css
-/* v3 */
-.my-class {
-  background-color: theme(colors.red.500);
-}
-
-/* v4: Use CSS variables */
-.my-class {
-  background-color: var(--color-red-500);
-}
-```
+Use `var(--color-red-500)` instead of `theme(colors.red.500)`.
 
 ## Upgrading to v4
 
@@ -68,7 +50,7 @@ Always read the [upgrade guide](https://tailwindcss.com/docs/upgrade-guide) firs
 npx @tailwindcss/upgrade@latest
 ```
 
-The tool converts JS config to CSS format. Review all changes to clean up false positives.
+For detailed step-by-step migration, see [references/migration-guide.md](references/migration-guide.md).
 
 ## Installation
 
@@ -102,22 +84,19 @@ export default defineConfig({
 
 ## @theme Block
 
-Define design tokens directly in CSS:
+Define design tokens directly in CSS. All theme values become CSS variables at `:root`.
 
 ### Colors
 
 ```css
 @theme {
-  /* OKLCH format (recommended) */
   --color-brand-50: oklch(0.98 0.02 200);
-  --color-brand-100: oklch(0.95 0.04 200);
   --color-brand-500: oklch(0.7 0.15 200);
   --color-brand-900: oklch(0.3 0.1 200);
-
-  /* HSL also supported */
-  --color-accent: hsl(262 83% 58%);
 }
 ```
+
+v4 encourages OKLCH for perceptually uniform colors. For complete color scale patterns, see [references/oklch-colors.md](references/oklch-colors.md).
 
 ### Typography
 
@@ -126,158 +105,12 @@ Define design tokens directly in CSS:
   --font-sans: "Inter", system-ui, sans-serif;
   --font-display: "Satoshi", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
-
-  /* Font sizes */
-  --text-tiny: 0.625rem;
-  --text-huge: 4rem;
 }
 ```
 
-### Spacing
-
-```css
-@theme {
-  --spacing-128: 32rem;
-  --spacing-144: 36rem;
-}
-```
-
-### Breakpoints
-
-```css
-@theme {
-  --breakpoint-3xl: 1920px;
-  --breakpoint-4xl: 2560px;
-}
-```
-
-### Animations
-
-```css
-@theme {
-  --ease-fluid: cubic-bezier(0.3, 0, 0, 1);
-  --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
-
-  --animate-fade-in: fade-in 0.3s var(--ease-fluid);
-}
-
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-```
-
-## Generated CSS Variables
-
-All theme values become CSS variables at `:root`:
-
-```css
-/* Generated output */
-:root {
-  --font-display: "Satoshi", "sans-serif";
-  --breakpoint-3xl: 1920px;
-  --color-brand-500: oklch(0.7 0.15 200);
-}
-```
-
-Use anywhere in your CSS or JavaScript:
-
-```css
-.custom-element {
-  font-family: var(--font-display);
-  color: var(--color-brand-500);
-}
-```
-
-```js
-// Access in JavaScript
-const brandColor = getComputedStyle(document.documentElement)
-  .getPropertyValue('--color-brand-500')
-```
-
-## Migration from v3
-
-### 1. Run Automated Upgrade
-
-```bash
-npx @tailwindcss/upgrade@latest
-```
-
-### 2. Convert Configuration
-
-**v3 tailwind.config.js:**
-```js
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        brand: '#3b82f6',
-      },
-      fontFamily: {
-        display: ['Satoshi', 'sans-serif'],
-      },
-    },
-  },
-}
-```
-
-**v4 CSS equivalent:**
-```css
-@import "tailwindcss";
-
-@theme {
-  --color-brand: #3b82f6;
-  --font-display: "Satoshi", sans-serif;
-}
-```
-
-### 3. Update Import Syntax
-
-Replace Tailwind directives with single import.
-
-### 4. Update CSS Variable References
-
-Replace square brackets with parentheses for CSS variables.
-
-### 5. Replace theme() Calls
-
-Use CSS variables instead of `theme()` function.
-
-## OKLCH Color Format
-
-v4 encourages OKLCH for perceptually uniform colors:
-
-```css
-/* Format: oklch(Lightness Chroma Hue) */
---color-blue: oklch(0.7 0.15 240);
-/*              L: 0-1   C: 0-0.4  H: 0-360 */
-```
-
-Benefits:
-- Perceptually uniform lightness
-- Better for generating color scales
-- Wider gamut support
-
-### Color Scale Example
-
-```css
-@theme {
-  --color-blue-50: oklch(0.97 0.02 240);
-  --color-blue-100: oklch(0.93 0.04 240);
-  --color-blue-200: oklch(0.87 0.08 240);
-  --color-blue-300: oklch(0.79 0.12 240);
-  --color-blue-400: oklch(0.70 0.15 240);
-  --color-blue-500: oklch(0.60 0.18 240);
-  --color-blue-600: oklch(0.50 0.18 240);
-  --color-blue-700: oklch(0.40 0.16 240);
-  --color-blue-800: oklch(0.32 0.12 240);
-  --color-blue-900: oklch(0.25 0.08 240);
-}
-```
+For spacing, breakpoints, animations, and full `@theme` syntax, see [references/v4-syntax.md](references/v4-syntax.md).
 
 ## Container Queries
-
-Native support for container queries:
 
 ```html
 <div class="@container">
@@ -297,7 +130,6 @@ ALWAYS use the v4 name — the v3 names no longer work:
 | `shadow-sm` / `shadow` | `shadow-xs` / `shadow-sm` |
 | `drop-shadow-sm` / `drop-shadow` | `drop-shadow-xs` / `drop-shadow-sm` |
 | `blur-sm` / `blur` | `blur-xs` / `blur-sm` |
-| `backdrop-blur-sm` / `backdrop-blur` | `backdrop-blur-xs` / `backdrop-blur-sm` |
 | `rounded-sm` / `rounded` | `rounded-xs` / `rounded-sm` |
 | `outline-none` | `outline-hidden` |
 | `ring` (default) | `ring-3` |
@@ -308,49 +140,35 @@ NEVER use these — use the replacement:
 
 | Removed | Replacement |
 |---------|-------------|
-| `bg-opacity-*`, `text-opacity-*`, etc. | Opacity modifiers: `bg-black/50`, `text-black/50` |
+| `bg-opacity-*`, `text-opacity-*` | Opacity modifiers: `bg-black/50` |
 | `flex-shrink-*` / `flex-grow-*` | `shrink-*` / `grow-*` |
-| `overflow-ellipsis` | `text-ellipsis` |
-| `decoration-slice` / `decoration-clone` | `box-decoration-slice` / `box-decoration-clone` |
 | `tailwind.config.js` | `@theme` in CSS |
 | `bg-[--var]` | `bg-(--var)` |
 | `theme(colors.x)` | `var(--color-x)` |
 | `@tailwind base/components/utilities` | `@import "tailwindcss"` |
 | `autoprefixer` | Built-in |
-| `@apply` | CSS variables, `--spacing()`, or framework components |
 
 ## Key Rules
 
-- **Never use `@apply`** — use CSS variables, `--spacing()`, or framework components
+- **Never use `@apply`** — use CSS variables or framework components
 - **Use `gap` not `space-x-*`/`space-y-*`** in flex/grid layouts
 - **Use line-height modifiers** — `text-base/7` not `text-base leading-7`
 - **Use `min-h-dvh`** not `min-h-screen` (mobile Safari bug)
 - **Use `size-*`** when width and height are equal
 - **Use opacity modifiers** — `bg-red-500/60` not `bg-red-500 bg-opacity-60`
 
-For the complete rules reference, see `references/tailwind-rules.md`.
+For the complete rules reference, see [references/tailwind-rules.md](references/tailwind-rules.md).
 
 ## v4.1 Features
 
-### Text Shadows
-
 ```html
+<!-- Text Shadows -->
 <h1 class="text-shadow-lg">Large shadow</h1>
-<p class="text-shadow-sm/50">Shadow with opacity</p>
-```
 
-### Masking
-
-```html
+<!-- Masking -->
 <div class="mask-t-from-50%">Top fade</div>
-<div class="mask-b-from-20% mask-b-to-80%">Bottom gradient</div>
-<div class="mask-radial-[100%_100%] mask-radial-from-75% mask-radial-at-left">Radial</div>
-```
 
-### New Gradient Types
-
-```html
-<div class="bg-linear-to-br from-violet-500 to-fuchsia-500"></div>
+<!-- New Gradient Types -->
 <div class="bg-radial-[at_50%_75%] from-sky-200 to-indigo-900"></div>
 <div class="bg-conic-180 from-indigo-600 via-indigo-50 to-indigo-600"></div>
 ```
@@ -363,7 +181,6 @@ Update globals.css for v4 syntax:
 @import "tailwindcss";
 
 @theme {
-  /* shadcn theme variables */
   --radius: 0.5rem;
 }
 
@@ -371,23 +188,22 @@ Update globals.css for v4 syntax:
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-    /* ... rest of shadcn variables */
   }
-
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-    /* ... dark mode variables */
   }
 }
 ```
 
 ## Reference Files
 
-- **`references/tailwind-rules.md`** - v4.1+ best practices, removed/renamed utilities, layout rules, common pitfalls
-- **`references/v4-syntax.md`** - Complete v4 syntax reference (@theme, variables, layers)
-- **`references/migration-guide.md`** - Detailed v3→v4 migration steps
-- **`references/oklch-colors.md`** - OKLCH color system guide
+| File | Contents | Read when... |
+|------|----------|-------------|
+| [references/tailwind-rules.md](references/tailwind-rules.md) | v4.1+ best practices, removed/renamed utilities, layout rules, common pitfalls | Writing or reviewing Tailwind classes |
+| [references/v4-syntax.md](references/v4-syntax.md) | Complete @theme, variables, layers, spacing, shadows, animations | Configuring theme or writing custom CSS |
+| [references/migration-guide.md](references/migration-guide.md) | Step-by-step v3→v4 migration | Upgrading an existing project |
+| [references/oklch-colors.md](references/oklch-colors.md) | OKLCH color system, scales, semantic colors, conversion | Designing custom color palettes |
 
 ## Resources
 

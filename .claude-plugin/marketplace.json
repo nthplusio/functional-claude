@@ -9,19 +9,19 @@
       "name": "prisma-dev",
       "source": "./plugins/prisma-dev",
       "description": "Prisma ORM development workflows with schema analysis, migration safety, and query guidance",
-      "version": "0.1.11"
+      "version": "0.2.0"
     },
     {
       "name": "shadcn-dev",
       "source": "./plugins/shadcn-dev",
       "description": "shadcn/ui and Tailwind CSS v4 development workflows for React applications. Covers component usage, form building with react-hook-form and zod, theming, data tables with TanStack Table, and Tailwind CSS v4 migration",
-      "version": "0.2.5"
+      "version": "0.3.0"
     },
     {
       "name": "code-quality",
       "source": "./plugins/code-quality",
       "description": "Deterministic code quality infrastructure — git hooks, lint-staged, and formatters that run on every commit and push, with guided setup and ecosystem detection",
-      "version": "1.0.3"
+      "version": "1.1.0"
     },
     {
       "name": "claude-plugin-dev",
@@ -35,11 +35,11 @@
       "description": "OpenTUI terminal interface development with TypeScript/Bun. Supports Core imperative API, React reconciler, and Solid reconciler with components, flexbox layout, keyboard handling, and animations",
       "version": "0.1.9"
     },
-{
+    {
       "name": "agent-teams",
       "source": "./plugins/agent-teams",
       "description": "Agent team blueprints, coordination patterns, and reusable personas for parallel development. Unified commands (spawn-build, spawn-think, spawn-create) with adaptive sizing and verbosity control",
-      "version": "0.23.2"
+      "version": "0.24.0"
     },
     {
       "name": "gemini-cli",
