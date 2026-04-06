@@ -10,7 +10,7 @@ description: "Operate the Resend CLI and MCP server for sending emails, managing
   'configure resend', 'update resend config', 'resend setup', or references Resend
   operations. Manages per-project configuration (.resend.md) for domain, sender
   address, default recipient, API key env var, and sending instructions."
-version: 0.2.1
+version: 0.3.0
 ---
 
 # Resend CLI
@@ -78,6 +78,15 @@ Always apply project configuration when sending:
 2. Use the `to` value as the default recipient when the user doesn't specify one
 3. Follow `instructions` from the config (tone, format, sign-off, etc.)
 4. The user can override any default per-email
+
+### Template-Aware Sending
+
+Before composing any email, check for a matching template. After sending without a template, offer to create one. See [references/templates.md](references/templates.md) for the full workflow.
+
+**Quick summary:**
+1. **Pre-send**: List templates, match by name/alias against the email's purpose. If match found, offer to use it with `--template <id> --var key=value`.
+2. **Send**: Compose and send using config defaults.
+3. **Post-send**: If no template was used, offer to save the email as a reusable template.
 
 ### Via MCP (preferred)
 
