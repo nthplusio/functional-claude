@@ -1,16 +1,18 @@
 ---
 name: resend-cli
-description: "Operate the Resend CLI and MCP server for sending emails, managing
-  domains, contacts, broadcasts, templates, webhooks, API keys, and segments. Use
-  when the user mentions Resend, wants to send email from the terminal, manage email
-  infrastructure, work with Resend domains or contacts, create broadcasts, manage
-  email templates, or any task involving the `resend` command or Resend MCP tools.
-  Also trigger when the user says 'resend-send', 'send an email', 'email sending',
-  'resend domains', 'resend contacts', 'resend broadcasts', 'resend templates',
-  'configure resend', 'update resend config', 'resend setup', or references Resend
-  operations. Manages per-project configuration (.resend.md) for domain, sender
-  address, default recipient, API key env var, and sending instructions."
-version: 0.3.1
+description: "Operate the Resend CLI (preferred) or MCP server (fallback) for sending
+  emails, managing domains, contacts, broadcasts, templates, webhooks, API keys, and
+  segments. Defaults to CLI with explicit auth; falls back to MCP only when CLI is
+  unavailable. Use when the user mentions Resend, wants to send email from the
+  terminal, manage email infrastructure, work with Resend domains or contacts, create
+  broadcasts, manage email templates, or any task involving the `resend` command or
+  Resend MCP tools. Also trigger when the user says 'resend-send', 'send an email',
+  'email sending', 'resend domains', 'resend contacts', 'resend broadcasts', 'resend
+  templates', 'configure resend', 'update resend config', 'resend setup', or
+  references Resend operations. Manages per-project configuration (.resend.md) for
+  domain, sender address, default recipient, API key env var, and sending
+  instructions."
+version: 0.4.0
 ---
 
 # Resend CLI
@@ -52,23 +54,36 @@ If not ignored, add it to `.gitignore` before proceeding. This file must never b
 
 **If the user asks to update/change config**: Read the current file, ask what to change, update the frontmatter, confirm. See [references/setup.md](references/setup.md) § Updating Configuration.
 
-### 2. MCP Server (`.mcp.json`)
+### 2. CLI Pre-flight (primary tool)
 
-Check `.mcp.json` at the project root for a `resend` entry under `mcpServers`. If missing, set it up using the `api_key_env` from `.resend.md` — see [references/setup.md](references/setup.md) § MCP Server Setup.
-
-When the MCP server is configured, `mcp__resend__*` tools are available for direct API access. Prefer MCP tools over the CLI for sending emails and managing resources.
-
-**Note:** After adding the MCP server entry, the user may need to restart their Claude session for the tools to become available.
-
-### 3. CLI Pre-flight (only when CLI is needed)
-
-Only run these checks when an operation requires the CLI (webhook listening, diagnostics, auth management, or when MCP tools are unavailable):
+Check if the Resend CLI is installed:
 
 ```bash
 ~/.resend/bin/resend --version
 ```
 
-If not found: `curl -fsSL https://resend.com/install.sh | bash`
+If not found, offer to install: `curl -fsSL https://resend.com/install.sh | bash`
+If the user declines installation, fall back to MCP — see step 3.
+
+**API key validation:** Before the first CLI command, verify the env var from `api_key_env` is set:
+
+```bash
+printenv <api_key_env>
+```
+
+If empty, ask the user for their Resend API key (starts with `re_`, available at https://resend.com/api-keys) and guide them to persist it — see [references/setup.md](references/setup.md) § Check API Key.
+
+**All CLI commands must include `--api-key`**, passing the env var from `api_key_env`. For example, if `api_key_env: RESEND_API_KEY`:
+
+```bash
+~/.resend/bin/resend --api-key "$RESEND_API_KEY" emails list
+```
+
+### 3. MCP Server (fallback — only when CLI is unavailable)
+
+Only configure MCP if the CLI is not installed and the user declines to install it. Check `.mcp.json` at the project root for a `resend` entry under `mcpServers`. If missing, set it up using `api_key_env` from `.resend.md` — see [references/setup.md](references/setup.md) § MCP Server Setup.
+
+**Note:** After adding the MCP server entry, the user may need to restart their Claude session for the `mcp__resend__*` tools to become available.
 
 ## Sending Emails
 
@@ -94,53 +109,59 @@ Before composing any email, check for a matching template. After sending without
 2. **Send**: Compose and send using config defaults.
 3. **Post-send**: If no template was used, offer to save the email as a reusable template.
 
-### Via MCP (preferred)
+### Via CLI (preferred)
 
-Use `mcp__resend__*` tools when the MCP server is configured. Pass the `from` address from config.
-
-### Via CLI (fallback)
+Always include `--api-key` with the env var from `api_key_env`. Replace `RESEND_API_KEY` below with the actual env var name if different.
 
 ```bash
-~/.resend/bin/resend emails send \
+~/.resend/bin/resend --api-key "$RESEND_API_KEY" emails send \
   --from "<from-value-from-config>" \
   --to user@example.com \
   --subject "Subject" \
   --text "Body"
 ```
 
+### Via MCP (fallback — only when CLI is unavailable)
+
+Use `mcp__resend__*` tools only when the CLI is not installed. Pass the `from` address from config.
+
 ### Common Patterns
+
+All examples use `--api-key "$RESEND_API_KEY"` — replace with the actual env var from `api_key_env` if different.
 
 Send HTML email:
 ```bash
-~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --subject "Update" --html "<h1>Hello</h1>"
+~/.resend/bin/resend --api-key "$RESEND_API_KEY" emails send --from "<FROM>" --to user@example.com --subject "Update" --html "<h1>Hello</h1>"
 ```
 
 Send with attachments:
 ```bash
-~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --subject "Files" --text "See attached" --attachment ./doc.pdf
+~/.resend/bin/resend --api-key "$RESEND_API_KEY" emails send --from "<FROM>" --to user@example.com --subject "Files" --text "See attached" --attachment ./doc.pdf
 ```
 
 Pipe HTML from file:
 ```bash
-~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --subject "Newsletter" --html-file ./newsletter.html
+~/.resend/bin/resend --api-key "$RESEND_API_KEY" emails send --from "<FROM>" --to user@example.com --subject "Newsletter" --html-file ./newsletter.html
 ```
 
 Send using a template:
 ```bash
-~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --template tmpl_abc123 --var name=Alice
+~/.resend/bin/resend --api-key "$RESEND_API_KEY" emails send --from "<FROM>" --to user@example.com --template tmpl_abc123 --var name=Alice
 ```
 
 Batch send from JSON:
 ```bash
-~/.resend/bin/resend emails batch --file batch.json
+~/.resend/bin/resend --api-key "$RESEND_API_KEY" emails batch --file batch.json
 ```
 
 Schedule for later:
 ```bash
-~/.resend/bin/resend emails send --from "<FROM>" --to user@example.com --subject "Reminder" --text "..." --scheduled-at "2025-03-01T09:00:00Z"
+~/.resend/bin/resend --api-key "$RESEND_API_KEY" emails send --from "<FROM>" --to user@example.com --subject "Reminder" --text "..." --scheduled-at "2025-03-01T09:00:00Z"
 ```
 
 ## Quick Reference
+
+All commands below require `--api-key "$<api_key_env>"` as a global flag (omitted from table for brevity).
 
 | Task | Command |
 |------|---------|

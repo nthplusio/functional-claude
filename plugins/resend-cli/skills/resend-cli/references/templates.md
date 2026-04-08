@@ -2,15 +2,17 @@
 
 Resend templates store reusable email formats with variable substitution. This workflow integrates template discovery into the sending process.
 
+**Note:** All CLI commands in this file must include the global auth flag per SKILL.md § CLI Pre-flight. Omitted from examples for brevity.
+
 ## Pre-Send: Check for Matching Templates
 
 Before composing an email, fetch the template list:
 
 ```bash
-~/.resend/bin/resend templates list --json --quiet
+~/.resend/bin/resend --api-key "$RESEND_API_KEY" templates list --json --quiet
 ```
 
-Or via MCP if available (`mcp__resend__list_templates`).
+Or via MCP if the CLI is not installed (`mcp__resend__list_templates`).
 
 ### Matching Logic
 

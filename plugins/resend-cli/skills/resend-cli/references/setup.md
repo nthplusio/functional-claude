@@ -82,11 +82,15 @@ Project-specific Resend email settings.
 Managed by the resend-cli skill — edit directly or ask Claude to update.
 ```
 
-### Step 7: Continue to MCP Server Setup
+### Step 7: Verify CLI or Set Up MCP Fallback
 
-After writing the config, proceed to MCP Server Setup below.
+If the CLI is installed, setup is complete — proceed with the user's request.
 
-## MCP Server Setup
+If the CLI is not installed and the user declined to install it, set up MCP as a fallback — see MCP Server Setup below.
+
+## MCP Server Setup (fallback — only when CLI is unavailable)
+
+Only configure MCP when the Resend CLI is not installed and the user has declined to install it.
 
 ### Check Existing Configuration
 

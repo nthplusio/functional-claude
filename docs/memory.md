@@ -24,7 +24,7 @@ This document contains accumulated knowledge about the functional-claude plugin 
 | obsidian-dev | 0.1.1 | Obsidian plugin development workflows covering setup, Plugin API, commands, settings, vault operations, UI components, and editor integration |
 | repo-sme | 0.2.3 | Repository Subject Matter Expert — register GitHub repos, browse branches, query architecture and APIs, and create GitHub issues via read-only analysis |
 | project-manager | 0.11.3 | Project manager for multi-project workflows — per-repo GitHub credentials, Linear issue lifecycle, branch naming, PR linking, and session briefings |
-| resend-cli | 0.3.1 | Resend CLI and MCP integration for sending emails, managing domains, contacts, broadcasts, templates, webhooks, API keys, and segments with per-project configuration |
+| resend-cli | 0.4.0 | Resend CLI and MCP integration for sending emails, managing domains, contacts, broadcasts, templates, webhooks, API keys, and segments with per-project configuration |
 
 ## Architecture Overview
 
